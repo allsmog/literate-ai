@@ -1090,18 +1090,35 @@ def _detect_release_workflow(root: Path) -> list[dict[str, str]]:
     return findings
 
 
-def inspect_harness(legacy_root: Path) -> dict[str, object]:
-    """Return one versioned harness-inventory document for a legacy tree."""
+def inspect_harness(
+    legacy_root: Path, *, ci_root: Path | None = None
+) -> dict[str, object]:
+    """Return one versioned harness-inventory document for a legacy tree.
+
+    ``ci_root`` names the project root when conversion retained host-anchored CI
+    configuration in place; its CI declarations are inventoried alongside any the
+    legacy tree still carries.
+    """
 
     if not legacy_root.is_dir():
         raise ValueError("legacy_root must be an existing directory")
     build_findings, commands, stages = _detect_build_system(legacy_root)
+    ci_roots = [legacy_root]
+    if ci_root is not None and ci_root.resolve() != legacy_root.resolve():
+        ci_roots.append(ci_root)
+    ci_findings: list[dict[str, str]] = []
+    for root in ci_roots:
+        for finding in (
+            *_detect_operating_systems(root),
+            *_detect_gitlab_ci(root),
+            *_detect_release_workflow(root),
+        ):
+            if finding not in ci_findings:
+                ci_findings.append(finding)
     findings = [
         *build_findings,
         *_detect_packaging(legacy_root),
-        *_detect_operating_systems(legacy_root),
-        *_detect_gitlab_ci(legacy_root),
-        *_detect_release_workflow(legacy_root),
+        *ci_findings,
     ]
     source_scope = capture_retained_source_scope(
         legacy_root,
@@ -1793,14 +1810,22 @@ def execute_harness_wrapper_parity(
                     report["state"] = "failed"
                     baseline_source = baseline_phase.get("source_tree")
                     observed_source = observed.get("source_tree")
+                    message = (
+                        f"legacy wrapper {phase} result differs from the direct "
+                        f"baseline (exit {observed['exit_code']} vs "
+                        f"{baseline_phase.get('exit_code')}; source "
+                        f"{observed_source} vs {baseline_source})"
+                    )
+                    if observed["exit_code"] != 0:
+                        # Carry the wrapper's bounded stream tails so a failing
+                        # parity run is diagnosable without rerunning it.
+                        diagnostics = _gate_failure_message(phase, observed)
+                        _headline, _, tails = diagnostics.partition("\n")
+                        if tails:
+                            message = f"{message}\n{tails}"
                     raise HarnessBaselineError(
                         "project.convert_wrapper_parity_failed",
-                        (
-                            f"legacy wrapper {phase} result differs from the direct "
-                            f"baseline (exit {observed['exit_code']} vs "
-                            f"{baseline_phase.get('exit_code')}; source "
-                            f"{observed_source} vs {baseline_source})"
-                        ),
+                        message,
                         report,
                     )
     report["state"] = "passed"

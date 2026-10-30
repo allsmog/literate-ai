@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Keep root-anchored CI declarations (`.github/`, `.gitlab-ci.yml`, `.gitlab/`,
+  `.circleci/`) in place during conversion so adoption does not disable the
+  repository's CI; inventory still classifies them. Roll back conversion when the
+  post-move wrapper parity fails instead of leaving a half-converted tree, include
+  the failing wrapper's output in parity errors, and count `node --test` summaries
+  so Node retained receipts report exact test totals.
+
 - Tighten `onboard adopt` detection for Node trees: propose npm build/test/start
   stages only for declared scripts (npm's placeholder test is not a test) and run
   `npm ci`/`npm install` first because baseline copies omit `node_modules`, select

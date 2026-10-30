@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from literate_ai.adapters.harness_test_discovery import observe_test_collection
 from literate_ai.adapters.project_initialization import (
     detect_repo_flavors,
     plan_convert,
@@ -80,6 +81,21 @@ class JavaScriptAdoptionTests(unittest.TestCase):
             selectors = detect_repo_flavors(root)
             self.assertIn("flavor://literate-ai/package-npm", selectors)
             self.assertNotIn("flavor://literate-ai/package-pip", selectors)
+
+    def test_node_test_summaries_report_exact_counts(self):
+        tap = b"TAP version 13\n1..2\n# tests 7\n# pass 5\n# fail 1\n# cancelled 0\n"
+        tap += b"# skipped 1\n# todo 0\n# duration_ms 12.5\n"
+        observed = observe_test_collection("test", tap, b"")
+        self.assertEqual(
+            (observed["state"], observed["total"], observed["passed"]),
+            ("nonempty", 7, 5),
+        )
+        self.assertEqual((observed["failed"], observed["skipped"]), (1, 1))
+
+        spec = "ℹ tests 3\nℹ pass 3\nℹ fail 0\n".encode()
+        self.assertEqual(observe_test_collection("test", spec, b"")["passed"], 3)
+        empty = observe_test_collection("test", b"# tests 0\n# pass 0\n", b"")
+        self.assertEqual(empty["state"], "empty")
 
     def test_python_tree_keeps_pip_packaging_default(self):
         with tempfile.TemporaryDirectory() as directory:

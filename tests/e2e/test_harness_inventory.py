@@ -585,6 +585,55 @@ services.
             }
             self.assertEqual(restored, original)
 
+    def test_failing_lift_shift_parity_restores_tree_and_retained_ci(self) -> None:
+        from literate_ai.adapters.harness_inventory import HarnessBaselineError
+
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "late-parity-project"
+            target.mkdir()
+            original = {
+                "Makefile": "all:\n\t@true\ntest:\n\t@true\n",
+                "src/app.py": "print('legacy')\n",
+                ".github/workflows/ci.yml": "jobs: {}\n",
+            }
+            for relative, content in original.items():
+                path = target / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(content, encoding="utf-8")
+
+            def failing_lift_shift(*_args: object, **_kwargs: object) -> None:
+                raise HarnessBaselineError(
+                    "project.convert_wrapper_parity_failed",
+                    "legacy wrapper test result differs from the direct baseline",
+                    {"phases": []},
+                )
+
+            with (
+                patch(
+                    "literate_ai.adapters.harness_inventory.lift_shift_legacy_project",
+                    failing_lift_shift,
+                ),
+                self.assertRaises(ProjectInitializationError) as raised,
+            ):
+                _adapter().initialize(
+                    target,
+                    source_intelligence_provider="none",
+                    convert=True,
+                )
+
+            self.assertEqual(
+                raised.exception.code, "project.convert_wrapper_parity_failed"
+            )
+            self.assertIn("rolled back", raised.exception.message)
+            self.assertFalse((target / "literate.project.json").exists())
+            self.assertFalse((target / "_legacy").exists())
+            restored = {
+                path.relative_to(target).as_posix(): path.read_text(encoding="utf-8")
+                for path in target.rglob("*")
+                if path.is_file()
+            }
+            self.assertEqual(restored, original)
+
 
 class DetectionToSelectorSliceTests(unittest.TestCase):
     """Detection feeds init: a CMake repo must convert with build-cmake selected."""

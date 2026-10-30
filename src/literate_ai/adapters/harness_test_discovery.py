@@ -40,6 +40,11 @@ _REPO_TEST_OUTCOME = re.compile(
     r"\[OK\]\s+All\s+(\d+)\s+tests?\s+process(?:es)?\s+returned\s+0\b",
     re.IGNORECASE,
 )
+# node:test run summary: TAP reporter lines use "#", the spec reporter "ℹ".
+_NODE_TEST_SUMMARY = re.compile(
+    r"^(?:#|\u2139)\s+(tests|pass|fail|cancelled|skipped|todo)\s+(\d+)\s*$",
+    re.MULTILINE,
+)
 _ZERO_PATTERNS = (
     re.compile(r"\bno tests ran\b", re.IGNORECASE),
     re.compile(r"\bcollected\s+0\s+items?\b", re.IGNORECASE),
@@ -108,6 +113,19 @@ def observe_test_collection(phase: str, stdout: bytes, stderr: bytes) -> dict[st
         return _counted_observation(passed, 0, 0, 0)
     if any(pattern.search(text) for pattern in _ZERO_PATTERNS):
         return _test_observation("empty", total=0, passed=0, failed=0, skipped=0)
+
+    node_counts: dict[str, int] = {}
+    for match in _NODE_TEST_SUMMARY.finditer(text):
+        node_counts[match.group(1)] = node_counts.get(match.group(1), 0) + int(
+            match.group(2)
+        )
+    if "tests" in node_counts and "pass" in node_counts:
+        return _counted_observation(
+            node_counts["pass"],
+            node_counts.get("fail", 0) + node_counts.get("cancelled", 0),
+            node_counts.get("skipped", 0) + node_counts.get("todo", 0),
+            0,
+        )
 
     cargo = tuple(_CARGO_OUTCOME.finditer(text))
     if cargo:

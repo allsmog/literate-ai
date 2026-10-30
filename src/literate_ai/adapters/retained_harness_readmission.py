@@ -291,7 +291,7 @@ def plan_retained_harness_readmission(
     manifest_path = _safe_path(root, "literate.project.json")
     authority_path = _safe_path(root, CONVERSION_AUTHORITY_FILE)
     old_inventory = _load_json(inventory_path)
-    new_inventory = inspect_harness(implementation)
+    new_inventory = inspect_harness(implementation, ci_root=root)
     new_inventory = _retain_admitted_stages(
         old_inventory,
         new_inventory,
@@ -798,7 +798,7 @@ def apply_retained_harness_readmission(
             )
             written[review_name] = review_content
             record_project_authority_review(root)
-            current_inventory = inspect_harness(implementation)
+            current_inventory = inspect_harness(implementation, ci_root=root)
             current_source_tree = observe_retained_tree(
                 implementation, current_inventory["source_scope"]
             )["source_tree"]

@@ -726,7 +726,14 @@ def plan_convert(
     else:
         readiness = "ready"
     quarantine_entries = sorted(
-        item.name for item in root.iterdir() if item.name != ".git"
+        item.name
+        for item in root.iterdir()
+        if item.name != ".git" and item.name not in CONVERT_RETAINED_IN_PLACE_ENTRIES
+    )
+    retained_in_place = sorted(
+        item.name
+        for item in root.iterdir()
+        if item.name in CONVERT_RETAINED_IN_PLACE_ENTRIES
     )
     return {
         "schema": CONVERT_PLAN_SCHEMA,
@@ -747,6 +754,7 @@ def plan_convert(
         "quarantine": {
             "root": CONVERT_LEGACY_DIRECTORY,
             "entries": quarantine_entries,
+            "retained_in_place": retained_in_place,
             "destination": "generated-transaction-directory-on-apply",
         },
         # The complete typed stage descriptions remain in
@@ -764,6 +772,11 @@ def plan_convert(
 
 CONVERT_QUARANTINE_SCHEMA = "literate-ai/project-convert-quarantine@1"
 CONVERT_LEGACY_DIRECTORY = "_legacy"
+# Forges read CI declarations only from the repository root, so conversion retains
+# them in place instead of silently disabling CI on the adopting branch.
+CONVERT_RETAINED_IN_PLACE_ENTRIES = frozenset(
+    {".circleci", ".github", ".gitlab", ".gitlab-ci.yml"}
+)
 
 
 def _git_entry_is_fully_tracked(target: Path, entry: Path) -> bool:
@@ -812,8 +825,9 @@ def _git_entry_contains_gitlink(target: Path, entry: Path) -> bool:
 
 
 def _quarantine_existing_tree(target: Path) -> dict[str, object] | None:
-    """Move every pre-existing entry at *target* except ``.git`` into one aside
-    directory, preserving the legacy hierarchy intact beneath it.
+    """Move every pre-existing entry at *target* except ``.git`` and root-anchored
+    CI declarations into one aside directory, preserving the legacy hierarchy
+    intact beneath it.
 
     Git-tracked entries are moved with ``git mv`` (when the target resolves inside a
     Git work tree); every other entry is moved with a plain filesystem move. Returns a
@@ -821,8 +835,18 @@ def _quarantine_existing_tree(target: Path) -> dict[str, object] | None:
     """
 
     entries = sorted(
-        (item for item in target.iterdir() if item.name != ".git"),
+        (
+            item
+            for item in target.iterdir()
+            if item.name != ".git"
+            and item.name not in CONVERT_RETAINED_IN_PLACE_ENTRIES
+        ),
         key=lambda item: item.name,
+    )
+    retained_in_place = sorted(
+        item.name
+        for item in target.iterdir()
+        if item.name in CONVERT_RETAINED_IN_PLACE_ENTRIES
     )
     if not entries:
         return None
@@ -883,6 +907,7 @@ def _quarantine_existing_tree(target: Path) -> dict[str, object] | None:
         "schema": CONVERT_QUARANTINE_SCHEMA,
         "directory": aside.relative_to(target).as_posix(),
         "moved": moved,
+        "retained_in_place": retained_in_place,
     }
 
 
@@ -902,10 +927,19 @@ def _rollback_converted_tree(target: Path, quarantine: dict[str, object]) -> Non
             "project.convert_rollback_source_missing",
             "conversion rollback quarantine is unavailable",
         )
-    # Nothing except repository metadata and the quarantine survives rollback.
+    # Nothing except repository metadata, entries retained in place and the
+    # quarantine survives rollback.
     legacy_root_name = Path(directory).parts[0]
+    retained_in_place = quarantine.get("retained_in_place", [])
+    if not isinstance(retained_in_place, list) or not set(retained_in_place) <= (
+        CONVERT_RETAINED_IN_PLACE_ENTRIES
+    ):
+        raise ProjectInitializationError(
+            "project.convert_rollback_manifest_invalid",
+            "conversion rollback contains invalid retained-in-place entries",
+        )
     for entry in sorted(target.iterdir(), key=lambda item: item.name):
-        if entry.name in {".git", legacy_root_name}:
+        if entry.name in {".git", legacy_root_name, *retained_in_place}:
             continue
         if entry.is_dir() and not entry.is_symlink():
             shutil.rmtree(entry)
@@ -3038,7 +3072,8 @@ class FilesystemProjectInitializationAdapter:
             )
 
             harness_inventory_document = inspect_harness(
-                resolved_target / str(quarantine["directory"])
+                resolved_target / str(quarantine["directory"]),
+                ci_root=resolved_target,
             )
             if harness_workspace_links:
                 harness_inventory_document["workspace_links"] = (
@@ -3190,7 +3225,19 @@ class FilesystemProjectInitializationAdapter:
                     workspace_links=harness_workspace_links,
                 )
             except (HarnessBaselineError, HarnessWorkspaceError) as exc:
-                raise ProjectInitializationError(exc.code, exc.message) from exc
+                # lift_shift_legacy_project restored the quarantine before raising;
+                # finish the same transactional rollback as the earlier gates.
+                try:
+                    _rollback_converted_tree(resolved_target, quarantine)
+                except ProjectInitializationError as rollback_error:
+                    raise ProjectInitializationError(
+                        "project.convert_rollback_failed",
+                        f"{exc.message}; rollback also failed: {rollback_error}",
+                    ) from rollback_error
+                raise ProjectInitializationError(
+                    exc.code,
+                    f"{exc.message}; literate-ai conversion was rolled back",
+                ) from exc
             lift_shift_path = evidence_dir / "legacy-lift-shift.json"
             lift_shift_path.write_bytes(
                 canonical_json_bytes(harness_lift_shift_document) + b"\n"
