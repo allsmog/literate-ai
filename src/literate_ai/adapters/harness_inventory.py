@@ -75,6 +75,7 @@ _STORAGE_FAILURE_PATTERN = re.compile(
 
 _MAKEFILES = ("Makefile", "GNUMakefile", "GNUmakefile", "makefile")
 _REPO_DRIVERS = ("repo.sh", "repo.bat")
+_NPM_PLACEHOLDER_TEST = 'echo "Error: no test specified" && exit 1'
 _REPO_BUILD_WRAPPERS = {"nt": "build.bat", "posix": "build.sh"}
 _SKIP_DIR_NAMES = frozenset({".git", "_build", "_legacy", "node_modules"})
 CONVERT_BASELINE_EXCLUDED_NAMES = EXCLUDED_DIRECTORY_NAMES
@@ -910,6 +911,8 @@ def _detect_build_system(
             )
         except (OSError, ValueError):
             scripts = {}
+        if not isinstance(scripts, dict):
+            scripts = {}
         findings.append(
             _finding(
                 "language.javascript",
@@ -917,9 +920,14 @@ def _detect_build_system(
                 f"Node package with scripts: {', '.join(sorted(scripts)) or 'none'}",
             )
         )
-        _add_stage_if_absent(stages, "build", "npm run build", "package.json")
-        _add_stage_if_absent(stages, "test", "npm test", "package.json")
-        _add_stage_if_absent(stages, "run", "npm start", "package.json")
+        # npm fails on undeclared scripts, so only declared ones become stages;
+        # `npm init`'s placeholder test script always fails and is not a test.
+        if "build" in scripts:
+            _add_stage_if_absent(stages, "build", "npm run build", "package.json")
+        if scripts.get("test", _NPM_PLACEHOLDER_TEST) != _NPM_PLACEHOLDER_TEST:
+            _add_stage_if_absent(stages, "test", "npm test", "package.json")
+        if "start" in scripts:
+            _add_stage_if_absent(stages, "run", "npm start", "package.json")
         _add_stage_if_absent(stages, "package", "npm pack", "package.json")
 
     pyproject = root / "pyproject.toml"

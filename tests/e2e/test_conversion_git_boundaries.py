@@ -86,6 +86,38 @@ class ConversionGitBoundaryTests(unittest.TestCase):
                 {"branch": "dev/next/111", "source": "current-upstream"},
             )
 
+    def test_conventional_remote_default_precedes_untracked_feature_branch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            _repository(source)
+            _git(source, "branch", "feature/work")
+            clone = root / "clone"
+            subprocess.run(
+                ("git", "clone", "--quiet", "--no-local", str(source), str(clone)),
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            _git(clone, "remote", "set-head", "origin", "--delete")
+            _git(clone, "fetch", "--quiet", "origin", "feature/work")
+            _git(
+                clone,
+                "checkout",
+                "--quiet",
+                "--no-track",
+                "-b",
+                "feature/work",
+                "origin/feature/work",
+            )
+
+            plan = plan_convert(clone)
+
+            self.assertEqual(
+                plan["repository_default_branch"],
+                {"branch": "main", "source": "remote-conventional-default"},
+            )
+
     def test_initialized_nested_submodule_is_relocated_with_legacy_tree(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

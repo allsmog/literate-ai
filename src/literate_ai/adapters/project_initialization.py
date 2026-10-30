@@ -460,6 +460,11 @@ def detect_repo_flavors(
             selectors.append("flavor://literate-ai/build-make")
             covered_axes.add("build.system")
 
+    # Packaging detection. A root Node manifest owns npm packaging.
+    if (path / "package.json").is_file():
+        selectors.append("flavor://literate-ai/package-npm")
+        covered_axes.add("packaging")
+
     # Apply language/build defaults for uncovered axes
     for axis, default in _FLAVOR_AXIS_DEFAULTS.items():
         if axis not in covered_axes:
@@ -601,6 +606,18 @@ def _conversion_repository_policy(
         branch = remote_head.removeprefix(prefix)
         policy = RepositoryPolicy(default_branch=branch, remote=remote)
         return policy, {"branch": branch, "source": "remote-head"}
+
+    # Single-branch and container clones often lack origin/HEAD; prefer the
+    # conventional default over whatever feature branch happens to be checked out.
+    conventional = RepositoryPolicy().default_branch
+    if remote in remote_names and _git_probe(
+        root, "show-ref", "--verify", f"refs/remotes/{remote}/{conventional}"
+    ):
+        policy = RepositoryPolicy(default_branch=conventional, remote=remote)
+        return policy, {
+            "branch": conventional,
+            "source": "remote-conventional-default",
+        }
 
     current = _git_probe(root, "symbolic-ref", "--quiet", "--short", "HEAD")
     if remote in remote_names:

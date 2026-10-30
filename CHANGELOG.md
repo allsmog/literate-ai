@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Tighten `onboard adopt` detection for Node trees: propose npm build/test/start
+  stages only for declared scripts (npm's placeholder test is not a test), select
+  `package-npm` instead of the pip default when `package.json` owns the root, and
+  prefer an existing `origin/main` over the checked-out feature branch when
+  `origin/HEAD` is absent.
+
 - Add independent 1.3.1 lab projects with real Component/Flavor locks, authored
   retained inputs and verifier-owned browser contracts. Make `litai build` and
   `litai run` the attendee path; keep preview assembly in a maintainer guide.
