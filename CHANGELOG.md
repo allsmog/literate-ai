@@ -3,7 +3,8 @@
 ## Unreleased
 
 - Tighten `onboard adopt` detection for Node trees: propose npm build/test/start
-  stages only for declared scripts (npm's placeholder test is not a test), select
+  stages only for declared scripts (npm's placeholder test is not a test) and run
+  `npm ci`/`npm install` first because baseline copies omit `node_modules`, select
   `package-npm` instead of the pip default when `package.json` owns the root, and
   prefer an existing `origin/main` over the checked-out feature branch when
   `origin/HEAD` is absent.

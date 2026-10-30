@@ -29,8 +29,22 @@ class JavaScriptAdoptionTests(unittest.TestCase):
                 for stage in report["proposed_wrapper_stages"]
             }
             self.assertEqual(
-                commands, {"build": "npm run build", "package": "npm pack"}
+                commands,
+                {"build": "npm install && npm run build", "package": "npm pack"},
             )
+
+    def test_lockfile_stages_install_with_npm_ci(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _package(root, {"build": "tsc", "test": "node --test"})
+            (root / "package-lock.json").write_text("{}", encoding="utf-8")
+            report = plan_convert(root, default_branch="main")
+            commands = {
+                stage["id"]: stage["command"]
+                for stage in report["proposed_wrapper_stages"]
+            }
+            self.assertEqual(commands["build"], "npm ci && npm run build")
+            self.assertEqual(commands["test"], "npm ci && npm test")
 
     def test_npm_init_placeholder_test_is_not_a_test_stage(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -52,7 +66,7 @@ class JavaScriptAdoptionTests(unittest.TestCase):
             _package(root, {"test": "node --test"})
             report = plan_convert(root, default_branch="main")
             self.assertIn(
-                {"id": "test", "command": "npm test"},
+                {"id": "test", "command": "npm install && npm test"},
                 [
                     {"id": stage["id"], "command": stage["command"]}
                     for stage in report["proposed_wrapper_stages"]

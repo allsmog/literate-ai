@@ -922,12 +922,20 @@ def _detect_build_system(
         )
         # npm fails on undeclared scripts, so only declared ones become stages;
         # `npm init`'s placeholder test script always fails and is not a test.
+        # Baseline copies omit node_modules, so dependent stages install first.
+        install = "npm ci" if (root / "package-lock.json").is_file() else "npm install"
         if "build" in scripts:
-            _add_stage_if_absent(stages, "build", "npm run build", "package.json")
+            _add_stage_if_absent(
+                stages, "build", f"{install} && npm run build", "package.json"
+            )
         if scripts.get("test", _NPM_PLACEHOLDER_TEST) != _NPM_PLACEHOLDER_TEST:
-            _add_stage_if_absent(stages, "test", "npm test", "package.json")
+            _add_stage_if_absent(
+                stages, "test", f"{install} && npm test", "package.json"
+            )
         if "start" in scripts:
-            _add_stage_if_absent(stages, "run", "npm start", "package.json")
+            _add_stage_if_absent(
+                stages, "run", f"{install} && npm start", "package.json"
+            )
         _add_stage_if_absent(stages, "package", "npm pack", "package.json")
 
     pyproject = root / "pyproject.toml"
