@@ -33537,3 +33537,17 @@ independent review and the complete combined gate from test one.
 - **Evidence:**
   - [x] Three regression checks pass; the original code reproduces the request-custody refusal. Two existing accepted-cache round-trip tests pass.
   - [ ] Real Linux continuation completes with explicit current source selection.
+
+### [ ] PYTHON-SRC-001: Import artifact-local Python src packages
+
+- **Priority:** P1
+- **Owner:** Standard dependency-free Python library verifier
+- **Direction:** Finish the approved bounded Linux cleanup checks with the required Python layout.
+- **Conclusion:** The generated package follows the pinned src-layout skill. Add its artifact-local src directory to the import verifier, retaining stdlib and exact module-origin enforcement. Sanitized upstream issue draft awaits separate posting authority.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Support flat and src packages without accepting escaped package roots.
+- **Evidence:**
+  - [x] Three focused checks pass; the old driver fails the src subcase and passes the flat subcase.
+  - [ ] Actual Linux library continuation passes under the committed noneditable wheel.

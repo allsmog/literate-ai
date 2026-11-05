@@ -766,6 +766,12 @@ IO.puts(JSON.encode!(%{schema: "literate-ai/library-import-observation@1",
     raise SystemExit(completed.returncode)
 elif language == "python":
     sys.path.insert(0, str(source))
+    package_source = source / "src"
+    if package_source.is_dir():
+        if (package_source.is_symlink()
+                or source not in package_source.resolve(strict=True).parents):
+            raise RuntimeError("Python package source escaped the exact artifact")
+        sys.path.insert(1, str(package_source))
     for capability in surface["capabilities"]:
         module = importlib.import_module(capability["module"])
         origin = pathlib.Path(module.__file__).resolve(strict=True)
