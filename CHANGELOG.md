@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Retained wrapper file membership can be refreshed beside independently qualified
+  native children. The reviewed plan pins their registry and current qualification;
+  promoted source, stale evidence and overlapping ownership still refuse. A new
+  complete retained receipt remains required.
+
 - Source generation permits read-only access to its request file, including chunked reads, while retaining source-only writes and independent lifecycle checks.
 
 - Remote retained SDK producer and consumer grants honor the original action's

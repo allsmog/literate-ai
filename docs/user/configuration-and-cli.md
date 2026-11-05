@@ -2295,7 +2295,11 @@ files), or the existing pruned-filesystem policy when Git is unavailable. It doe
 not redetect or replace admitted harness commands, edit source, or advance conversion
 stages. The default single-wrapper path executes no harness; refined Component
 execution occurs only with `--run-component-baselines`. Indirect source/metadata
-paths and already specification-authoritative projects refuse. Inspect a new plan
+paths and source promoted within the retained project refuse. A qualified aggregate
+can refresh a separate retained wrapper only when every promotion belongs to a
+registered native child outside that source tree. The plan binds the exact registry
+and current qualified projections, and apply checks them again before returning.
+Native qualification and conversion history stay unchanged. Inspect a new plan
 after any input drift; an unchanged plan applies as a no-op.
 
 The original baseline, wrapper parity, lift-shift evidence and receipt remain on

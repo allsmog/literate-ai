@@ -33523,3 +33523,17 @@ independent review and the complete combined gate from test one.
   - [x] Clarify request bootstrap access without authorizing general shell execution.
 - **Evidence:**
   - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.
+
+### [ ] RETAINED-SCOPE-CHILDREN-001 - Refresh retained wrapper scope beside qualified native children
+
+- **Priority:** P0
+- **Owner:** retained scope refresh and conversion authority adapters, Goals 1 and 4
+- **Direction:** Allow reviewed retained wrapper membership updates while independently registered native children remain qualified.
+- **Conclusion:** Qualification of separate native children must not imply authority transfer for an unpromoted retained wrapper. Permit only a disjoint retained wrapper with exact current child evidence; preserve all native authority and require a new complete retained receipt.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Bind current registry and verified child projections into the refresh plan; reject root promotions, overlap and stale or unqualified child authority; revalidate under the existing transaction and preserve history.
+- **Evidence:**
+  - [ ] Existing scope refresh tests plus qualified-child controls, rollback and drift refusal; isolated installed-wheel planning against a real adopted project; complete new retained consumer receipt.
+- **Progress:** The focused scope suite passes 11 tests, and retained receipt, readmission and remote-harness regression passes 21 tests. A guarded source-CLI plan and apply against a real hybrid project preserve four qualified child projections while refreshing 11 added and four removed paths. Installed-wheel verification and the complete new consumer receipt remain open.
