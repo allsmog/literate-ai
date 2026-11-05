@@ -207,7 +207,10 @@ class FilesystemStandardSourceRestorer:
             raise StandardSourceCacheRestorationError(
                 "explicit entry selection requires prepared derivation keys"
             )
-        keys = {self.cache_key(node).identity for node in prepared_nodes}
+        keys = {
+            self.cache_key(node).accepted_source_lookup_identity
+            for node in prepared_nodes
+        }
         if self.entry_selections.keys() - keys:
             raise StandardSourceCacheRestorationError(
                 "explicit cache entry does not match a current planned derivation"
@@ -227,7 +230,7 @@ class FilesystemStandardSourceRestorer:
             key,
             force_regeneration=force_regeneration,
             component_lock_identity=component_lock_identity,
-            entry_identity=self.entry_selections.get(key.identity),
+            entry_identity=self.entry_selections.get(key.accepted_source_lookup_identity),
         )
         standard = tuple(
             item

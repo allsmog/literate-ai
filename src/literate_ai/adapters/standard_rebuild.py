@@ -856,14 +856,14 @@ def assemble_filesystem_standard_rebuild_adapter(
                 key.model_binding.provider_id != accepted_source_provider_id
                 or key.coding_cli_tool_binding_identity
                 != accepted_source_provider_identity
-                or key.identity in entry_selections
+                or key.accepted_source_lookup_identity in entry_selections
             ):
                 raise SourceCacheError(
                     "source-cache.selection-conflict",
                     "explicit entries disagree on provider or select multiple "
                     "members of one derivation",
                 )
-            entry_selections[key.identity] = entry.identity
+            entry_selections[key.accepted_source_lookup_identity] = entry.identity
     except SourceCacheError as exc:
         raise FilesystemStandardRebuildError(exc.code, exc.message) from exc
     retained_review = None
