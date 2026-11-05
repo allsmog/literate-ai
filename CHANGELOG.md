@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Source generation permits read-only access to its request file, including chunked reads, while retaining source-only writes and independent lifecycle checks.
+
 - Complete current-main native qualification of retained Windows system context,
   base/private interpreter DLL capture, and the five-minute C++ discovery bound;
   preserve command drift, missing-sidecar and guarded native build refusals (#102, #103).

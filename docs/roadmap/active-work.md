@@ -34301,7 +34301,7 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [ ] Reproduce nonzero parity exit and invalid JSON, verify original marker/exit identities and private durable diagnostics, and reject diagnostic evidence as qualified products.
   - [ ] Exercise a later failure after an earlier success; renew independent review, full source, installed/native and exact-head integration gates.
 
-### [ ] CODEX-READ-001: Permit bounded reading of the generation request
+### [x] CODEX-READ-001: Permit bounded reading of the generation request
 
 - **Priority:** P1
 - **Owner:** coding CLI generation transport
@@ -34310,6 +34310,6 @@ implementation, policy weakening, qualification or issue closure is recorded her
 - **Depends on:** none
 - **Completion prerequisites:** none
 - **Implementation:**
-  - [ ] Clarify request bootstrap access without authorizing general shell execution.
+  - [x] Clarify request bootstrap access without authorizing general shell execution.
 - **Evidence:**
-  - [ ] Focused coding CLI regression suite and isolated wheel-backed generation admission.
+  - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.
