@@ -33524,7 +33524,7 @@ independent review and the complete combined gate from test one.
 - **Evidence:**
   - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.
 
-### [ ] CACHE-SELECT-001: Select explicit source entries by stable accepted lookup identity
+### [x] CACHE-SELECT-001: Select explicit source entries by stable accepted lookup identity
 
 - **Priority:** P1
 - **Owner:** Standard source-cache selection adapters
@@ -33536,9 +33536,9 @@ independent review and the complete combined gate from test one.
   - [x] Align selection producer and consumer with accepted_source_lookup_identity.
 - **Evidence:**
   - [x] Three regression checks pass; the original code reproduces the request-custody refusal. Two existing accepted-cache round-trip tests pass.
-  - [ ] Real Linux continuation completes with explicit current source selection.
+  - [x] Actual Linux segment-gate TEST passes with explicit current source selection (cleanup cpu-r9), including build, generated tests, exact artifact import, independent library acceptance and a finalized receipt. Older weighted/arbiter entries remain stale under their changed plan semantics; they are not admitted by this repair.
 
-### [ ] PYTHON-SRC-001: Import artifact-local Python src packages
+### [x] PYTHON-SRC-001: Import artifact-local Python src packages
 
 - **Priority:** P1
 - **Owner:** Standard dependency-free Python library verifier
@@ -33550,4 +33550,4 @@ independent review and the complete combined gate from test one.
   - [x] Support flat and src packages without accepting escaped package roots.
 - **Evidence:**
   - [x] Three focused checks pass; the old driver fails the src subcase and passes the flat subcase.
-  - [ ] Actual Linux library continuation passes under the committed noneditable wheel.
+  - [x] Actual Linux segment-gate TEST passes under the noneditable wheel from 7836213e (cleanup cpu-r9): three generated cases, six independent protocol cases, including 200 holds, exact artifact import and a finalized receipt. SDK and wheel-dependency import-driver variants were not changed or qualified by this narrow repair.
