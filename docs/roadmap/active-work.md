@@ -33511,7 +33511,7 @@ independent review and the complete combined gate from test one.
   - [ ] Real live-worker action/stage/state and network/disk/cpu/memory observations with declared unsupported values, not invented measurements.
   - [ ] Authentication, secret/command/environment/path redaction, no-listener/no-job-mutation, volume/coalescing/cancellation controls, independent review and integrated native qualification.
 
-### [ ] CODEX-READ-001: Permit bounded reading of the generation request
+### [x] CODEX-READ-001: Permit bounded reading of the generation request
 
 - **Priority:** P1
 - **Owner:** coding CLI generation transport
@@ -33520,6 +33520,6 @@ independent review and the complete combined gate from test one.
 - **Depends on:** none
 - **Completion prerequisites:** none
 - **Implementation:**
-  - [ ] Clarify request bootstrap access without authorizing general shell execution.
+  - [x] Clarify request bootstrap access without authorizing general shell execution.
 - **Evidence:**
-  - [ ] Focused coding CLI regression suite and isolated wheel-backed generation admission.
+  - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.

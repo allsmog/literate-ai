@@ -765,7 +765,7 @@ IO.puts(JSON.encode!(%{schema: "literate-ai/library-import-observation@1",
     sys.stderr.buffer.write(completed.stderr)
     raise SystemExit(completed.returncode)
 elif language == "python":
-    sys.path[:] = [str(source)]
+    sys.path.insert(0, str(source))
     for capability in surface["capabilities"]:
         module = importlib.import_module(capability["module"])
         origin = pathlib.Path(module.__file__).resolve(strict=True)

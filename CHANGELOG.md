@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Source generation permits read-only access to its request file, including chunked reads, while retaining source-only writes and independent lifecycle checks.
+
 - Remote retained SDK producer and consumer grants honor the original action's
   deadline, capped at three hours, so long source verification does not outlive
   an unrelated ten-minute grant. Expiry, revocation and current-custody checks
