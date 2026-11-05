@@ -1,7 +1,8 @@
-# ADR 0060: Reviewed addition of qualified native children
+# ADR 0064: Reviewed addition of qualified native children
 
 - Status: Accepted
 - Date: 2026-11-05
+- Numbering: The operator accepted this unchanged decision locally as ADR 0060. It is renumbered 0064 during upstream reconciliation because main already owns ADR 0060 for retained receipt promotion.
 - Decision owners: literate-ai maintainers and the operator directing this contribution
 - Roadmap: [NATIVE-QUALIFIED-ADDITION-001](../roadmap/active-work.md#native-qualified-addition-001)
 - Issue: [#315](https://github.com/jordanhubbard/literate-ai/issues/315)

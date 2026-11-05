@@ -150,7 +150,8 @@ SDLC catalog (verbs unchanged; grouped for flow):
     litai project agent-entrypoints [PATH]
     litai project tracker inspect | peer-work | parent checkout | ci-plan
     litai project retained-cargo check | materialize | admit
-    litai project test-receipt run-retained | update | check | require-current
+    litai project test-receipt run-retained | promote-retained | update | check
+    litai project test-receipt require-current
     litai project test-receipt verify-evidence | publish-evidence
     litai project test-receipt require-current-evidence
     litai project source-intelligence sync | check
@@ -318,6 +319,10 @@ def _handle(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
         return authority_graph_from_args(args), 0
     if args.command == "render":
+        if args.render_command == "tree":
+            from .render_tree import plan_tree_from_args
+
+            return plan_tree_from_args(args)
         from .render import render_dashboard_from_args, render_html_from_args
 
         return (
@@ -479,6 +484,22 @@ def _add_repository_fetch_deadline_arguments(parser) -> None:
     )
 
 
+def _promotion_budget_arguments(parser):
+    for name in (
+        "maximum-metadata-bytes",
+        "maximum-memory-bytes",
+        "maximum-document-bytes",
+        "maximum-payload-bytes",
+        "max-closure-steps",
+        "timeout-seconds",
+    ):
+        parser.add_argument(
+            "--promotion-" + name,
+            type=int,
+            help="finite promotion capture/verification budget",
+        )
+
+
 def _add_retained_project_arguments(parser, *, execution_options=False) -> None:
     parser.add_argument(
         "--retained-project",
@@ -498,6 +519,12 @@ def _add_retained_project_arguments(parser, *, execution_options=False) -> None:
         help="exact reviewed retained-project plan identity",
     )
     if execution_options:
+        parser.add_argument(
+            "--retain-promotion-evidence",
+            action="store_true",
+            help="capture complete promotion assertions during this authorized run",
+        )
+        _promotion_budget_arguments(parser)
         parser.add_argument(
             "--allow-host-execution",
             action="store_true",
@@ -1516,6 +1543,31 @@ def _parser() -> JsonArgumentParser:
     render_commands = render.add_subparsers(
         dest="render_command", required=True, parser_class=JsonArgumentParser
     )
+    render_tree = render_commands.add_parser(
+        "tree",
+        help="plan a bounded directory metadata view, or apply its initial plan",
+        description=(
+            "Read-only by default. Initial publication requires --apply and the "
+            "exact current --ack-plan identity. Existing output and interrupted "
+            "namespaces refuse; rerender and recovery are not authorized here."
+        ),
+    )
+    render_tree.add_argument("--root", default=".", help="physical source project root")
+    render_tree.add_argument(
+        "--declaration", required=True, help="bounded tree-view declaration JSON"
+    )
+    render_tree_actions = render_tree.add_mutually_exclusive_group()
+    render_tree_actions.add_argument(
+        "--apply", action="store_true", help="publish an acknowledged initial view"
+    )
+    render_tree_actions.add_argument(
+        "--check",
+        action="store_true",
+        help="check complete existing pages and current source without writing files",
+    )
+    render_tree.add_argument(
+        "--ack-plan", help="exact sha256 identity of the current full read-only plan"
+    )
     render_html = render_commands.add_parser(
         "html",
         help="render one provenance-bound single-file HTML view",
@@ -1720,6 +1772,8 @@ def _parser() -> JsonArgumentParser:
             "run only this gate (repeatable). Default: all gates -- authority, locks, "
             "source-intelligence (always skipped when provider is none), "
             "html-observability (declared HTML currency), receipt. "
+            "A declared literate.tree-html.json also selects tree-html-observability; "
+            "that gate can be requested explicitly. "
             "Verify never builds; that is rebuild's job"
         ),
     )
@@ -2352,6 +2406,35 @@ def _parser() -> JsonArgumentParser:
             "implementation; repeat exactly the destinations qualified at conversion"
         ),
     )
+    receipt_promote = project_receipt_commands.add_parser(
+        "promote-retained",
+        help=(
+            "re-verify an admitted retained-project run against the project's "
+            "receipt policy and emit a finalized candidate for 'update'"
+        ),
+    )
+    receipt_promote.add_argument(
+        "candidate",
+        help="new external file; POSIX parent must be operator-owned with no "
+        "group/world write permission",
+    )
+    receipt_promote.add_argument("--project", default=".")
+    receipt_promote.add_argument("--retained-project", required=True)
+    receipt_promote.add_argument("--retained-project-profile", required=True)
+    receipt_promote.add_argument("--custody-root", required=True)
+    receipt_promote.add_argument("--retained-receipt", required=True)
+    receipt_promote.add_argument(
+        "--promotion-evidence",
+        required=True,
+        help="exact complete evidence root captured by the original authorized runtime",
+    )
+    _promotion_budget_arguments(receipt_promote)
+    receipt_promote.add_argument("--plan", help="expected current plan identity")
+    receipt_promote.add_argument("--target", default="host")
+    receipt_promote.add_argument("--dry-run", action="store_true")
+    from .execution_workers import add_execution_worker_arguments as _worker_args
+
+    _worker_args(receipt_promote)
     receipt_current = project_receipt_commands.add_parser("require-current")
     receipt_current.add_argument("--project", default=".")
     project_test_checkpoint = project_commands.add_parser(
@@ -3334,11 +3417,22 @@ def main(
         or command == "onboard"
         and arguments[arguments.index("onboard") + 1 :][:1] == ("orchestrate",)
     )
+    scoped_retained_promotion = (
+        command.startswith("project.")
+        and "test-receipt" in arguments
+        and "promote-retained" in arguments
+    )
+    deferred_retained_frontdoor = command in {"build", "test", "rebuild"}
     scoped_retained_cargo = command == "project.retained-cargo"
     scoped_worker_health = command == "worker.health"
     scoped_agent_entrypoints = command == "project.agent-entrypoints"
+    scoped_tree_render = command == "render.tree"
     scoped_orchestration = (
-        scoped_orchestration or scoped_worker_health or scoped_agent_entrypoints
+        scoped_orchestration
+        or scoped_worker_health
+        or scoped_agent_entrypoints
+        or scoped_tree_render
+        or scoped_retained_promotion
     )
     scoped_evidence = (
         command.startswith("project.")
@@ -3357,11 +3451,20 @@ def main(
         and not scoped_orchestration
         and not scoped_evidence
         and not scoped_retained_cargo
+        and not deferred_retained_frontdoor
     ):
         maybe_host_self_update(raw)
     try:
         parser = _parser()
         args = parser.parse_args(arguments)
+        # Canonical parsing recognizes accepted option abbreviations. A retained
+        # read-only plan must be identified before any implicit host writer.
+        scoped_orchestration = scoped_orchestration or (
+            deferred_retained_frontdoor
+            and bool(getattr(args, "retained_project_plan", False))
+        )
+        if deferred_retained_frontdoor and not scoped_orchestration:
+            maybe_host_self_update(raw)
         if args.command == "update":
             maybe_host_self_update(raw, check_now=True)
         scoped_orchestration = (
@@ -3402,7 +3505,11 @@ def main(
                 else (
                     "worker.health_read_only_options"
                     if scoped_worker_health
-                    else "orchestration.read_only_options"
+                    else (
+                        "render.tree.scoped_options"
+                        if scoped_tree_render
+                        else "orchestration.read_only_options"
+                    )
                 ),
                 "read-only inspection does not admit MCP discovery "
                 "or debug-file output",

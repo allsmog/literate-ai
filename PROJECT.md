@@ -1,5 +1,21 @@
 # Literate AI — Project Requirements and Completeness
 
+Under accepted ADR 0058, an explicitly selected tree declaration may be checked
+without creating source, cache, temporary payload or output files. A current
+result requires a complete actual page/metadata/index namespace observation and
+independent canonical source hashing with closing membership and link checks.
+Only the actual finite read-only output context selects its exact generated
+paths during source capture; saved output assertions grant no write, recovery,
+collection or later source-exclusion authority. Existing single-file views and
+ordinary payload-retaining SDK capture retain their contracts and defaults.
+
+Projects may opt into complete tree freshness through a closed, versioned
+`literate.tree-html.json` registry of bounded project-relative declaration paths.
+Verification holds the actual registry and declaration inputs current, then runs
+the same complete source/output check for every declared view. The new gate uses
+`project-verify@2`; projects without it preserve their existing definition,
+single-file requests, default gates and `project-verify@1` report shape.
+
 This document is the durable, root-level source of truth for what Literate AI is for
 and how complete its implementation is against that purpose. It sits above every file
 in `docs/`: a document under `docs/` may detail or justify a decision, but the goals and
@@ -86,10 +102,45 @@ resolution and 1.4.0 release. The [integration plan](docs/roadmap/1.4-integratio
 tracks every initial item, the existing release goals, native qualification and
 publication evidence. All required acceptance remains open until proven.
 
+LIBRARY-EXPORT-ORDER-001 and LIBRARY-IMPORT-ISOLATION-001 cover newly reported
+JavaScript export-map ordering and ambient Python import defects under Goals 1
+and 4. Draft PR #313 contains a candidate for the former. Main already isolates
+the generic Python verifier; preserving that protection through integration,
+independent review and installed qualification remain open. QUALIFIED-CHILD-ADD-001
+extends Goals 1, 4 and 6 with a public atomic transaction for adding an
+independently qualified native child to a qualified retained parent. Issue #315
+requires accepted design, implementation and native evidence before completion.
+
+SHADOW-001 extends Goals 1 and 4 with a separate repository that continually
+qualifies selected upstream branches and PRs, tests repairs and validates their
+export in the actual upstream layout. The directing user accepted ADR 0063;
+implementation, independent review and real Git/forge qualification remain open.
+
 CARGO-COMPAT-001 and COMMAND-WORKER-001 record the directing user's explicit
 acceptance of ADRs 0054 and 0055 for 1.4 under Goals 1, 4, 5 and 6.
 Reviewed Cargo compatibility and command-addressed remote workers remain open;
 implementation follows the prioritized FreeBSD SDK and Daemonarchy unblock.
+WORKER-GPU-MEMORY-002 independently qualifies the landed permission-text memory
+serializer on its original command route; this bounded observation fix does not
+complete the broader command-worker or native package goals.
+
+RETAINED-UNIT-PACKAGE-001 permits one canonical request preparation within each
+receiver construction. The preview and worker must use the same actual typed
+selection and plan from that invocation; decoded intent cannot replace them.
+Each publication, reservation and execution boundary still reopens current
+project, source, profile, catalog, SDK policy and private registration authority.
+No preparation is cached across calls or grants execution or release permission.
+
+RETAINED-OBSERVATION-PERF-001 permits the canonical receiver and source-plan
+assertions within one validation call to use the immutable plan produced by that
+same fresh canonical preparation. Bind its original receiver, request, worker,
+registration, catalog, process and deadline; prepare and measure a fresh nonce
+again on the next call. Custom callbacks retain independent source replanning.
+Keep all direct original/captured byte checks, dependency and SDK observations,
+tool/revocation checks and closing registration/custody checks. Do not cache
+successful input verification. A change that is observed and then restored must
+still refuse. The plan value cannot restore an owner from a document or grant
+execution or release permission.
 
 RETAINED-TREE-EXPLORER-001 and WORKER-TELEMETRY-001 extend Goals 1 and 4
 with hierarchical retained-tree information cards and authenticated read-only
@@ -810,3 +861,16 @@ SSH descriptor, and registers it privately. Durable request state prevents silen
 repeat allocation and preserves validated responses for registration recovery.
 Provider APIs, resource sizing translation, credential acquisition and remote
 resource deletion belong to the organization command.
+
+
+SDK command metadata retention may use one bounded operation-local batch under
+its original live SDK runtime owner. The writer freezes an ordered canonical
+metadata one record at a time before writing, limits record count by the selected SDK policy and
+frozen bytes by the declared retained input budget and existing metadata ceiling,
+and requires full currentness before and after immutable CAS writes. Private
+receiver custody and the original deadline remain current for every write;
+command authorization and revocation are checked before evidence is exposed.
+The retained command-context augmentation and every retained content identity
+remain unchanged. A refused closing check admits no partial metadata. Metadata
+outside batch eligibility uses the original guarded single-record path with a
+bounded diagnostic; it does not gain a new supported-input limit.

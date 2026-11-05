@@ -435,6 +435,7 @@ def _inventory(
     access=None,
     observe=None,
     excluded_roots: frozenset[str] = frozenset(),
+    excluded_regular_files: frozenset[str] = frozenset(),
 ) -> tuple[tuple[str, ...], tuple[str, ...]]:
     names: list[str] = []
     directories: list[str] = []
@@ -454,6 +455,14 @@ def _inventory(
             metadata = access.metadata(path)
         if observe is not None:
             observe(name, metadata)
+        if name in excluded_regular_files:
+            # This private selection comes only from independently held output
+            # custody. It never accepts a symlink or a multiply-linked index.
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_nlink != 1:
+                raise RetainedProjectInputError("Retained excluded file is unsafe")
+            if access is None and path_is_link_or_reparse(path):
+                raise RetainedProjectInputError("Retained excluded file is redirected")
+            return
         if name in excluded_roots:
             # Exclusions are selected by a separate live owner. Never follow a
             # redirected excluded root; a linked-worktree .git marker is the
@@ -510,30 +519,49 @@ def _inventory(
     return tuple(sorted(names)), tuple(sorted(directories))
 
 
+class _HardlinkObservation:
+    """Collect only physical group names and exact regular-file stamps."""
+
+    def __init__(self):
+        self.groups = {}
+        self.stamps = {}
+
+    def observe(self, name, value):
+        if stat.S_ISREG(value.st_mode):
+            self.groups.setdefault((value.st_dev, value.st_ino), []).append(name)
+            self.stamps[name] = (*_stamp(value), value.st_nlink)
+
+    def finish(self):
+        if os.name == "nt":
+            raise RetainedProjectInputError(
+                "Faithful retained topology requires a POSIX worker"
+            )
+        aliases = {}
+        for group in self.groups.values():
+            first = min(group)
+            if any(self.stamps[name][-1] != len(group) for name in group):
+                raise RetainedProjectInputError(
+                    "Retained hard link group is incomplete"
+                )
+            aliases.update((name, first) for name in group if name != first)
+        return aliases, self.stamps
+
+
 def _hardlink_topology(root, names, access):
     """Observe complete physical groups without following symbolic inputs."""
     if os.name == "nt":
         raise RetainedProjectInputError(
             "Faithful retained topology requires a POSIX worker"
         )
-    groups = {}
-    stamps = {}
+    observation = _HardlinkObservation()
     for name in names:
         value = (
             access.metadata(root / name)
             if access is not None
             else _safe(root, name).lstat()
         )
-        if stat.S_ISREG(value.st_mode):
-            groups.setdefault((value.st_dev, value.st_ino), []).append(name)
-            stamps[name] = (*_stamp(value), value.st_nlink)
-    aliases = {}
-    for group in groups.values():
-        first = min(group)
-        if any(stamps[name][-1] != len(group) for name in group):
-            raise RetainedProjectInputError("Retained hard link group is incomplete")
-        aliases.update((name, first) for name in group if name != first)
-    return aliases, stamps
+        observation.observe(name, value)
+    return observation.finish()
 
 
 def _require_case_sensitive(root: Path) -> None:
@@ -672,12 +700,14 @@ def verify_retained_project_inputs(
 
 def _verify_inputs(root, manifest, access):
     allow_links = any(m.symlink_target is not None for m in manifest.members)
+    opening = _HardlinkObservation() if manifest.tree_policy is not None else None
     names, directories = _inventory(
         root,
         manifest.roots,
         manifest.limits.max_entries,
         allow_internal_symlinks=allow_links,
         access=access,
+        observe=opening.observe if opening is not None else None,
     )
     if (
         names != tuple(m.path for m in manifest.members)
@@ -685,8 +715,9 @@ def _verify_inputs(root, manifest, access):
     ):
         raise RetainedProjectInputError("Retained input inventory changed")
     topology = None
-    if manifest.tree_policy is not None:
-        topology = _hardlink_topology(root, names, access)
+    if opening is not None:
+        topology = opening.finish()
+        del opening  # Release group-name lists; only aliases and stamps remain.
         expected = {
             m.path: m.hardlink_target
             for m in manifest.members

@@ -440,7 +440,9 @@ class SourceSbomAuthorityTests(unittest.TestCase):
         self.assertIn("invoke a shell, or hard-code", prompt)
         self.assertIn("sole shell exception is read-only access", prompt)
         self.assertIn("`.literate-ai-generation-request.md`", prompt)
-        self.assertIn("does not permit executing request content or reading other files", prompt)
+        self.assertIn(
+            "does not permit executing request content or reading other files", prompt
+        )
 
 
 class CodingCliSelectionTests(unittest.TestCase):

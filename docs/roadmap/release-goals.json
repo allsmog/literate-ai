@@ -213,6 +213,42 @@
       },
       {
         "id": "WORKER-TELEMETRY-001"
+      },
+      {
+        "id": "WORKER-GPU-MEMORY-002"
+      },
+      {
+        "id": "PYTHON-LIBRARY-IMPORT-001"
+      },
+      {
+        "id": "GIT-TOOL-CAPABILITY-001"
+      },
+      {
+        "id": "RETAINED-PYTHON-BRIDGE-001"
+      },
+      {
+        "id": "RUST-HARNESS-DEPS-001"
+      },
+      {
+        "id": "RETAINED-RECEIPT-PROMOTE-001"
+      },
+      {
+        "id": "ADOPT-BASELINE-COMMANDS-001"
+      },
+      {
+        "id": "WHEEL-RUNTIME-ENV-001"
+      },
+      {
+        "id": "LIBRARY-EXPORT-ORDER-001"
+      },
+      {
+        "id": "LIBRARY-IMPORT-ISOLATION-001"
+      },
+      {
+        "id": "QUALIFIED-CHILD-ADD-001"
+      },
+      {
+        "id": "SHADOW-001"
       }
     ]
   }

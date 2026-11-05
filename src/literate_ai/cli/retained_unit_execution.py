@@ -6,6 +6,7 @@ owners issue fresh admission; packaging rechecks genuine SDK and LINK owners.
 
 import os
 import platform
+from dataclasses import dataclass
 from pathlib import Path
 
 from literate_ai.adapters.component_lock_application import (
@@ -13,6 +14,7 @@ from literate_ai.adapters.component_lock_application import (
 )
 from literate_ai.adapters.freebsd_packaging import FreeBsdPkgToolBinding
 from literate_ai.adapters.native_tar_archives import NativeTarToolBinding
+from literate_ai.adapters.retained_project_planning import RetainedProjectPlanningResult
 from literate_ai.adapters.retained_project_runtime import (
     execute_local_retained_project,
     execute_receiver_retained_project,
@@ -23,18 +25,28 @@ from literate_ai.adapters.retained_project_unit_packages import (
 from literate_ai.adapters.retained_unit_link import link_retained_unit_packages
 from literate_ai.adapters.retained_unit_results import read_retained_unit_results
 from literate_ai.adapters.retained_unit_specifications import (
+    RetainedUnitSpecificationContext,
     bind_retained_unit_specifications,
 )
 from literate_ai.adapters.retained_unit_tool_observations import (
     retained_unit_tool_observations,
 )
+from literate_ai.adapters.retained_unit_verification import (
+    RetainedUnitVerificationSelection,
+)
 from literate_ai.cache_directories import (
     ensure_cache_directory,
     select_cache_directories,
 )
-from literate_ai.contracts import ExecutionWorkerKind, canonical_identity
+from literate_ai.contracts import (
+    ContentIdentity,
+    ExecutionWorkerKind,
+    canonical_identity,
+)
+from literate_ai.contracts.retained_project import RetainedProjectManifest
 
 from .execution_workers import (
+    SelectedExecutionWorker,
     admit_execution_worker_health,
     dispatch_with_worker_health_poll,
 )
@@ -54,12 +66,37 @@ def _worker_selection_identity(selected):
     )
 
 
-def execute_retained_unit_package_from_args(
+@dataclass(frozen=True, slots=True)
+class _PreparedRetainedUnitExecution:
+    """Actual invocation-local planning objects, never decoded admission grants."""
+
+    context: tuple
+    manifest: RetainedProjectManifest
+    selected: SelectedExecutionWorker
+    planning: RetainedProjectPlanningResult
+    specification_context: RetainedUnitSpecificationContext
+    verification_selection: RetainedUnitVerificationSelection | None
+    request: dict[str, object]
+    authorization: ContentIdentity
+    original_context: object
+
+    def preview(self):
+        return {
+            "schema": "literate-ai/retained-unit-package-verification-plan@1"
+            if self.verification_selection is not None
+            else EXECUTION_PLAN_SCHEMA,
+            "request": self.request,
+            "authorization_identity": self.authorization.uri,
+            "executed": False,
+            "release_authorized": False,
+        }
+
+
+def _prepare_retained_unit_execution(
     args, *, receiver_context=None, verification_selection=None
 ):
-    project, binding, policy, observations, _pkg, _tar, authority = _project_context(
-        args
-    )
+    context = _project_context(args)
+    project, binding, policy, observations, _pkg, _tar, authority = context
     manifest, selected, planning = authority()
     plan = planning.plan
     specification_context = bind_retained_unit_specifications(
@@ -120,16 +157,105 @@ def execute_retained_unit_package_from_args(
             request=request,
             specification_context=specification_context,
         )
+    return _PreparedRetainedUnitExecution(
+        context,
+        manifest,
+        selected,
+        planning,
+        specification_context,
+        verification_selection,
+        request,
+        authorization,
+        original_context,
+    )
+
+
+_CANONICAL_AUTHORITY_PLAN = object()
+
+
+@dataclass(frozen=True, slots=True, init=False, eq=False)
+class _CanonicalRetainedAuthorityPlan:
+    """Original CLI assertions, with reuse limited to a fresh receiver plan."""
+
+    _authority: object
+    _selected: object
+    _plan: object
+    _verification_selection: object
+    _policy: object
+    _pid: int
+    _seal: object
+
+    def __init__(self, prepared, *, _seal=None):
+        if _seal is not _CANONICAL_AUTHORITY_PLAN:
+            raise TypeError("retained.receiver.private-authority-plan-required")
+        for name, value in {
+            "_authority": prepared.context[-1],
+            "_selected": prepared.selected,
+            "_plan": prepared.planning.plan,
+            "_verification_selection": prepared.verification_selection,
+            "_policy": prepared.context[2],
+            "_pid": os.getpid(),
+            "_seal": _seal,
+        }.items():
+            object.__setattr__(self, name, value)
+
+    def __reduce__(self):
+        raise TypeError("retained.receiver.authority-plan-cannot-be-transported")
+
+    def _require_original(self):
+        if self._seal is not _CANONICAL_AUTHORITY_PLAN or self._pid != os.getpid():
+            raise ValueError("retained.receiver.authority-plan-not-original")
+        if self._verification_selection is not None:
+            self._verification_selection.require_current(self._policy)
+
+    def __call__(self):
+        self._require_original()
+        _manifest, selected, current = self._authority()
+        if _worker_selection_identity(selected) != _worker_selection_identity(
+            self._selected
+        ):
+            raise ValueError("retained.unit.execution-worker-selection-changed")
+        return current.plan
+
+    def _from_receiver_preparation(self, plan):
+        # Only the exact canonical receiver callback can supply this value. It
+        # just prepared authority and compared the complete authorized preview,
+        # including worker/catalog/parameters and verification intent. Retain the
+        # original verification owner's currentness assertion independently.
+        self._require_original()
+        if plan != self._plan:
+            raise ValueError("retained.unit.execution-authority-changed")
+        return plan
+
+    def _matches_receiver_selection(self, context):
+        self._require_original()
+        return context.matches_canonical_worker_selection(
+            _worker_selection_identity(self._selected)
+        )
+
+
+def execute_retained_unit_package_from_args(
+    args, *, receiver_context=None, verification_selection=None
+):
+    prepared = _prepare_retained_unit_execution(
+        args,
+        receiver_context=receiver_context,
+        verification_selection=verification_selection,
+    )
+    project, binding, policy, observations, _pkg, _tar, authority = prepared.context
+    manifest, selected, planning = (
+        prepared.manifest,
+        prepared.selected,
+        prepared.planning,
+    )
+    plan = planning.plan
+    specification_context = prepared.specification_context
+    verification_selection = prepared.verification_selection
+    verifying = verification_selection is not None
+    request, authorization = prepared.request, prepared.authorization
+    original_context = prepared.original_context
     if args.retained_unit_command in {"execution-plan", "verify-plan"}:
-        return {
-            "schema": "literate-ai/retained-unit-package-verification-plan@1"
-            if verifying
-            else EXECUTION_PLAN_SCHEMA,
-            "request": request,
-            "authorization_identity": authorization.uri,
-            "executed": False,
-            "release_authorized": False,
-        }, 0
+        return prepared.preview(), 0
     plan.require_authorization(args.authorize_retained_project)
     if args.authorize_unit_packages != authorization.uri:
         raise ValueError("retained.unit.exact-package-authorization-required")
@@ -178,15 +304,9 @@ def execute_retained_unit_package_from_args(
     if retained_unit_tool_observations(pkg_tool, tar_tool) != observations:
         raise ValueError("retained.unit.current-native-tools-differ")
 
-    def current_authority_plan():
-        if verifying:
-            verification_selection.require_current(policy)
-        _manifest, current_worker, current = authority()
-        if _worker_selection_identity(current_worker) != _worker_selection_identity(
-            selected
-        ):
-            raise ValueError("retained.unit.execution-worker-selection-changed")
-        return current.plan
+    current_authority_plan = _CanonicalRetainedAuthorityPlan(
+        prepared, _seal=_CANONICAL_AUTHORITY_PLAN
+    )
 
     def current_plan():
         if receiver_context is not None:
@@ -204,6 +324,9 @@ def execute_retained_unit_package_from_args(
         runtime_current_plan = _compose_receiver_current_plan(
             receiver_context, plan, current_authority_plan
         )
+        # CLI bookends use the same original composition as runtime: only a
+        # fresh, matching canonical preparation can replace another source scan.
+        current_plan = runtime_current_plan
     else:
         runtime_current_plan = current_plan
 
