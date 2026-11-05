@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Explicit source selections use the existing stable accepted-lookup identity across request custody changes, preserving model, source-semantic and exact-entry checks.
+
 - Source generation permits read-only access to its request file, including chunked reads, while retaining source-only writes and independent lifecycle checks.
 
 - Complete current-main native qualification of retained Windows system context,

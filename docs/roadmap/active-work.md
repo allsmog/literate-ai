@@ -34313,3 +34313,17 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Clarify request bootstrap access without authorizing general shell execution.
 - **Evidence:**
   - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.
+
+### [ ] CACHE-SELECT-001: Select explicit source entries by stable accepted lookup identity
+
+- **Priority:** P1
+- **Owner:** Standard source-cache selection adapters
+- **Direction:** Complete the approved bounded Linux cleanup checks without weakening source admission.
+- **Conclusion:** Explicit entry selection incorrectly compares transaction-local request keys even when accepted lookup identity matches. Use the existing stable identity throughout selection; reject changed source semantics and preserve all prior entries.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Align selection producer and consumer with accepted_source_lookup_identity.
+- **Evidence:**
+  - [x] Three regression checks pass; the original code reproduces the request-custody refusal. Two existing accepted-cache round-trip tests pass.
+  - [ ] Real Linux continuation completes with explicit current source selection.
