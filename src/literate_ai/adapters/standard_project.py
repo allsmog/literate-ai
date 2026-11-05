@@ -789,6 +789,11 @@ IO.puts(JSON.encode!(%{schema: "literate-ai/library-import-observation@1",
     raise SystemExit(completed.returncode)
 elif language == "python":
     sys.path.insert(0, str(source))
+    origin = source / "src"
+    if origin.is_dir():
+        if origin.is_symlink():
+            raise RuntimeError("library import escaped the exact artifact")
+        sys.path.insert(1, str(origin))
     for capability in surface["capabilities"]:
         module = importlib.import_module(capability["module"])
         origin = pathlib.Path(module.__file__).resolve(strict=True)
