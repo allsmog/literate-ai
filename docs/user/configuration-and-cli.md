@@ -544,6 +544,9 @@ root-integration acceptance still remain.
 | `project adopt-original [--project PATH] [--apply --acknowledge --expected-plan-identity SHA256]` | Review a validated canonical project's clean Git commit/tree and explicitly select original source authority with metadata-only writes. Preserve source layout; refuse stale plans, dirty or unsafe roots, existing evidence/authority and legacy conversion transitions. This grants no execution or release admission. |
 | `project convert-stage show [--project PATH]` | Read the canonical evidence-bound conversion authority state for an adopted project. |
 | `project convert-stage advance --to retained\|drafted\|qualified [--project PATH]` | Advance exactly one adjacent stage after independently verifying the current receipt or Component-promotion evidence. No command silently promotes a tree. |
+| `project native-child plan-add CHILD [--project PATH]` | Read-only review of adding one independently qualified child to a currently qualified retained parent. Bind the exact parent receipt, registry, authority, child definition and qualification. |
+| `project native-child apply-add PLAN [--project PATH] --acknowledge` | Recheck the reviewed plan under metadata locks, register the child and renew the exact parent qualification together. Retain an owned recovery journal and roll back ordinary failures. |
+| `project native-child recover-add JOURNAL [--project PATH]` | Restore a known interrupted addition from its owned journal. Changed parent inputs, unrelated metadata or changed child qualification refuse before recovery writes. |
 | `project retained-scope refresh [--project PATH] [--apply --acknowledge --expected-plan-identity SHA256]` | Review exact added/removed retained-source paths and input identities, then revalidate and rebind scope and receipt policy without changing source or historical conversion evidence. |
 | `project retained-harness readmit [--project PATH] [--retain-stage STAGE_ID ...] [--apply --acknowledge --expected-plan-identity SHA256] [--worker-id ID] [--worker-config PATH] [--timeout-seconds N]` | Re-inspect a retained implementation while original source still owns release authority, including at the `retained` conversion stage. A repeated `--retain-stage` carries the exact named stage from the current admitted inventory when inspection cannot rediscover it; the stage IDs and complete records are part of the reviewed plan and must be repeated unchanged on apply. The command binds the selected worker, timeout, and supported pinned runtime-tool requirements into that plan, then qualifies the corrected direct commands and generated wrapper locally or on one exact POSIX SSH worker before atomically replacing inventory, baseline, parity, wrapper/shim authority, Component lock, and receipt policy. Prior lift-and-shift and conversion evidence and the current conversion stage remain immutable. Specification-authoritative projects fail closed. |
 | `project retained-cargo check --binding PATH --plan PATH --gates PATH ...` | Verify reviewed Cargo bindings, current provider authority, an explicit local or HTTPS archive, and any present packages. Report missing packages without provisioning them. See [retained Cargo provisioning](retained-cargo.md) for required review and delivery inputs. |
@@ -1605,6 +1608,42 @@ before/after metadata as history, and rolls back both if validation or retention
 An uncoordinated registered-child rebind refuses. Concurrent metadata changes are never
 silently registered or overwritten during rollback.
 
+To attach a new independently qualified child to a qualified retained parent, use
+the separate native-child operation:
+
+```console
+litai project native-child plan-add .literate/native-projects/new-library --project . > /tmp/native-addition.json
+litai project native-child apply-add /tmp/native-addition.json --project . --acknowledge
+```
+
+Inspect the plan before apply. Planning binds the current parent definition,
+retained receipt, qualified authority and exact registry bytes, plus the new
+child's definition, authority heads and qualified projections. The child must
+already exist directly beneath `.literate/native-projects`. Existing registration,
+duplicate project IDs or Component coordinates, unsafe paths and stale
+qualification refuse. The canonical plan uses
+`literate-ai/qualified-native-child-addition-plan@1`; apply also accepts the
+successful CLI result envelope emitted above. Re-plan after any bound input moves.
+
+Apply locks the registry and conversion authority in that order, preserves every
+existing child registration and records the exact qualification union. It writes
+a private journal beneath `.literate/native-child-additions/` before either
+metadata change. Ordinary failures restore both prior files. An interrupted
+process can leave metadata inconsistent, which ordinary qualification checks
+reject. Use the journal path reported by apply, or the matching prepared journal
+left by the interrupted operation:
+
+```console
+litai project native-child recover-add .literate/native-child-additions/TRANSACTION/journal.json --project .
+```
+
+Recovery restores only the transaction's exact prior metadata. It checks live
+receipt, definitions, authority and qualification first, and refuses unrelated
+changes. A completed journal with matching metadata returns without writes.
+Registration grants no source retirement, consumer wiring, package publication
+or generated-code execution. The typed application entry point is
+`NativeChildAdditionService` in `literate_ai.application.native_child_addition`.
+
 For a custom (non-Standard) receipt suite, rebind preserves its suite ID/version,
 required evidence kinds, and minimum test count. An independent harness runner stays
 unchanged; a runner exactly bound to the old Standard driver advances to the new
@@ -2109,6 +2148,16 @@ catalog selected by `--worker-config`, `LITAI_WORKER_CONFIG`, or the platform-re
 user configuration path and requires an exact SSH entry whose declared OS is Linux or
 macOS. Unknown IDs, command workers, Windows workers, and workers without an explicit
 POSIX OS fail before transport.
+
+The current local cache patch also copies registered native children's
+`generated/committed-source-cache/` files beside `implementation/` in the disposable
+workspace. The exact paths and digest-bound file set enter the local
+lifecycle request; the harness still runs its ordinary checks. Links and
+non-regular cache files refuse. This patch is local-only while
+[#307](https://github.com/jordanhubbard/literate-ai/issues/307) owns package delivery.
+Selecting a remote worker with native cache inputs returns
+`retained_receipt.remote_native_caches_unsupported` before dispatch. It does not
+silently omit those caches or qualify remote package transport.
 
 The remote path sends only the admitted retained source-scope archive, canonical
 harness inventory, selected worker declaration, and identity-bound request. The

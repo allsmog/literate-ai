@@ -411,6 +411,10 @@ def _handle(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             from .operator import conversion_authority_from_args
 
             return conversion_authority_from_args(args), 0
+        if args.project_command == "native-child":
+            from .native_child_addition import native_child_addition_from_args
+
+            return native_child_addition_from_args(args), 0
         if args.project_command == "adopt-original":
             from .original_adoption import original_adoption_from_args
 
@@ -2174,6 +2178,23 @@ def _parser() -> JsonArgumentParser:
         "--to", required=True, choices=("retained", "drafted", "qualified")
     )
     project_convert_stage_advance.add_argument("--project", default=".")
+    project_native_child = project_commands.add_parser(
+        "native-child",
+        help="review, attach and recover already-qualified native children",
+    )
+    native_child_commands = project_native_child.add_subparsers(
+        dest="native_child_command", required=True, parser_class=JsonArgumentParser
+    )
+    native_child_plan = native_child_commands.add_parser("plan-add")
+    native_child_plan.add_argument("child")
+    native_child_plan.add_argument("--project", default=".")
+    native_child_apply = native_child_commands.add_parser("apply-add")
+    native_child_apply.add_argument("plan")
+    native_child_apply.add_argument("--project", default=".")
+    native_child_apply.add_argument("--acknowledge", action="store_true")
+    native_child_recover = native_child_commands.add_parser("recover-add")
+    native_child_recover.add_argument("journal")
+    native_child_recover.add_argument("--project", default=".")
     project_retained_scope = project_commands.add_parser(
         "retained-scope", help="review and refresh retained source membership"
     )
@@ -3436,7 +3457,8 @@ def main(
         performance_span = (
             nullcontext({})
             if (
-                getattr(args, "project_command", None) == "retained-scope"
+                getattr(args, "project_command", None)
+                in {"retained-scope", "native-child"}
                 or scoped_orchestration
                 or args.command in ("render", "verify")
                 # A read-only onboard plan must not create OBJ_DIR in the tree

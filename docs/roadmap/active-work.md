@@ -33573,7 +33573,7 @@ independent review and the complete combined gate from test one.
   - [x] An isolated non-editable wheel proves projection of the unchanged 51-capability fixture.
 - **Evidence:** Four new regression tests and four existing Standard command projection tests pass, including real Python, JavaScript and Rust import verification. Local command and build-authority regression passes seven tests with one existing macOS persistent-service skip. Lint and formatting pass. The clean wheel from commit `05d07fe60b2d4acbb740b059fc131c7bc160375d`, SHA-256 `24389b995bea8fcfaaa73d7d3db567f06eb02b86a03d7a6cb41b953b475eeafb`, is installed independently and non-editably. It projects the unchanged 51-capability surface from 4,440 to 1,396 characters without changing its identity or any import mapping. Existing consumer pins remain unchanged.
 
-### [ ] LIBRARY-EXPORT-ORDER-001 - Verify JavaScript export maps without JSON key-order dependence
+### [x] LIBRARY-EXPORT-ORDER-001 - Verify JavaScript export maps without JSON key-order dependence
 
 - **Priority:** P1
 - **Owner:** Standard JavaScript library import verifier
@@ -33587,11 +33587,89 @@ independent review and the complete combined gate from test one.
   - [x] Compare exact sorted own-key sets after the existing required-target checks, retaining every negative guard.
 - **Evidence:**
   - [x] The real-import regression reverses export order and passes; missing, additional and wrong export targets, missing symbols, dependency declarations and path escapes still refuse.
-  - [ ] Focused tests, lint and formatting pass; a separately installed clean wheel qualifies the motivating unchanged library.
+  - [x] Focused tests, lint and formatting pass; a separately installed clean wheel qualifies the motivating unchanged library.
 
 The exact own-key set correction passes four managed import-command tests and
 four existing Standard command projection tests. The negative-control probe
 rejects both the old order-sensitive check and the cardinality-only proposal.
 The additional inherited-key fixture preserves rejection of a same-cardinality
-undeclared replacement. Changed Python files pass lint and formatting. A clean
-wheel and unchanged-library qualification proof remain pending.
+undeclared replacement. Changed Python files pass lint and formatting. The clean
+non-editable wheel at `d4bd72bf` has SHA-256
+`0a803747dd0cd81d00a413d3df9a57a44aa42e3192c8a94300736790c03845de`.
+The unchanged wording library passes two clean builds and all 4,598,945 original
+observations, reaching qualified projection
+`sha256:ab1d16b729691c61c2ecbd803aff8636be0801be6747c07275a7de3d75232560`.
+The tested commit and updated draft PR #313 are published with explicit approval.
+
+### [ ] LIBRARY-IMPORT-ISOLATION-001 - Isolate generic Python library imports from ambient modules
+
+- **GitHub issue:** [#316](https://github.com/jordanhubbard/literate-ai/issues/316)
+
+- **Priority:** P1
+- **Owner:** Standard generic library command projection
+- **Direction:** Reject undeclared dependencies supplied only through the invoking interpreter environment.
+- **Conclusion:** The controlled artifact-origin fixture still imports an undeclared ambient module. Isolate generic verifier startup while preserving standard-library imports and the separate verified-wheel dependency closure. This is an ordinary verifier bug fix under issue #316.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Isolate the generic library verifier interpreter without changing verified-wheel dependency admission.
+  - [x] Add actual-import regression fixtures for ambient PYTHONPATH, standard-library imports and startup shadowing.
+- **Evidence:**
+  - [x] Managed focused regressions prove the old invocation fails the controls and the corrected invocation passes; lint and formatting pass.
+  - [ ] A clean separately installed wheel preserves exact artifact origin checks and intended verified-wheel behavior.
+
+Three actual-import controls, four existing command-projection tests and two
+verified-wheel runtime tests pass under the managed Make runner. The old generic
+invocation incorrectly accepts the ambient-only dependency. The verified-wheel
+tests use the exact pinned pip 26.2.1 fixture and pass without skips. Installed
+proof and publication of this newer source remain pending.
+
+<a id="native-qualified-addition-001"></a>
+### [ ] NATIVE-QUALIFIED-ADDITION-001 - Add qualified native children through reviewed public transactions
+
+- **GitHub issue:** [#315](https://github.com/jordanhubbard/literate-ai/issues/315)
+- **ADR:** [0060](../decisions/0060-qualified-native-child-addition.md), explicitly accepted before implementation.
+
+- **Priority:** P1
+- **Owner:** public project application and conversion-authority adapters
+- **Direction:** Replace consumer private registry writes with the accepted ADR 0060 plan, apply and recovery path.
+- **Conclusion:** The operator accepted ADR 0060 after issue #315 was filed. Bind exact current receipt, authority, registry and child qualification in a read-only plan; apply under metadata locks and preserve guarded recovery. Keep source retirement and execution separately owned.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Implement canonical reviewed addition plans and public typed application operations.
+  - [x] Expose read-only planning, acknowledged application and guarded interrupted-transaction recovery through the CLI.
+  - [ ] Replace the downstream private helper only after the clean installed public path is verified.
+- **Evidence:**
+  - [ ] Portable two-library fixtures and refusal, concurrency, rollback and recovery controls pass through public APIs and CLI.
+  - [ ] Managed regressions, lint and formatting pass; a clean non-editable wheel proves unchanged existing behavior and the new supported registration path.
+
+The managed transaction suite passes 25 controls with explicit qualification-reader
+fixtures. It covers exact evidence unions, concurrent plans, changed receipt and
+child authority, failure after either metadata write, journal completion failure,
+and recovery refusal before writes when live qualification changes. Rehashed
+recovery plans cannot replace the required prior-plus-child evidence union. Real
+two-library qualification and clean installed-wheel acceptance remain pending.
+
+<a id="native-cache-transport-scope-001"></a>
+### [ ] NATIVE-CACHE-TRANSPORT-SCOPE-001 - State and verify the local retained cache boundary
+
+- **GitHub issue:** [#307](https://github.com/jordanhubbard/literate-ai/issues/307)
+- **Priority:** P1
+- **Owner:** retained harness adapter and public execution documentation
+- **Direction:** Document and test the existing local cache transport patch without claiming a portable package delivery protocol.
+- **Conclusion:** Registered children's committed cache bytes are bound to the local lifecycle request and copied into its disposable workspace. Remote execution explicitly refuses these inputs before dispatch. Preserve that boundary while upstream package delivery remains open.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Explain local cache copying and remote refusal in the CLI guide, cache guide, changelog and design traceability.
+- **Evidence:**
+  - [x] Local execution observes the exact captured bytes and a changed cache changes its lifecycle request identity.
+  - [x] Remote selection with native cache inputs refuses before dispatch or candidate publication.
+  - [x] Focused retained harness regressions, lint and formatting pass.
+
+The retained receipt suite passes nine tests, including both new public CLI
+controls with an actual registered cache tree. Related registry, replacement,
+rebind, generic projection and remote harness regressions pass 44 managed tests.
+The project authority gate passes after the documentation review. Its broad
+framework test receipt is stale; these focused regressions do not replace it.

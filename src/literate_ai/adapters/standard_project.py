@@ -1978,6 +1978,10 @@ def _command_contract(
             manifest,
             "{artifact_root}",
         )
+        if language.target == "python":
+            # The generic import driver admits the artifact and standard library.
+            # The verified-wheel branch below owns its explicit dependency closure.
+            execute_argv = (execute_argv[0], "-I", "-S", "-B", *execute_argv[1:])
     else:
         test_argv = _runtime_command(
             language, single_file=single_file, phase=ComponentCommandPhase.TEST

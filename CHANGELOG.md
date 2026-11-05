@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Qualified retained parents can review, apply and recover addition of an already
+  qualified native child through public commands. Plans bind exact current inputs;
+  locked metadata updates preserve prior registrations and guarded recovery.
+- The retained native cache transport patch remains local-only. Local requests
+  bind exact cache bytes; remote selection refuses before dispatch while portable
+  package delivery remains open in #307.
+
+- Generic Python library import checks ignore ambient module paths and startup
+  hooks while retaining standard-library imports and exact artifact-origin checks.
+  The separate verified-wheel dependency closure keeps its existing behavior.
+
 - JavaScript library import checks accept exact export maps regardless of JSON
   property insertion order while still rejecting undeclared and missing keys.
 

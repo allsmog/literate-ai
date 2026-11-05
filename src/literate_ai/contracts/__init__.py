@@ -458,6 +458,7 @@ from .model_scopes import (
     ModelScopeResolutionStep,
     resolve_model_scope,
 )
+from .native_child_addition import QualifiedNativeChildAdditionPlan
 from .operator_adoption import (
     CONVERSION_AUTHORITY_SCHEMA,
     ONBOARD_PLAN_SCHEMA,
@@ -863,6 +864,7 @@ __all__ = [
     "ONBOARD_PLAN_SCHEMA",
     "ConversionAuthorityStage",
     "ConversionAuthorityState",
+    "QualifiedNativeChildAdditionPlan",
     "advance_conversion_authority",
     "CATALOG_IMPORTS_SCHEMA",
     "CatalogImport",
