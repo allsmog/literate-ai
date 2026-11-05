@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Library import checks fit larger reviewed interfaces into the existing bounded
+  command while retaining every import and the complete authority identity.
+- Source conversion recognizes JavaScript and TypeScript module and JSX filename
+  extensions while preserving test, minified and sensitive-content classifications.
 - Retained wrapper file membership can be refreshed beside independently qualified
   native children. The reviewed plan pins their registry and current qualification;
   promoted source, stale evidence and overlapping ownership still refuse. A new
