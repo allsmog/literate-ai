@@ -34300,3 +34300,16 @@ implementation, policy weakening, qualification or issue closure is recorded her
 - **Evidence:**
   - [ ] Reproduce nonzero parity exit and invalid JSON, verify original marker/exit identities and private durable diagnostics, and reject diagnostic evidence as qualified products.
   - [ ] Exercise a later failure after an earlier success; renew independent review, full source, installed/native and exact-head integration gates.
+
+### [ ] CODEX-READ-001: Permit bounded reading of the generation request
+
+- **Priority:** P1
+- **Owner:** coding CLI generation transport
+- **Direction:** Repair the observed Codex empty-generation failure caused by contradictory shell guidance.
+- **Conclusion:** Allow read-only shell access only to the framework request file; retain source-only writes and all lifecycle checks. Upstream issue filing awaits explicit outbound approval.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [ ] Clarify request bootstrap access without authorizing general shell execution.
+- **Evidence:**
+  - [ ] Focused coding CLI regression suite and isolated wheel-backed generation admission.
