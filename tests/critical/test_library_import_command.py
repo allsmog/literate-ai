@@ -143,6 +143,24 @@ class LibraryImportCommandTests(unittest.TestCase):
                 json.loads(imported.stdout)["capabilities"],
                 [item.capability for item in surface.capabilities],
             )
+            # JSON object insertion order does not change the declared exports.
+            manifest["exports"] = dict(reversed(list(manifest["exports"].items())))
+            reordered = run()
+            self.assertEqual(reordered.returncode, 0, reordered.stderr)
+            self.assertEqual(
+                json.loads(reordered.stdout)["capabilities"],
+                [item.capability for item in surface.capabilities],
+            )
+            subpath = next(iter(manifest["exports"]))
+            target = manifest["exports"].pop(subpath)
+            missing = run()
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertIn("exports map differs", missing.stderr)
+            manifest["exports"][subpath] = "./wrong.js"
+            wrong = run()
+            self.assertNotEqual(wrong.returncode, 0)
+            self.assertIn("exports map differs", wrong.stderr)
+            manifest["exports"][subpath] = target
             item = surface.capabilities[-1]
             module = package / (item.module.split("/", 1)[1] + ".js")
             original = module.read_text()
@@ -156,6 +174,28 @@ class LibraryImportCommandTests(unittest.TestCase):
             self.assertNotEqual(rejected.returncode, 0)
             self.assertIn("undeclared entries", rejected.stderr)
             del manifest["exports"]["./undeclared"]
+            # Cardinality alone cannot distinguish an undeclared replacement
+            # when an imported module supplies the missing key by inheritance.
+            first = surface.capabilities[0]
+            first_module = package / (first.module.split("/", 1)[1] + ".js")
+            first_original = first_module.read_text()
+            inherited_subpath = "./" + item.module.split("/", 1)[1]
+            inherited_target = manifest["exports"].pop(inherited_subpath)
+            manifest["exports"]["./substituted"] = "./substituted.js"
+            first_module.write_text(
+                first_original
+                + "Object.prototype["
+                + json.dumps(inherited_subpath)
+                + "]="
+                + json.dumps(inherited_target)
+                + ";\n"
+            )
+            rejected = run()
+            self.assertNotEqual(rejected.returncode, 0)
+            self.assertIn("undeclared entries", rejected.stderr)
+            first_module.write_text(first_original)
+            del manifest["exports"]["./substituted"]
+            manifest["exports"][inherited_subpath] = inherited_target
             manifest["dependencies"] = {"unexpected": "1.0.0"}
             rejected = run()
             self.assertNotEqual(rejected.returncode, 0)

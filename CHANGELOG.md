@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- JavaScript library import checks accept exact export maps regardless of JSON
+  property insertion order while still rejecting undeclared and missing keys.
+
 - Library import checks fit larger reviewed interfaces into the existing bounded
   command while retaining every import and the complete authority identity.
 - Source conversion recognizes JavaScript and TypeScript module and JSX filename

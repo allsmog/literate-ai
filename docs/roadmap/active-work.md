@@ -33538,7 +33538,7 @@ independent review and the complete combined gate from test one.
   - [x] Existing scope refresh tests plus qualified-child controls, rollback and drift refusal; isolated installed-wheel planning against a real adopted project; complete new retained consumer receipt.
 - **Evidence:** The focused scope suite passes 11 tests, and retained receipt, readmission and remote-harness regression passes 21 tests. A guarded plan and apply preserve four qualified child projections while refreshing 11 added and four removed paths. A clean-checkout wheel from commit `4548261e3c2293c75b22dcfafd831821c80179a6` has SHA-256 `6bc6c124985ca80e85ee375142266579f8d08cff6ec409eeae6f554a560b1d12`; its separate non-editable installation reports that origin and plans no further scope changes against the real hybrid project. The complete sealed build, test and package workflow passes, with retained receipt `sha256:2b883528374f56bef8faf25ed5f629fb2f6ba641754c8cc17ef5fb6b4547a9ba`. Its compact application-suite count is 937 passed and zero failed; the same complete command also passes 23 shell checks, 183 OAuth checks, 62 live agent checks and 600 agent tests. Publication remains subject to operator authorization.
 
-### [ ] SOURCE-MODULE-EXTENSIONS-001 - Recognize JavaScript and TypeScript module source extensions
+### [x] SOURCE-MODULE-EXTENSIONS-001 - Recognize JavaScript and TypeScript module source extensions
 
 - **Priority:** P1
 - **Owner:** source inventory and static derivation, Goals 1 and 4
@@ -33551,10 +33551,10 @@ independent review and the complete combined gate from test one.
   - [x] Document the supported source extensions and keep a portable downstream issue draft pending explicit filing authorization.
 - **Evidence:**
   - [x] Regression tests prove inert static derivation for each added extension, test classification, and unchanged sensitive/binary/generated exclusions.
-  - [ ] An isolated non-editable wheel performs public static derivation on an unchanged module-extension fixture.
-- **Development evidence:** Three focused tests cover all eight JavaScript/TypeScript extensions, 24 test/minified filename controls and 24 sensitive/binary/generated exclusion controls. The focused module tests plus existing credential, conversion and public CLI regression suites pass 14 tests. Exact wheel installation remains pending the required clean source commit; no origin pin is overridden.
+  - [x] An isolated non-editable wheel performs public static derivation on an unchanged module-extension fixture.
+- **Evidence:** Three focused tests cover all eight JavaScript/TypeScript extensions, 24 test/minified filename controls and 24 sensitive/binary/generated exclusion controls. The focused module tests plus existing credential, conversion and public CLI regression suites pass 14 tests. The clean wheel from commit `05d07fe60b2d4acbb740b059fc131c7bc160375d` has SHA-256 `24389b995bea8fcfaaa73d7d3db567f06eb02b86a03d7a6cb41b953b475eeafb`. Its independent non-editable installation classifies an unchanged `.mts` fixture as TypeScript and performs public static derivation without source execution. No origin pin is overridden.
 
-### [ ] LIBRARY-IMPORT-COMMAND-001 - Keep large library import checks within the command bound
+### [x] LIBRARY-IMPORT-COMMAND-001 - Keep large library import checks within the command bound
 
 - **Priority:** P1
 - **Owner:** Standard command projection for library import verification
@@ -33570,5 +33570,28 @@ independent review and the complete combined gate from test one.
   - [x] Successful imports, missing exports, undeclared exports, dependency declarations and namespace escapes retain their checks.
   - [x] Interface-only changes alter command identity; genuinely oversized import mappings still fail closed.
   - [x] Focused projection and library lifecycle tests plus lint and formatting pass.
-  - [ ] An isolated non-editable wheel proves projection of the unchanged 51-capability fixture.
-- **Development evidence:** Four new regression tests and four existing Standard command projection tests pass, including real Python, JavaScript and Rust import verification. Local command and build-authority regression passes seven tests with one existing macOS persistent-service skip. Lint and formatting pass. The motivating 51-capability surface shrinks from 4,440 to 1,396 characters without changing its identity or any import mapping. Exact wheel proof awaits the clean source commit; existing consumer pins remain unchanged.
+  - [x] An isolated non-editable wheel proves projection of the unchanged 51-capability fixture.
+- **Evidence:** Four new regression tests and four existing Standard command projection tests pass, including real Python, JavaScript and Rust import verification. Local command and build-authority regression passes seven tests with one existing macOS persistent-service skip. Lint and formatting pass. The clean wheel from commit `05d07fe60b2d4acbb740b059fc131c7bc160375d`, SHA-256 `24389b995bea8fcfaaa73d7d3db567f06eb02b86a03d7a6cb41b953b475eeafb`, is installed independently and non-editably. It projects the unchanged 51-capability surface from 4,440 to 1,396 characters without changing its identity or any import mapping. Existing consumer pins remain unchanged.
+
+### [ ] LIBRARY-EXPORT-ORDER-001 - Verify JavaScript export maps without JSON key-order dependence
+
+- **Priority:** P1
+- **Owner:** Standard JavaScript library import verifier
+- **Direction:** Qualify exact dependency-free library exports regardless of JSON object insertion order.
+- **GitHub issue:** [#314](https://github.com/jordanhubbard/literate-ai/issues/314)
+- **Conclusion:** The verifier checks each required module target and symbol, then incorrectly treats JSON insertion-order differences as undeclared exports. Require exact membership independently of ordering while retaining every current refusal. The refreshed tracker search finds no matching issue. The operator authorized filing and updating the existing pull request; issue #314 records the portable defect before source changes. Compare sorted own-key sets after the existing required-target checks. Exact membership remains required even when an imported module supplies a missing key through Object.prototype.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] File the sanitized upstream issue before applying the proposed verifier correction.
+  - [x] Compare exact sorted own-key sets after the existing required-target checks, retaining every negative guard.
+- **Evidence:**
+  - [x] The real-import regression reverses export order and passes; missing, additional and wrong export targets, missing symbols, dependency declarations and path escapes still refuse.
+  - [ ] Focused tests, lint and formatting pass; a separately installed clean wheel qualifies the motivating unchanged library.
+
+The exact own-key set correction passes four managed import-command tests and
+four existing Standard command projection tests. The negative-control probe
+rejects both the old order-sensitive check and the cardinality-only proposal.
+The additional inherited-key fixture preserves rejection of a same-cardinality
+undeclared replacement. Changed Python files pass lint and formatting. A clean
+wheel and unchanged-library qualification proof remain pending.
