@@ -1,0 +1,225 @@
+{
+  "evidence_kind": "sanitized-local-development-observations",
+  "source_candidate": "d45e47395d1ed14cf83768ae2e7894cfd6d2f422",
+  "source_reports": [
+    {
+      "raw_report_sha256": "7dc14ae3b5e40828eef53d6887852f78645374378adf6746c7f614de5bea4e49",
+      "summary": {
+        "executed": 10,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 10,
+        "selected": 10,
+        "skipped": 0
+      },
+      "outcomes": [
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetCliTests.test_qualification_binds_assets_from_the_actual_current_lock"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetCliTests.test_signed_cli_promotes_asset_into_lock_cas_and_immutable_overlay"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetCliTests.test_wrong_reviewed_pin_refuses_atomic_project_publication"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_asset_kind_cannot_materialize_into_generated_source"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_binary_materialization_requires_locked_pin_and_keeps_raw_source_guard"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_changed_missing_and_symlinked_inputs_never_publish"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_graph_wire_preserves_pins_and_legacy_empty_identity"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_published_graph_schema_requires_exact_local_pins_and_authoring_bound"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_unpinned_remote_and_aliasing_assets_refuse"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_promoted_assets.PromotedAssetContractsTests.test_unrelated_dependency_assets_and_ambiguous_targets"
+        }
+      ],
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "347317b1833522f41a20243aba8106e93100b108193433c9dacd1aeef0826875",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "outcomes": [
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.e2e.test_cli_arbitrary_source.ArbitrarySourceCliTests.test_model_translation_requires_explicit_source_egress_authorization"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.e2e.test_cli_arbitrary_source.ArbitrarySourceCliTests.test_signed_derive_review_accept_and_audit"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.e2e.test_cli_arbitrary_source.ArbitrarySourceCliTests.test_signed_static_review_graph_promotes_a_source_free_project"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.e2e.test_cli_arbitrary_source.ArbitrarySourceCliTests.test_unsigned_and_drifted_sources_fail_closed_at_acceptance"
+        }
+      ],
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "b5bbc5928dcb5b145e7e3106a7456fde0c67cb51e643426c037324f42623fdf5",
+      "summary": {
+        "executed": 9,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 9,
+        "selected": 9,
+        "skipped": 0
+      },
+      "outcomes": [
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_locked_source_promotion.LockedSourcePromotionTests.test_missing_and_stale_lock_evidence_fail_closed"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_locked_source_promotion.LockedSourcePromotionTests.test_recertification_write_failure_keeps_old_qualified_head"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_locked_source_promotion.LockedSourcePromotionTests.test_standard_rebind_migration_reopens_and_binds_old_and_new_runs"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_locked_source_promotion.LockedSourcePromotionTests.test_store_admits_qualification_only_through_locked_service"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_locked_source_promotion.LockedSourcePromotionTests.test_store_atomically_recertifies_an_existing_qualified_head"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_source_promotion_materialization.SourcePromotionMaterializerTests.test_rejects_traversal_forbidden_targets_and_overlapping_roots"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_source_promotion_materialization.SourcePromotionMaterializerTests.test_standard_rebind_migration_accepts_only_exact_binding_change"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.critical.test_source_promotion_materialization.SourcePromotionMaterializerTests.test_unlisted_source_prompt_and_journal_canaries_never_enter_closure"
+        },
+        {
+          "annotation_identity": null,
+          "failure_identity": null,
+          "schema": "urn:literate-ai:schema:v2:known-test-failure-outcome",
+          "status": "passed",
+          "test_key": "tests.smoke.test_source_promotion_service.SourcePromotionServiceTests.test_public_service_materializes_and_assesses_the_exact_audited_closure"
+        }
+      ],
+      "release_evidence": false
+    }
+  ],
+  "wheel_sha256": "6d3853d78615a68ff7d53a1b11aa0912b7e3a8409654c09c50cae59dbc793b07",
+  "source_archive_sha256": "470f2e22dacb5b4ff3dff3877c78b0097063ce216551e1dcd871bc227e7d51e1",
+  "installed_distribution_identity": "sha256:2a9dc2d0ed02fb40af82534d9720822607f51de7dcf8f8305e0be10b7e416dee",
+  "installed_tests": 10,
+  "installed_failures": 0,
+  "installed_errors": 0,
+  "installed_skips": 0,
+  "framework_module_origin_count": 544,
+  "all_framework_modules_inside_installed_package": true,
+  "installed_raw_report_sha256": "32d40d8724d990ee5719a81e4bdbcb1b0aa99423f4cdac547d54474cfddd4cab",
+  "root_fixture_authority": "The existing fixture explicitly selects root project authority. Asset admission, signatures, locks, source exclusion and assembly are the real installed implementations.",
+  "network_package_access": false,
+  "old_SDK_modified": false,
+  "whole_parent_public_export_gate": "timed_out_at120seconds;exact_owned_orphan_terminated;failure_preserved",
+  "changed_content_export_check": "passed",
+  "full_parent_release_or_native_or_scientific_authority_claimed": false
+}
