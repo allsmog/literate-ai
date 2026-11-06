@@ -37,7 +37,8 @@
             "forward-skill",
             "workflow",
             "routing-policy",
-            "project-configuration"
+            "project-configuration",
+            "immutable-asset"
           ]
         },
         "source_root_label": {

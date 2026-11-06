@@ -14,7 +14,8 @@ from pathlib import PurePosixPath
 from types import MappingProxyType
 from typing import Any, ClassVar
 
-from literate_ai.contracts import semantic_version
+from literate_ai.contracts import canonical_relative_posix_paths, semantic_version
+from literate_ai.contracts.component_locking.authoring import ComponentAssetSelector
 from literate_ai.contracts.library_imports import (
     AuthoredLibraryImport,
     validate_library_imports,
@@ -83,6 +84,8 @@ def _freeze_models(value: Mapping[str, str]) -> Mapping[str, str]:
 def canonical_value(value: Any) -> Any:
     """Return a JSON-compatible semantic representation for hashing and fixtures."""
 
+    if isinstance(value, ComponentAssetSelector):
+        return canonical_value(value.to_dict())
     if dataclasses.is_dataclass(value) and not isinstance(value, type):
         return {
             item.name: canonical_value(getattr(value, item.name))
@@ -727,6 +730,9 @@ class ComponentGraphNodeDraft:
     library_imports: tuple[AuthoredLibraryImport, ...] = field(
         default=(), metadata={"omit_empty": True}
     )
+    assets: tuple[ComponentAssetSelector, ...] = field(
+        default=(), metadata={"omit_empty": True}
+    )
 
     def __post_init__(self) -> None:
         for name in ("coordinate", "title"):
@@ -747,6 +753,7 @@ class ComponentGraphNodeDraft:
                     self.capability_contracts,
                     self.entrypoints,
                     self.build_needs,
+                    self.assets,
                 )
             ):
                 raise SourceToSpecificationError(
@@ -774,6 +781,39 @@ class ComponentGraphNodeDraft:
             raise SourceToSpecificationError(
                 "component_graph.library_imports_invalid",
                 "native import declarations must cover reviewed library capabilities",
+            ) from exc
+        if (
+            not isinstance(self.assets, tuple)
+            or len(self.assets) > 256
+            or any(not isinstance(item, ComponentAssetSelector) for item in self.assets)
+        ):
+            raise SourceToSpecificationError(
+                "component_graph.assets_invalid",
+                "assets require bounded typed selectors",
+            )
+        ids = tuple(item.asset_id for item in self.assets)
+        if ids != tuple(sorted(set(ids))):
+            raise SourceToSpecificationError(
+                "component_graph.assets_noncanonical",
+                "assets must have unique IDs in canonical order",
+            )
+        try:
+            for item in self.assets:
+                if not item.source.startswith("assets/") or item.pin is None:
+                    raise ValueError(
+                        "promoted assets require local assets/ sources and exact pins"
+                    )
+            canonical_relative_posix_paths(
+                (item.source for item in self.assets), label="promoted asset sources"
+            )
+            canonical_relative_posix_paths(
+                (item.path for item in self.assets), label="promoted asset projections"
+            )
+        except (TypeError, ValueError) as exc:
+            raise SourceToSpecificationError(
+                "component_graph.assets_invalid",
+                "promoted assets require non-overlapping local sources, "
+                "projections and exact pins",
             ) from exc
         if self.kind != "unknown" and (
             any(
