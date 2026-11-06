@@ -34342,7 +34342,7 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Three focused checks pass; the old driver fails the src subcase and passes the flat subcase.
   - [x] Actual Linux segment-gate TEST passes under the noneditable wheel from 7836213e (cleanup cpu-r9): three generated cases, six independent protocol cases, including 200 holds, exact artifact import and a finalized receipt. SDK and wheel-dependency import-driver variants were not changed or qualified by this narrow repair.
 
-### [ ] PROMOTE-ASSETS-001 - Preserve pinned immutable assets through reviewed source promotion
+### [x] PROMOTE-ASSETS-001 - Preserve pinned immutable assets through reviewed source promotion
 
 - **GitHub issue:** [#74](https://github.com/jordanhubbard/literate-ai/issues/74)
 
@@ -34358,4 +34358,5 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Preserve legacy asset-free identities and refuse missing, stale, unpinned, escaping, symlinked or colliding inputs before publishing a promoted tree.
 - **Evidence:**
   - [x] Portable contract and CLI roundtrip tests prove exact nontext bytes, Component selectors, lock BlobRefs and immutable assembly while original source guards remain enforced.
-  - [ ] Focused regressions, lint/format, offline wheel and installed CLI fixture pass before downstream use; all failures are preserved.
+  - [x] Focused regressions, lint/format, offline wheel and installed CLI fixture pass before downstream use; all failures are preserved.
+  - Local source candidate `d45e47395d1ed14cf83768ae2e7894cfd6d2f422` passes 10 asset tests, nine legacy promotion tests and four CLI regressions. Its exact offline wheel passes the same 10 asset tests without skips, with all 544 imported framework modules inside the installed package. See [the development evidence](promoted-assets-development.md). This closes the narrow promotion handoff; issue 74's broader retained catalog and full framework release gates remain open.
