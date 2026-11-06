@@ -3,7 +3,8 @@
 This application service is intentionally narrower than a tree copier.  A caller must
 name every admitted file, classify it as a forward-generation authority, and pin its
 exact bytes before the service creates a Component closure.  Provenance, prompts,
-inverse journals, and retained source have no representable input kind here.
+inverse journals, and retained implementation have no representable input kind here.
+Explicitly reviewed immutable assets remain non-generated inputs with exact pins.
 """
 
 from __future__ import annotations
@@ -20,6 +21,7 @@ import tempfile
 import unicodedata
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from enum import StrEnum
 from errno import ELOOP
 from pathlib import Path, PurePosixPath
@@ -78,6 +80,7 @@ class PromotionInputKind(StrEnum):
     WORKFLOW = "workflow"
     ROUTING_POLICY = "routing-policy"
     PROJECT_CONFIGURATION = "project-configuration"
+    IMMUTABLE_ASSET = "immutable-asset"
 
 
 @dataclass(frozen=True, slots=True)
@@ -107,6 +110,7 @@ class SourcePromotionInput:
                 f"promotion target {self.target_path!r} enters a "
                 "non-generatable closure",
             )
+        _require_asset_target(self.kind, target)
         _content_identity(self.expected_content_identity, "expected content identity")
 
 
@@ -136,6 +140,7 @@ class GenerationInputAuditEntry:
                 "promotion.forbidden_target",
                 f"audit target {self.target_path!r} enters a non-generatable closure",
             )
+        _require_asset_target(self.kind, target)
         _content_identity(self.content_identity, "audit content identity")
         if (
             isinstance(self.byte_count, bool)
@@ -582,6 +587,9 @@ class SourceExclusionAssessment:
     source_inventory_identity: str
     overlapping_paths: tuple[str, ...]
     overlapping_content_identities: tuple[str, ...]
+    immutable_assets: tuple[tuple[str, str], ...] = dataclass_field(
+        default=(), metadata={"omit_empty": True}
+    )
 
     def __post_init__(self) -> None:
         for value, label in (
@@ -601,6 +609,15 @@ class SourceExclusionAssessment:
             _portable_path(path, label="source-exclusion overlap path")
         for identity in self.overlapping_content_identities:
             _content_identity(identity, "source-exclusion overlap identity")
+        if self.immutable_assets != tuple(sorted(set(self.immutable_assets))):
+            raise SourcePromotionError(
+                "promotion.source_exclusion_invalid",
+                "immutable asset bindings must be canonical",
+            )
+        for path, identity in self.immutable_assets:
+            target = _portable_path(path, label="source-exclusion immutable asset")
+            _require_asset_target(PromotionInputKind.IMMUTABLE_ASSET, target)
+            _content_identity(identity, "source-exclusion immutable asset identity")
 
     @property
     def source_excluded(self) -> bool:
@@ -609,7 +626,7 @@ class SourceExclusionAssessment:
         return not self.overlapping_paths and not self.overlapping_content_identities
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        value = {
             "generation_input_audit_identity": self.generation_input_audit_identity,
             "materialized_tree_identity": self.materialized_tree_identity,
             "source_inventory_identity": self.source_inventory_identity,
@@ -617,10 +634,19 @@ class SourceExclusionAssessment:
             "overlapping_content_identities": list(self.overlapping_content_identities),
             "source_excluded": self.source_excluded,
         }
+        if self.immutable_assets:
+            value["immutable_assets"] = [
+                {"path": path, "content_identity": identity}
+                for path, identity in self.immutable_assets
+            ]
+        return value
 
 
 def assess_source_exclusion(
-    audit: GenerationInputAudit, source_inventory: SourceInventory
+    audit: GenerationInputAudit,
+    source_inventory: SourceInventory,
+    *,
+    immutable_asset_pins: Mapping[str, str] | None = None,
 ) -> SourceExclusionAssessment:
     """Derive source exclusion from exact path and byte identities, never a flag."""
 
@@ -631,6 +657,28 @@ def assess_source_exclusion(
             "promotion.source_exclusion_invalid",
             "source exclusion requires a typed audit and source inventory",
         )
+    pins = {} if immutable_asset_pins is None else immutable_asset_pins
+    if not isinstance(pins, Mapping):
+        raise SourcePromotionError(
+            "promotion.source_exclusion_invalid",
+            "immutable asset pins require a mapping",
+        )
+    for path, identity in pins.items():
+        target = _portable_path(path, label="locked immutable asset path")
+        _require_asset_target(PromotionInputKind.IMMUTABLE_ASSET, target)
+        _content_identity(identity, "locked immutable asset identity")
+    checked_assets = []
+    implementation_inputs = []
+    for entry in audit.entries:
+        if entry.kind is PromotionInputKind.IMMUTABLE_ASSET:
+            if pins.get(entry.target_path) != entry.content_identity:
+                raise SourcePromotionError(
+                    "promotion.asset_lock_mismatch",
+                    "audited immutable asset does not match its current locked BlobRef",
+                )
+            checked_assets.append((entry.target_path, entry.content_identity))
+        else:
+            implementation_inputs.append(entry)
     source_paths = {entry.path for entry in source_inventory.entries}
     source_identities = {entry.content_digest for entry in source_inventory.entries}
     overlapping_paths = tuple(
@@ -638,7 +686,7 @@ def assess_source_exclusion(
             source_paths.intersection(
                 {
                     path
-                    for entry in audit.entries
+                    for entry in implementation_inputs
                     for path in (entry.source_path, entry.target_path)
                 }
             )
@@ -647,7 +695,7 @@ def assess_source_exclusion(
     overlapping_content_identities = tuple(
         sorted(
             source_identities.intersection(
-                {entry.content_identity for entry in audit.entries}
+                {entry.content_identity for entry in implementation_inputs}
             )
         )
     )
@@ -657,6 +705,7 @@ def assess_source_exclusion(
         source_inventory_identity=source_inventory.identity,
         overlapping_paths=overlapping_paths,
         overlapping_content_identities=overlapping_content_identities,
+        immutable_assets=tuple(sorted(checked_assets)),
     )
 
 
@@ -1033,6 +1082,20 @@ def _validate_root_label(value: str) -> None:
         raise SourcePromotionError(
             "promotion.invalid_root_label",
             "source_root_label must be a lower-case portable token",
+        )
+
+
+def _require_asset_target(kind: PromotionInputKind, target: PurePosixPath) -> None:
+    if kind is not PromotionInputKind.IMMUTABLE_ASSET:
+        return
+    parts = target.parts
+    if not (
+        (len(parts) >= 2 and parts[0] == "assets")
+        or (len(parts) >= 4 and parts[0] == "components" and parts[2] == "assets")
+    ):
+        raise SourcePromotionError(
+            "promotion.asset_target_invalid",
+            "immutable asset inputs must remain in the Component assets directory",
         )
 
 

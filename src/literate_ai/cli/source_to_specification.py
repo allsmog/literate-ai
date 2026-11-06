@@ -1170,9 +1170,35 @@ def _inherited_promotion_build(project):
         raise CliFailure(exc.code, exc.message) from exc
 
 
+def _locked_promotion_asset_pins(audit, lock) -> dict[str, str]:
+    from literate_ai.source_to_specification.promotion_materialization import (
+        PromotionInputKind,
+    )
+
+    targets = {
+        entry.target_path
+        for entry in audit.entries
+        if entry.kind is PromotionInputKind.IMMUTABLE_ASSET
+    }
+    pins: dict[str, str] = {}
+    for node in lock.nodes:
+        for asset in node.revision.assets:
+            path = f"components/{node.revision.coordinate.name}/{asset.selector.source}"
+            if path not in targets:
+                continue
+            if path in pins:
+                raise CliFailure(
+                    "promotion.asset_lock_ambiguous",
+                    "multiple locked assets claim the same promoted target",
+                )
+            pins[path] = asset.blob.identity
+    return pins
+
+
 def _create_promoted_project(
     *,
     accepted_root: Path,
+    source_root: Path | None = None,
     project_target: Path,
     result: SourceToSpecificationResult,
     flavor_drafts: object,
@@ -1453,8 +1479,24 @@ def _create_promoted_project(
                 )
                 for source_path, promoted_artifact in specification_projection
             )
+            if node.assets and source_root is None:
+                raise CliFailure(
+                    "promotion.asset_source_missing",
+                    "reviewed immutable assets require their exact source root",
+                )
+            asset_inputs = tuple(
+                SourcePromotionInput(
+                    kind=PromotionInputKind.IMMUTABLE_ASSET,
+                    source_root=source_root,
+                    source_root_label="reviewed-asset-source",
+                    source_path=asset.source,
+                    target_path=asset.source,
+                    expected_content_identity=asset.pin.uri,
+                )
+                for asset in node.assets
+            )
             materializer.materialize(
-                promotion_inputs,
+                (*promotion_inputs, *asset_inputs),
                 component_root,
             )
             if node.coordinate == graph.root_coordinate:
@@ -1487,6 +1529,7 @@ def _create_promoted_project(
             }
             authoring = ComponentAuthoring(
                 library_imports=node.library_imports,
+                assets=node.assets,
                 coordinate=ComponentCoordinate(node_namespace, node_name),
                 version="1.0.0",
                 display_name=node.title,
@@ -1972,6 +2015,7 @@ def _create_promoted_project(
                 "skills/specification-to-source/bazel-build-system/SKILL.md"
             ): PromotionInputKind.FORWARD_SKILL,
         }
+        asset_forward_pins: dict[str, str] = {}
         for coordinate, (_node_namespace, node_name) in node_coordinates.items():
             forward_paths[f"components/{node_name}/component.md"] = (
                 PromotionInputKind.COMPONENT_INTENT
@@ -1980,6 +2024,16 @@ def _create_promoted_project(
                 forward_paths[f"components/{node_name}/{artifact.path}"] = (
                     PromotionInputKind.SPECIFICATION
                 )
+            node = next(item for item in graph.nodes if item.coordinate == coordinate)
+            for asset in node.assets:
+                asset_path = f"components/{node_name}/{asset.source}"
+                if asset_path in forward_paths:
+                    raise CliFailure(
+                        "promotion.asset_target_collision",
+                        "reviewed asset collides with another promotion authority",
+                    )
+                forward_paths[asset_path] = PromotionInputKind.IMMUTABLE_ASSET
+                asset_forward_pins[asset_path] = asset.pin.uri
         if profile_content is not None:
             forward_paths[f"components/{name}/qualification/profile.json"] = (
                 PromotionInputKind.PROJECT_CONFIGURATION
@@ -2007,7 +2061,9 @@ def _create_promoted_project(
                 source_path=path,
                 target_path=path,
                 expected_content_identity=(
-                    "sha256:"
+                    asset_forward_pins[path]
+                    if path in asset_forward_pins
+                    else "sha256:"
                     + hashlib.sha256((staging / path).read_bytes()).hexdigest()
                 ),
             )
@@ -3511,6 +3567,7 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 def create_promoted(destination):
                     return _create_promoted_project(
                         accepted_root=target,
+                        source_root=source_root,
                         project_target=destination,
                         result=result,
                         flavor_drafts=flavor_drafts,
@@ -3801,7 +3858,11 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 "source baseline does not match the accepted source snapshot",
             )
         source_exclusion = promotion_service.assess_source_exclusion(
-            component_audit, inventory
+            component_audit,
+            inventory,
+            immutable_asset_pins=_locked_promotion_asset_pins(
+                component_audit, locked_authority.lock
+            ),
         )
         if not source_exclusion.source_excluded:
             raise CliFailure(

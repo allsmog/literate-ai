@@ -1093,6 +1093,7 @@ def _merge_component_graphs(
                     "title": node.title,
                     "kind": node.kind,
                     "profiles": node.profiles,
+                    "assets": node.assets,
                     "provided_capabilities": set(),
                     "capability_contracts": {},
                     "library_imports": {},
@@ -1108,7 +1109,7 @@ def _merge_component_graphs(
                     "model_translation.component_graph_title_conflict",
                     f"language translators disagree on title for {node.coordinate}",
                 )
-            for field in ("kind", "profiles", "build_needs"):
+            for field in ("kind", "profiles", "build_needs", "assets"):
                 if current[field] != getattr(node, field):
                     raise SourceToSpecificationError(
                         "model_translation.component_graph_semantics_conflict",
@@ -1223,6 +1224,7 @@ def _merge_component_graphs(
                 library_imports=tuple(
                     item for _key, item in sorted(value["library_imports"].items())
                 ),
+                assets=value["assets"],  # type: ignore[arg-type]
                 build_needs=value["build_needs"],  # type: ignore[arg-type]
                 source_paths=tuple(sorted(value["source_paths"])),  # type: ignore[arg-type]
                 observation_ids=tuple(

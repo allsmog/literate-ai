@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from literate_ai.contracts.component_locking.authoring import ComponentAssetSelector
 from literate_ai.contracts.library_imports import AuthoredLibraryImport
 from literate_ai.source_to_specification import (
     V3_COMPONENT_GRAPH_DRAFT_SCHEMA,
@@ -136,6 +137,10 @@ def component_graph_from_wire(value: Any) -> ComponentGraphDraft:
                     for item in _items(
                         node.get("library_imports", []), "library imports"
                     )
+                ),
+                assets=tuple(
+                    ComponentAssetSelector.from_dict(item)
+                    for item in _items(node.get("assets", []), "assets")
                 ),
                 build_needs=_strings(node.get("build_needs", []), "build needs"),
                 source_paths=_strings(node["source_paths"], "source_paths"),

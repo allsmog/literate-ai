@@ -217,6 +217,12 @@ immutable snapshots; it must not dereference source links or weaken default
 refusal and legacy identities. Native action, package and
 independent acceptance qualification remain required beyond ownership planning.
 
+PROMOTE-ASSETS-001 supplies a narrow part of issue #74: explicitly signed local
+asset declarations now pass through source-promotion graph transport, exact-byte
+materialization and emitted Component authoring to the existing lock and immutable
+assembly contracts. Focused source and CLI checks pass. Installed-wheel proof and
+the broader retained catalog's native/package qualification remain open.
+
 RETAINED-FS-001 extends Goals 1 and 4 with independent observation of retained
 products' filesystem effects. Development cases bind private fixtures, exact
 file state and bounded observation without changing legacy case identities or

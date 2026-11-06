@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 from literate_ai.application.locked_generation_authority import (
@@ -53,9 +53,15 @@ class SourcePromotionService:
         return self._materializer.audit(inputs)
 
     def assess_source_exclusion(
-        self, audit: GenerationInputAudit, source_inventory: SourceInventory
+        self,
+        audit: GenerationInputAudit,
+        source_inventory: SourceInventory,
+        *,
+        immutable_asset_pins: Mapping[str, str] | None = None,
     ) -> SourceExclusionAssessment:
-        return assess_source_exclusion(audit, source_inventory)
+        return assess_source_exclusion(
+            audit, source_inventory, immutable_asset_pins=immutable_asset_pins
+        )
 
     def verify_evidence(
         self,

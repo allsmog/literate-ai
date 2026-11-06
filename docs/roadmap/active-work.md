@@ -33551,3 +33551,21 @@ independent review and the complete combined gate from test one.
 - **Evidence:**
   - [x] Three focused checks pass; the old driver fails the src subcase and passes the flat subcase.
   - [x] Actual Linux segment-gate TEST passes under the noneditable wheel from 7836213e (cleanup cpu-r9): three generated cases, six independent protocol cases, including 200 holds, exact artifact import and a finalized receipt. SDK and wheel-dependency import-driver variants were not changed or qualified by this narrow repair.
+
+### [ ] PROMOTE-ASSETS-001 - Preserve pinned immutable assets through reviewed source promotion
+
+- **GitHub issue:** [#74](https://github.com/jordanhubbard/literate-ai/issues/74)
+
+- **Priority:** P1
+- **Owner:** source promotion graph, wire contracts, materializer and CLI
+- **Direction:** Preserve explicitly reviewed immutable asset declarations and exact bytes when converting a source boundary into canonical Components.
+- **Conclusion:** The Standard lock and producer already support immutable assets, but the promotion graph and emitter omit them. Carry typed pinned local inputs through the signed graph, atomic materialization and emitted Component authoring without copying retained implementation as generated source or changing asset-free legacy identities.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Add canonical typed asset declarations with required pins, local paths and collision checks to reviewed Component graphs and strict wire transport.
+  - [x] Materialize only exact declared asset bytes with explicit asset audit entries and emit the existing Component asset selectors for normal lock and immutable overlay assembly.
+  - [x] Preserve legacy asset-free identities and refuse missing, stale, unpinned, escaping, symlinked or colliding inputs before publishing a promoted tree.
+- **Evidence:**
+  - [x] Portable contract and CLI roundtrip tests prove exact nontext bytes, Component selectors, lock BlobRefs and immutable assembly while original source guards remain enforced.
+  - [ ] Focused regressions, lint/format, offline wheel and installed CLI fixture pass before downstream use; all failures are preserved.

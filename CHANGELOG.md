@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Signed source-promotion graphs preserve pinned local immutable assets through
+  atomic materialization, Component authoring, locked BlobRefs and immutable
+  assembly. Qualification checks the exact current asset bindings while retaining
+  source-overlap checks and legacy asset-free identities.
+
 - Explicit source selections use the existing stable accepted-lookup identity across request custody changes, preserving model, source-semantic and exact-entry checks.
 
 - Source generation permits read-only access to its request file, including chunked reads, while retaining source-only writes and independent lifecycle checks.

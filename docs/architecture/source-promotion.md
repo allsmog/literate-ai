@@ -165,8 +165,23 @@ the `drafted` and `qualified` transitions.
 
 Promotion itself now uses a closed allowlist rather than copying the accepted tree. Each
 admitted specification is read through `SourcePromotionMaterializer` with an exact
-SHA-256 pin, a portable source and target path, and one of seven forward-authority
+SHA-256 pin, a portable source and target path, and one of the declared forward-authority
 kinds.
+
+An explicit signed graph may carry typed immutable assets as non-generated
+inputs. These use the existing `ComponentAssetSelector` contract, with required
+pins and local `assets/` sources. Promotion reads the exact attested source root,
+atomically materializes each declared input, records the `immutable-asset` audit
+kind and emits the same selector in Component authoring. Standard locking and
+immutable overlay assembly retain their existing ownership of BlobRefs and
+model-write refusal. Empty asset sets remain omitted from legacy graph identities.
+
+Qualification excludes a typed asset audit entry from source-overlap detection
+only when its exact target path and content identity match a BlobRef in the
+current Component lock. The source-exclusion assessment records those bindings.
+Missing or stale locks fail closed, and the same digest copied under another
+authority kind still counts as source overlap. This input declaration never
+authorizes copying retained implementation into generated source.
 
 When model-backed inverse translation is unavailable, a reviewer may attach one
 source-bound Component graph to a deterministic-static bundle with

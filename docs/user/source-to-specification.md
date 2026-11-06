@@ -205,6 +205,17 @@ runnable entrypoint. CLIs and services require an evidence-backed entrypoint; un
 semantics block project promotion instead of becoming a fabricated
 `portable-application/run`.
 
+A signed reviewed Component graph may also declare immutable `assets` using the
+existing Component asset selector contract. Each declaration requires an exact
+content pin, a local `assets/` source beneath the attested source root, and a
+portable runtime projection path. Acceptance copies only those exact declared
+bytes into the Component's assets directory and preserves the selector in
+`component.md`. The normal lock resolver records its BlobRef; immutable source
+assembly supplies those bytes without making them model-writable. Missing,
+changed, symlinked, overlapping or unpinned assets fail before project publication.
+Asset-free graphs keep their established identities. Coding-model responses do
+not infer these declarations; attach them through the explicit signed graph review.
+
 For incremental conversion of an existing retained adopted project, use
 `--integrate-project path/to/adopted-root` instead of `--project-target`. Acceptance
 creates the same source-free project beneath `.literate/native-projects/` and atomically
