@@ -208,6 +208,21 @@ def _conversion_authority_from_args(args: Namespace) -> dict[str, Any]:
                 "conversion_authority.project_mismatch",
                 "conversion authority identifies another project",
             )
+        if args.convert_stage_command == "retire-child":
+            from literate_ai.adapters.conversion_authority import retire_native_project
+
+            return {
+                **retire_native_project(
+                    project,
+                    args.child,
+                    superseded_by=args.superseded_by,
+                    archive=Path(args.archive),
+                ),
+                "schema": "literate-ai/conversion-authority-command@1",
+                "operation": "retire-child",
+                "project": str(project.root),
+                "stage": current.stage.value,
+            }
         if args.convert_stage_command == "show":
             state = current
             operation = "show"

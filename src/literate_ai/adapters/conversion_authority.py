@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import shutil
 import stat
 import tempfile
 from pathlib import Path, PurePosixPath
@@ -245,6 +247,145 @@ def _register_native_project(project: LoadedProject, child_root: Path) -> None:
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
+
+
+def retire_native_project(
+    project: LoadedProject, project_id: str, *, superseded_by: str, archive: Path
+) -> dict[str, object]:
+    """Retire one superseded, never-qualified registered child after a verified archive.
+
+    The successor must be registered with every Component regeneratively qualified,
+    the retired child must have no regeneratively qualified Component, and the
+    archive must be a new directory outside the project. The child tree is copied
+    and hash-verified before the registry entry and the child directory are removed.
+    """
+
+    registry = project.root / NATIVE_PROJECTS_FILE
+    require_native_project_path(project, registry)
+    try:
+        with exclusive_cache_lock(registry.with_suffix(".lock")):
+            return _retire_native_project(
+                project, project_id, superseded_by=superseded_by, archive=archive
+            )
+    except CacheLockError as exc:
+        raise ConversionAuthorityError(
+            "conversion_authority.native_registry_locked",
+            "native project registration is already in progress or unsafe",
+        ) from exc
+
+
+def _projection_states(child_root: Path) -> list[ComponentAuthorityState]:
+    store = FileAuthorityProjectionStore(child_root)
+    return [store.current(coordinate).state for coordinate in store.coordinates()]
+
+
+def _tree_digests(root: Path) -> dict[str, str]:
+    digests: dict[str, str] = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink():
+            raise ConversionAuthorityError(
+                "conversion_authority.native_retirement_unsafe",
+                "retired child contains a symbolic link",
+            )
+        if path.is_file():
+            digests[path.relative_to(root).as_posix()] = hashlib.sha256(
+                path.read_bytes()
+            ).hexdigest()
+    return digests
+
+
+def _retire_native_project(
+    project: LoadedProject, project_id: str, *, superseded_by: str, archive: Path
+) -> dict[str, object]:
+    roots = _native_project_roots(project)
+    current = json.loads((project.root / NATIVE_PROJECTS_FILE).read_bytes())
+    entries = list(current["projects"])
+    by_id = {item["project_id"]: item for item in entries}
+    if (
+        project_id not in by_id
+        or superseded_by not in by_id
+        or project_id == superseded_by
+    ):
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_unknown",
+            "retired child and successor must be two registered native projects",
+        )
+    root_by_path = {
+        root.relative_to(project.root.resolve()).as_posix(): root for root in roots
+    }
+    child_root = root_by_path[by_id[project_id]["path"]]
+    successor_root = root_by_path[by_id[superseded_by]["path"]]
+    successor_states = _projection_states(successor_root)
+    if not successor_states or any(
+        state is not ComponentAuthorityState.REGENERATIVELY_QUALIFIED_FUNGIBLE
+        for state in successor_states
+    ):
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_successor_unqualified",
+            "successor must have every Component regeneratively qualified",
+        )
+    if any(
+        state is ComponentAuthorityState.REGENERATIVELY_QUALIFIED_FUNGIBLE
+        for state in _projection_states(child_root)
+    ):
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_qualified",
+            "a regeneratively qualified child is never retired",
+        )
+    archive = Path(os.path.abspath(archive))
+    if archive.exists() or archive.is_symlink():
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_archive_exists",
+            "retirement archive must be a new directory",
+        )
+    project_resolved = project.root.resolve()
+    if archive == project_resolved or project_resolved in archive.parents:
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_archive_inside_project",
+            "retirement archive must be outside the project",
+        )
+    before = _tree_digests(child_root)
+    shutil.copytree(child_root, archive / "child", symlinks=True)
+    if _tree_digests(archive / "child") != before:
+        raise ConversionAuthorityError(
+            "conversion_authority.native_retirement_archive_mismatch",
+            "archived child bytes differ from the registered child",
+        )
+    entry = by_id[project_id]
+    record = {
+        "schema": "literate-ai/native-project-retirement@1",
+        "retired": dict(entry),
+        "superseded_by": dict(by_id[superseded_by]),
+        "files": before,
+    }
+    (archive / "RETIREMENT.json").write_bytes(canonical_json_bytes(record) + b"\n")
+    document = {
+        "schema": NATIVE_PROJECTS_SCHEMA,
+        "projects": sorted(
+            (item for item in entries if item["project_id"] != project_id),
+            key=lambda item: item["path"],
+        ),
+    }
+    registry = project.root / NATIVE_PROJECTS_FILE
+    descriptor, temporary = tempfile.mkstemp(
+        prefix=".native-projects.", dir=registry.parent
+    )
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(canonical_json_bytes(document) + b"\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, registry)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+    shutil.rmtree(child_root)
+    _native_project_roots(project)
+    return {
+        **record,
+        "archive": str(archive),
+        "registered_projects": len(document["projects"]),
+    }
 
 
 def _named_file_matches(path: Path, descriptor: int, opened: os.stat_result) -> bool:
@@ -559,4 +700,5 @@ __all__ = [
     "evidence_for_conversion_stage",
     "register_native_project",
     "require_current_qualified_conversion_authority",
+    "retire_native_project",
 ]
