@@ -1,0 +1,82 @@
+{
+  "evidence_kind": "sanitized-local-development-observations",
+  "source_candidate": "7c4e0ba0f33c1373f10e51ae74e9313e5996c97b",
+  "source_reports": [
+    {
+      "raw_report_sha256": "433c6c633806398ec8ec16e4ad7d53847d89ea8fe5ff982c8e92638c61849a34",
+      "summary": {
+        "executed": 8,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 8,
+        "selected": 8,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "f708399873d058fd36a2c94dbc14a33427697c09e885389ba813a0bbc837b1fa",
+      "summary": {
+        "executed": 10,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 10,
+        "selected": 10,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "2a895e66e6e09bc0a7d3b563b4b03264ac65febe6aca43c8787ed0ba017990d4",
+      "summary": {
+        "executed": 9,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 9,
+        "selected": 9,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "27cdd2f6c8b68e66c92c4ce2fe4d41ea381e3c9b3583070c9f718a4297aeb5bd",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "68220cd1a6bc6a339c51da84df465ecdf5945aa46c68b12269ed7c3d917bc812",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "release_evidence": false
+    }
+  ],
+  "wheel_sha256": "17cb6c2255de5039cbbf7cf4fb41e498ad48e3bed0c2dfef6342ebff126444bc",
+  "source_archive_sha256": "38052dae89b9e572993d6c2040c4069b20c789a39c2e69fee4e9feb444ea231a",
+  "installed_distribution_identity": "sha256:7278b2345d02e74e75755a04662f2a5f35b5be8e5c773fa25347fe6376d6720a",
+  "installed_tests": 18,
+  "installed_failures": 0,
+  "installed_errors": 0,
+  "installed_skips": 0,
+  "framework_module_origin_count": 544,
+  "all_framework_modules_inside_installed_package": true,
+  "installed_raw_report_sha256": "111a0ba033cd25712488a02aa7c8e8cdca80ba6e85255c99190600a1c9a7370d",
+  "root_fixture_authority": "The existing fixture explicitly selects root project authority. Asset admission, signatures, locks, source exclusion and assembly are the real installed implementations.",
+  "complete_declared_input_graph_paths": 6,
+  "network_package_access": false,
+  "old_SDK_modified": false,
+  "whole_parent_public_export_gate": "Previous bounded whole-tree timeout remains preserved; no unchanged repeat.",
+  "full_parent_release_or_native_or_scientific_authority_claimed": false
+}
