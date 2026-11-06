@@ -302,6 +302,13 @@ proof pass for source candidate `d45e47395d1ed14cf83768ae2e7894cfd6d2f422`.
 The broader retained catalog's native/package qualification and full framework
 release gates remain open. See [the asset development evidence](docs/roadmap/promoted-assets-development.md).
 
+PROMOTE-SCOPE-001 supplies another narrow issue #74 correction: an explicit
+reviewed Component graph can own a declared nonexcluded supporting file that
+static detectors did not interpret. Complete observed evidence, unique ownership
+of additional files and observed-entrypoint checks remain required. Eight
+focused projection and signed CLI checks and 27 affected source regressions pass;
+installed-wheel renewal remains open.
+
 RETAINED-FS-001 extends Goals 1 and 4 with independent observation of retained
 products' filesystem effects. Development cases bind private fixtures, exact
 file state and bounded observation without changing legacy case identities or

@@ -208,6 +208,16 @@ particular, a zero-entrypoint `library` must remain explicitly distinguishable f
 implicit base Component so planning projects an import surface instead of a CLI.
 A multi-node static promotion is deliberately rejected because inert inventory does not
 provide a reviewable statement partition across Component boundaries.
+
+Graph projection also permits explicit ownership of a nonexcluded file from the
+request's exact included scope when that file has no detector observation.
+Observed paths and evidence remain complete within their own nodes. A scope-only
+file has one owner and supplies no new observation, capability evidence or
+observed entrypoint. This separates complete input ownership from a detector's
+ability to interpret every language. Unknown paths, excluded extra files,
+borrowed observed paths, duplicate extra owners and unobserved entrypoints fail
+closed. Legacy empty scopes retain evidence-only path closure.
+
 The resulting `GenerationInputAudit` records every materializer read, kind, target,
 identity, and byte count. Source, prompts, model journals, `.literate`, Git,
 and provenance paths have no admitted kind and cannot be written into the Component

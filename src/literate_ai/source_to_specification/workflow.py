@@ -138,11 +138,19 @@ def _validate_component_graph_projection(
             "Component graph draft references unknown exact evidence",
         )
     evidence_paths = {item.path for item in evidence_by_id.values()}
-    if not graph_paths.issubset(evidence_paths):
+    # An explicit review can assign a declared file even when no detector
+    # produced a behavioral observation for it. Presence does not infer
+    # semantics or make that file an observed entrypoint.
+    scope_only_paths = (
+        set(request.included_paths) - set(request.excluded_paths) - evidence_paths
+    )
+    if not graph_paths.issubset(evidence_paths | scope_only_paths):
         raise SourceToSpecificationError(
             "workflow.component_graph_path_unknown",
-            "Component graph draft references a path outside exact evidence",
+            "Component graph draft references a path outside exact evidence "
+            "and declared source scope",
         )
+    scope_owners: set[str] = set()
     for node in graph.nodes:
         node_evidence = set(node.evidence_ids)
         expected_evidence = {
@@ -157,11 +165,22 @@ def _validate_component_graph_projection(
                 "assigned observations",
             )
         expected_paths = {evidence_by_id[item].path for item in node_evidence}
-        if set(node.source_paths) != expected_paths:
+        node_paths = set(node.source_paths)
+        additional_paths = node_paths - expected_paths
+        if not expected_paths.issubset(node_paths) or not additional_paths.issubset(
+            scope_only_paths
+        ):
             raise SourceToSpecificationError(
                 "workflow.component_graph_path_incomplete",
-                "each Component node must name the exact paths for its evidence",
+                "each Component node must name all paths for its evidence and "
+                "only declared unobserved files as additional scope",
             )
+        if additional_paths & scope_owners:
+            raise SourceToSpecificationError(
+                "workflow.component_graph_scope_ambiguous",
+                "a declared unobserved source file must have one Component owner",
+            )
+        scope_owners.update(additional_paths)
         for contract in node.capability_contracts:
             if not set(contract.evidence_ids).issubset(node_evidence):
                 raise SourceToSpecificationError(
@@ -171,7 +190,7 @@ def _validate_component_graph_projection(
         for entrypoint in node.entrypoints:
             if (
                 not set(entrypoint.evidence_ids).issubset(node_evidence)
-                or entrypoint.path not in node.source_paths
+                or entrypoint.path not in expected_paths
             ):
                 raise SourceToSpecificationError(
                     "workflow.component_graph_entrypoint_evidence_unknown",
