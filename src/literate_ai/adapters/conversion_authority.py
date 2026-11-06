@@ -468,15 +468,22 @@ def _component_projection_identities(
                 "conversion_authority.component_evidence_missing",
                 "conversion authority promotion requires Component projections",
             )
-        required = (
-            ComponentAuthorityState.REGENERATIVELY_QUALIFIED_FUNGIBLE
+        # A regeneratively qualified Component has already passed derivation, so
+        # it satisfies the drafted stage. The qualified stage stays strict.
+        accepted = (
+            (ComponentAuthorityState.REGENERATIVELY_QUALIFIED_FUNGIBLE,)
             if qualified
-            else ComponentAuthorityState.DERIVED_SOURCE_RETAINED
+            else (
+                ComponentAuthorityState.DERIVED_SOURCE_RETAINED,
+                ComponentAuthorityState.REGENERATIVELY_QUALIFIED_FUNGIBLE,
+            )
         )
-        if any(item.state is not required for _root, item in projections):
+        if any(item.state not in accepted for _root, item in projections):
             raise ConversionAuthorityError(
                 "conversion_authority.component_stage_incomplete",
-                f"every Component must be {required.value} before promotion",
+                "every Component must be "
+                + " or ".join(state.value for state in accepted)
+                + " before promotion",
             )
         if qualified:
             for projection_root, projection in projections:
