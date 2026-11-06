@@ -229,8 +229,10 @@ PROMOTE-SCOPE-001 supplies another narrow issue #74 correction: an explicit
 reviewed Component graph can own a declared nonexcluded supporting file that
 static detectors did not interpret. Complete observed evidence, unique ownership
 of additional files and observed-entrypoint checks remain required. Eight
-focused projection and signed CLI checks and 27 affected source regressions pass;
-installed-wheel renewal remains open.
+focused projection and signed CLI checks and 27 affected source regressions pass.
+The exact offline wheel passes all 18 installed asset/scope tests without skips.
+See [the scope development evidence](docs/roadmap/promoted-scope-development.md).
+Broader catalog and full framework release qualification remain open.
 
 RETAINED-FS-001 extends Goals 1 and 4 with independent observation of retained
 products' filesystem effects. Development cases bind private fixtures, exact
