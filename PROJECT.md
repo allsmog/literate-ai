@@ -234,6 +234,15 @@ The exact offline wheel passes all 18 installed asset/scope tests without skips.
 See [the scope development evidence](docs/roadmap/promoted-scope-development.md).
 Broader catalog and full framework release qualification remain open.
 
+PROMOTE-FLAVORS-001 extends the same explicit input handoff. Recovered aliases
+retain their initialized canonical target and operational contributions. An
+explicit custom Flavor selection captures its readable definition, specifications,
+command profile and exact transitive forward skills from the integration project
+or a separately named qualification catalog. Catalog defaults remain local to
+their owning project. Source snapshot and membership checks run again before
+atomic publication. Thirteen focused checks and 39 affected regressions pass
+without skips; isolated installed-wheel proof remains open.
+
 RETAINED-FS-001 extends Goals 1 and 4 with independent observation of retained
 products' filesystem effects. Development cases bind private fixtures, exact
 file state and bounded observation without changing legacy case identities or

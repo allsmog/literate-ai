@@ -207,6 +207,19 @@ ability to interpret every language. Unknown paths, excluded extra files,
 borrowed observed paths, duplicate extra owners and unobserved entrypoints fail
 closed. Legacy empty scopes retain evidence-only path closure.
 
+Explicit project-owned qualification Flavors retain their exact readable
+definition, specifications, operational contributions and transitive forward
+skill closure. Integrated promotion reads its integration project's catalog;
+standalone promotion may explicitly name a canonical qualification catalog.
+The readable catalog source is separate from repository-parent selection and
+does not contribute defaults. Imports retain canonical project-relative
+`flavors/` and `skills/` layout, refuse existing-content disagreement and have
+typed entries in the complete promotion input audit. A pinned source closure and
+fresh catalog resolution guard atomic publication against changed bytes,
+membership or dependencies. Recovered built-in aliases compare canonical
+coordinate and target authority rather than requiring an alias to equal its
+canonical target text.
+
 The resulting `GenerationInputAudit` records every materializer read, kind, target,
 identity, and byte count. Source, prompts, model journals, `.literate`, Git,
 and provenance paths have no admitted kind and cannot be written into the Component

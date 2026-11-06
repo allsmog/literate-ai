@@ -205,6 +205,23 @@ runnable entrypoint. CLIs and services require an evidence-backed entrypoint; un
 semantics block project promotion instead of becoming a fabricated
 `portable-application/run`.
 
+Explicitly selected custom Flavors can come from the integration project's
+canonical `flavors/` catalog. Standalone `--project-target` promotion can name a
+separate canonical project with `--qualification-catalog path/to/catalog`.
+Select the custom Flavor by its full coordinate, for example
+`--flavor=+flavor://example/shared-cpp`. The catalog supplies only selected
+readable Flavor inputs and their exact required forward-skill closure. It does
+not supply defaults or register a native child. Canonical `flavors/` and
+`skills/` directories are required for these imported inputs. A catalog cannot
+be combined with `--integrate-project` or used without `--project-target`.
+
+Acceptance preserves a recovered built-in alias's canonical target and
+operational contributions. For example, `cuda` resolves to the initialized
+`nvidia-cuda` target. Conflicting coordinates, axes or targets still fail closed.
+Captured catalog inputs cannot replace different initialized authority, escape
+their readable owners or use symlinks. Exact source and catalog-membership checks
+run again immediately before atomic project publication.
+
 A signed reviewed Component graph may also declare immutable `assets` using the
 existing Component asset selector contract. Each declaration requires an exact
 content pin, a local `assets/` source beneath the attested source root, and a
