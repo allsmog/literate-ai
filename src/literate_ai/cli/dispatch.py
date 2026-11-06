@@ -2174,6 +2174,14 @@ def _parser() -> JsonArgumentParser:
         "--to", required=True, choices=("retained", "drafted", "qualified")
     )
     project_convert_stage_advance.add_argument("--project", default=".")
+    project_convert_stage_retire = project_convert_stage_commands.add_parser(
+        "retire-child",
+        help="retire a superseded, never-qualified native child after an archive",
+    )
+    project_convert_stage_retire.add_argument("--child", required=True)
+    project_convert_stage_retire.add_argument("--superseded-by", required=True)
+    project_convert_stage_retire.add_argument("--archive", required=True)
+    project_convert_stage_retire.add_argument("--project", default=".")
     project_retained_scope = project_commands.add_parser(
         "retained-scope", help="review and refresh retained source membership"
     )
