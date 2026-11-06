@@ -33570,3 +33570,20 @@ independent review and the complete combined gate from test one.
   - [x] Portable contract and CLI roundtrip tests prove exact nontext bytes, Component selectors, lock BlobRefs and immutable assembly while original source guards remain enforced.
   - [x] Focused regressions, lint/format, offline wheel and installed CLI fixture pass before downstream use; all failures are preserved.
   - Local source candidate `d45e47395d1ed14cf83768ae2e7894cfd6d2f422` passes 10 asset tests, nine legacy promotion tests and four CLI regressions. Its exact offline wheel passes the same 10 asset tests without skips, with all 544 imported framework modules inside the installed package. See [the development evidence](promoted-assets-development.md). This closes the narrow promotion handoff; issue 74's broader retained catalog and full framework release gates remain open.
+
+### [ ] PROMOTE-SCOPE-001 - Preserve declared source files in reviewed Component scope
+
+- **GitHub issue:** [#74](https://github.com/jordanhubbard/literate-ai/issues/74)
+
+- **Priority:** P1
+- **Owner:** Source graph projection and signed static review
+- **Direction:** Keep complete declared source inputs in explicitly reviewed graphs even when static detectors produce no behavioral observation for a file.
+- **Conclusion:** The request includes the exact script path, but graph projection rejects it because observations mention only other files. Permit explicit ownership of declared nonexcluded unobserved files while retaining complete observation/evidence assignment, observed entrypoints, legacy behavior and all unknown-semantics review gates. Existing issue74 owns complete canonical input coverage.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Resolve additional graph paths only from exact request-included nonexcluded files and keep every observed path with its own node.
+  - [x] Reject unknown, excluded, borrowed and ambiguously owned scope-only paths; do not turn file presence into an observed entrypoint or inferred behavior.
+- **Evidence:**
+  - [x] Portable projection and signed CLI roundtrip tests prove complete opaque-file scope and all rejection controls without host execution.
+  - [ ] Focused regressions and isolated offline wheel/native six-file graph checks pass before downstream use; all failures remain preserved.

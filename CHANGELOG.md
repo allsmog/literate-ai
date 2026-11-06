@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Explicit source-graph review can assign a declared nonexcluded file without a
+  detector observation, preserving complete input scope while retaining observed
+  evidence, unique additional ownership and entrypoint checks.
+
 - Signed source-promotion graphs preserve pinned local immutable assets through
   atomic materialization, Component authoring, locked BlobRefs and immutable
   assembly. Qualification checks the exact current asset bindings while retaining

@@ -216,6 +216,16 @@ changed, symlinked, overlapping or unpinned assets fail before project publicati
 Asset-free graphs keep their established identities. Coding-model responses do
 not infer these declarations; attach them through the explicit signed graph review.
 
+An explicit reviewed graph may assign a source file named in the request's exact
+included scope even when static detectors produced no observation for that file.
+This keeps a supporting script within the recovered Component boundary. The
+extra file must be nonexcluded and have one Component owner. Every observed path
+and its evidence still belongs to its assigned node; another node cannot borrow
+it as extra scope. File presence supplies no behavioral observation and cannot
+authorize an unobserved entrypoint. Unknown semantics still require explicit
+review resolution before acceptance. Empty legacy request scopes retain their
+existing evidence-path validation.
+
 For incremental conversion of an existing retained adopted project, use
 `--integrate-project path/to/adopted-root` instead of `--project-target`. Acceptance
 creates the same source-free project beneath `.literate/native-projects/` and atomically
