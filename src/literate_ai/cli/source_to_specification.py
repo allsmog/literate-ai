@@ -1212,8 +1212,17 @@ def _create_promoted_project(
     inverse_evidence_custody: object | None,
     parent_selection: RepositoryParentSelection | None,
     promotion_parent=None,
+    qualification_catalog=None,
 ) -> dict[str, object]:
     """Create one complete, disposable-source-ready project from an accepted set."""
+
+    from literate_ai.adapters.component_lock_planning import ComponentLockPlanningError
+    from literate_ai.adapters.promotion_parent_flavors import (
+        PromotionParentFlavorError,
+        capture_parent_flavor_inputs,
+    )
+    from literate_ai.application.flavor_selection import FlavorSelectionError
+    from literate_ai.application.skill_closure import SkillClosureError
 
     from .project import init_project_from_args
 
@@ -1731,10 +1740,20 @@ def _create_promoted_project(
                 existing, _description = parse_authoring_markdown(
                     flavor_path.read_bytes(), source=flavor_path.as_posix()
                 )
+                existing_target = existing.get("target")
+                canonical_flavor = canonical_flavor_selector("+" + flavor)[1:]
+                target_matches = existing_target == flavor
+                if isinstance(existing_target, str):
+                    target_matches = target_matches or (
+                        canonical_flavor_selector("+" + existing_target)[1:]
+                        == canonical_flavor
+                        and f"flavor://{existing.get('namespace')}/{existing.get('name')}"
+                        == canonical_flavor
+                    )
                 if (
                     existing.get("schema") != FLAVOR_MARKDOWN_SCHEMA
                     or existing.get("primary_axis") != axis
-                    or existing.get("target") != flavor
+                    or not target_matches
                 ):
                     raise CliFailure(
                         "promotion.flavor_collision",
@@ -1785,14 +1804,41 @@ def _create_promoted_project(
                 f"+{values[0]}" for _axis, values in sorted(by_axis.items())
             )
 
+        parent_flavors = capture_parent_flavor_inputs(
+            qualification_catalog or promotion_parent,
+            selected_qualification_flavors,
+            proposed_aliases=tuple(
+                alias
+                for flavor in created_flavors
+                for alias in (
+                    canonical_flavor_selector("+" + flavor)[1:],
+                    f"flavor://source-derived/{flavor}",
+                )
+            ),
+        )
+        parent_flavor_paths = (
+            {} if parent_flavors is None else parent_flavors.materialize(staging)
+        )
+
+        def promotion_flavor_root(selector):
+            imported = (
+                None
+                if parent_flavors is None
+                else parent_flavors.directory_for(selector)
+            )
+            return (
+                staging / imported
+                if imported is not None
+                else staging / "flavors" / flavor_selector_directory(selector)
+            )
+
         selected_axes = set()
         selected_aliases = set()
         for selector in selected_qualification_flavors:
             if not selector.startswith("+"):
                 continue
-            selected_name = flavor_selector_directory(selector)
             selected_aliases.add(canonical_flavor_selector(selector)[1:])
-            selected_path = staging / "flavors" / selected_name / "flavor.md"
+            selected_path = promotion_flavor_root(selector) / "flavor.md"
             if not selected_path.is_file():
                 continue
             selected_authoring, _description = parse_authoring_markdown(
@@ -1892,8 +1938,7 @@ def _create_promoted_project(
         for selector in sorted(promoted_defaults):
             if not selector.startswith("+"):
                 continue
-            flavor = flavor_selector_directory(selector)
-            flavor_path = staging / "flavors" / flavor / "flavor.md"
+            flavor_path = promotion_flavor_root(selector) / "flavor.md"
             if not flavor_path.is_file():
                 continue
             selected_authoring, selected_description = parse_authoring_markdown(
@@ -2015,6 +2060,13 @@ def _create_promoted_project(
                 "skills/specification-to-source/bazel-build-system/SKILL.md"
             ): PromotionInputKind.FORWARD_SKILL,
         }
+        for path, kind in parent_flavor_paths.items():
+            if path in forward_paths and forward_paths[path] != kind:
+                raise CliFailure(
+                    "promotion.parent_flavor_collision",
+                    "parent Flavor input collides with another authority kind",
+                )
+            forward_paths[path] = kind
         asset_forward_pins: dict[str, str] = {}
         for coordinate, (_node_namespace, node_name) in node_coordinates.items():
             forward_paths[f"components/{node_name}/component.md"] = (
@@ -2041,12 +2093,11 @@ def _create_promoted_project(
         for selector in promoted_defaults:
             if not selector.startswith("+"):
                 continue
-            flavor = flavor_selector_directory(selector)
-            flavor_root = staging / "flavors" / flavor
+            flavor_root = promotion_flavor_root(selector)
             if not flavor_root.is_dir() or flavor_root.is_symlink():
                 raise CliFailure(
                     "promotion.flavor_missing",
-                    f"selected qualification Flavor is unavailable: {flavor}",
+                    f"selected qualification Flavor is unavailable: {selector}",
                 )
             for flavor_input in sorted(flavor_root.rglob("*")):
                 if flavor_input.is_symlink() or not flavor_input.is_file():
@@ -2208,10 +2259,23 @@ def _create_promoted_project(
                     "promotion.parent_changed",
                     "parent build selection changed during promotion",
                 )
+        if parent_flavors is not None:
+            parent_flavors.require_unchanged()
         os.replace(staging, project_target)
-    except BaseException:
+    except BaseException as exc:
         if staging.exists():
             shutil.rmtree(staging)
+        if isinstance(
+            exc,
+            (
+                ComponentLockPlanningError,
+                FlavorSelectionError,
+                PromotionParentFlavorError,
+                ProjectError,
+                SkillClosureError,
+            ),
+        ):
+            raise CliFailure(exc.code, exc.message) from exc
         raise
     return {
         "project_target": str(project_target),
@@ -3165,6 +3229,29 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             if args.project_target is not None
             else None
         )
+        qualification_catalog = None
+        catalog_path = getattr(args, "qualification_catalog", None)
+        if catalog_path is not None:
+            if args.integrate_project is not None:
+                raise CliFailure(
+                    "promotion.qualification_catalog_conflict",
+                    "integrated promotion uses its integration project's catalog",
+                )
+            if project_target is None:
+                raise CliFailure(
+                    "promotion.qualification_catalog_requires_project",
+                    "a qualification catalog requires --project-target",
+                )
+            catalog_path = Path(catalog_path).resolve(strict=True)
+            qualification_catalog = discover_project(catalog_path)
+            if (
+                qualification_catalog is None
+                or qualification_catalog.root != catalog_path
+            ):
+                raise CliFailure(
+                    "promotion.qualification_catalog_invalid",
+                    "qualification catalog must be an existing canonical project root",
+                )
         integration_project = None
         if args.integrate_project is not None:
             from literate_ai.adapters.conversion_authority import (
@@ -3585,6 +3672,7 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                         inverse_evidence_custody=inverse_evidence_custody,
                         parent_selection=parent_selection,
                         promotion_parent=integration_project,
+                        qualification_catalog=qualification_catalog,
                     )
 
                 if replacement_plan is not None:
@@ -4221,6 +4309,13 @@ def add_spec_parser(commands: argparse._SubParsersAction) -> None:
         help=(
             "ordered +flavor/-flavor selector for the promoted qualification lock; "
             "repeatable"
+        ),
+    )
+    accept.add_argument(
+        "--qualification-catalog",
+        help=(
+            "canonical project supplying explicitly selected custom Flavors for "
+            "--project-target; does not import defaults or register a child"
         ),
     )
     accept.add_argument(

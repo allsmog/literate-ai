@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Source promotion preserves canonical Flavor aliases and explicitly selected
+  project-owned Flavor definitions, command profiles and required skill closures.
+  Standalone promotion can read a canonical qualification catalog while keeping
+  exact input, collision, boundary and publication-time drift checks.
+
 - Explicit source-graph review can assign a declared nonexcluded file without a
   detector observation, preserving complete input scope while retaining observed
   evidence, unique additional ownership and entrypoint checks.

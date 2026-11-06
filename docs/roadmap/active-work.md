@@ -34378,3 +34378,21 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Portable projection and signed CLI roundtrip tests prove complete opaque-file scope and all rejection controls without host execution.
   - [x] Focused regressions and isolated offline wheel/native six-file graph checks pass before downstream use; all failures remain preserved.
   - Eight new checks and 27 affected regressions pass. The exact offline wheel passes 18 installed tests with zero skips and accepts all six declared input paths. See [the development evidence](promoted-scope-development.md). This closes only the narrow scope correction; issue 74 and full framework/native qualification remain open.
+
+### [ ] PROMOTE-FLAVORS-001 - Preserve canonical aliases and selected parent Flavor inputs
+
+- **GitHub issue:** [#74](https://github.com/jordanhubbard/literate-ai/issues/74)
+
+- **Priority:** P1
+- **Owner:** Source promotion Flavor projection and exact parent input custody
+- **Direction:** Carry explicit canonical target choices into source-free native child promotion without replacing their command profiles or losing reviewed parent-owned Flavor inputs.
+- **Conclusion:** A signed static source promotion refuses the cuda alias because its initialized canonical Flavor target is nvidia-cuda. The bootstrap also admits only known built-ins and does not capture an explicitly selected project-owned Flavor. Preserve canonical alias authority and capture only explicitly selected parent Flavor definitions and their exact readable inputs with collision, boundary and publication-time drift guards. Existing issue74 owns complete canonical input coverage; issue218 owns related promotion Flavor selection.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Validate initialized Flavor aliases by canonical coordinate and axis while retaining their target and operational contributions.
+  - [x] Resolve explicit selected local parent Flavors through the typed catalog, preserve exact readable input bytes and pin their source snapshot before atomic publication. Refuse ambiguity, symlinks, escape, collision and mid-flight changes.
+  - [x] Permit an explicit canonical qualification catalog for standalone promotion without registering an unqualified child or importing that catalog's defaults.
+- **Evidence:**
+  - [x] Portable signed CLI fixtures prove canonical accelerator alias handling and an exact custom shared-language command profile without compiling or generating host code.
+  - [ ] Focused refusal controls, affected regressions, private offline wheel and installed fixture checks pass. Preserve the original refusal and all failures; native and full release qualification remain separate.
