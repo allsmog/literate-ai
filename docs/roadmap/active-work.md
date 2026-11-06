@@ -32412,10 +32412,22 @@ PR #228 conflict-resolution evidence: merged main `9550a17743cf983a790dd22de471f
 - **Implementation:**
   - [x] Establish authoritative complete zero-argument public signatures and project a versioned mode through recipe, generated manifest validation, cache and lifecycle identities.
   - [x] Reconcile pinned generation guidance with independently selected overlapping inputs while keeping verifier-owned expected answers private.
+  - [x] Preserve the reviewed `interfaces/callable.json` supporting artifact during ordinary single-Component OpenSpec promotion; refuse ambiguous ownership and unsupported nested Markdown projection.
+  - [ ] Prove fresh installed promotion binds that exact declaration and establishes singleton coverage before generation, retaining the unchanged independent oracle and ordinary coverage refusals.
   - [ ] Complete the fresh installed registered-child journey and original refusal/recovery controls with its unchanged independent oracle.
 - **Evidence:**
   - [ ] Pass singleton positive, invented/duplicate/missing input, false exemption, stale authority and private-oracle controls plus unchanged v1/default-domain coverage.
   - [ ] Pass full regression, installed-wheel qualification and exact review/main CI before claiming issue 132 or dependent issue 48 complete.
+
+- **Promotion development evidence:** The ordinary signed acceptance control retains
+  a reviewed zero-argument declaration in its accepted set but drops it from the
+  child and leaves its lock unchanged before this correction. The corrected public
+  CLI fixture materializes the exact declaration, binds its digest in the child
+  lock and keeps retained implementation files outside the child. Five projection
+  controls, 16 singleton/default-coverage controls, 13 surrounding promotion tests,
+  that CLI fixture and seven project-verification controls pass, with no failures
+  or skips. The clean committed wheel, actual two-clean-run qualification and
+  upstream review/CI remain open. No generated schema or release receipt is claimed.
 
 ### [x] RUST-ADOPTION-DETECT-001 — Detect Cargo workspaces ahead of incidental helper languages
 
@@ -34056,9 +34068,11 @@ Current-main reconciliation retains the existing `python_profile is None` guard
 and `-I -S -B` launch. The separate verified-wheel dependency closure remains
 owned by its existing driver. All three added isolation controls, four standard
 command-projection controls and two actual verified-wheel runtime tests pass
-again against the reconciled source. A clean integrated wheel, supported-platform
-qualification, independent review, full required regression and exact-head CI
-remain pending.
+again against the reconciled source. Approved merge commit `4d672137` now passes
+all nine of these controls through its clean non-editable wheel, SHA-256
+`c275286c5e35093dcefe9a207ef49f69413d1bb3ca880338acd622ff9d2cd15d`.
+All 93 focused installed regressions pass. Supported-platform qualification,
+independent review, full required regression and exact-head CI remain pending.
 
 ### [ ] QUALIFIED-CHILD-ADD-001 — Add a qualified native child to a qualified retained parent atomically
 
@@ -34070,12 +34084,26 @@ remain pending.
 - **Conclusion:** Issue #315 is distinct from updates to a registered child and Python library delivery. The operator accepted the exact plan/apply/recovery design before implementation. [ADR 0064](../decisions/0064-qualified-native-child-addition.md) preserves that decision, originally accepted locally as ADR 0060, and the contribution implements the public transaction.
 - **Depends on:** ADR 0064 accepted design under ADR 0006
 - **Completion prerequisites:** none
-- **Next action:** Complete current-main integration and the real two-library interruption/recovery proof, then retain independent review and exact-head CI as release requirements.
+- **Next action:** Coordinate accepted ADR 0064 with the separately proposed ADR 0062 in PR #319, then obtain independent review and remaining integrated-head qualification. Installed two-library interruption/recovery acceptance passes at approved merge commit 4d672137; full required regression and exact-head CI remain release requirements.
 - **Implementation:**
   - [x] Obtain operator design acceptance and implement the public typed plan/apply/recovery transaction.
   - [ ] Complete integrated-head qualification and independent review.
 - **Evidence:**
   - [ ] Qualify two dependency-free children through public APIs; reject unqualified, stale, changed, unsafe and duplicate inputs; verify rollback, installed/native behavior, independent review and exact-head CI.
+
+**Installed integration checkpoint:** The clean non-editable wheel of approved
+merge commit `4d672137` passes all 93 focused managed regressions. A real public-CLI
+fixture qualifies and separately admits two fresh libraries, plans without changing
+file bytes, modes or times, rejects stale receipts and missing acknowledgement,
+then exits the process after registry publication. Ordinary verification rejects
+the exact stale qualification. Public recovery restores prior metadata; reapply
+preserves the first library and exact two-child evidence union. All 525 protected
+child files remain unchanged. Duplicate addition refuses and completed recovery
+changes no metadata. A prior wheel's prepared journal also recovers compatibly.
+The wheel SHA-256 is
+`c275286c5e35093dcefe9a207ef49f69413d1bb3ca880338acd622ff9d2cd15d`.
+Independent review, broader platform and full required regression, proposed ADR
+reconciliation and exact-head CI remain open.
 
 ### [ ] SHADOW-001 — Continuously qualify upstream branches through a separate shadow repository
 

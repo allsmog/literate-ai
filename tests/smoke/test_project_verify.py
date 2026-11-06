@@ -74,16 +74,26 @@ class VerifyCommandTests(unittest.TestCase):
         self.project = self.directory / "derived"
         shutil.copytree(self.template, self.project, symlinks=True)
 
-    def test_a_fresh_project_verifies(self) -> None:
+    def test_a_fresh_project_checks_all_declared_gates(self) -> None:
         status, envelope = invoke("verify", str(self.project))
-        self.assertEqual(status, 0, envelope)
         result = envelope["result"]
-        self.assertTrue(result["ok"])
-        self.assertEqual(result["counts"]["fail"], 0)
+        definition = load_project(self.project).definition
+        requires_receipt = definition.test_receipt_policy is not None
+        self.assertFalse((self.project / definition.test_receipt).exists())
+        self.assertEqual(status, int(requires_receipt), envelope)
+        self.assertEqual(result["ok"], not requires_receipt)
+        self.assertEqual(result["counts"]["fail"], int(requires_receipt))
         self.assertEqual(
             [item["gate"] for item in result["gates"]],
             list(GATES),
         )
+        gates = {item["gate"]: item for item in result["gates"]}
+        self.assertEqual(gates["authority"]["state"], "pass")
+        if requires_receipt:
+            self.assertEqual(gates["receipt"]["state"], "fail")
+            self.assertIn("project.test_receipt_missing:", gates["receipt"]["detail"])
+        else:
+            self.assertEqual(gates["receipt"]["state"], "skipped")
 
     def test_verify_changes_nothing(self) -> None:
         before = tree_snapshot(self.project)
@@ -163,7 +173,7 @@ class VerifyCommandTests(unittest.TestCase):
             evidence_identity=canonical_identity({"fixture": "wrapped"}),
         )
         before = tree_snapshot(self.project)
-        status, envelope = invoke("verify", str(self.project))
+        status, envelope = invoke("verify", str(self.project), "--gate", "authority")
         self.assertEqual(status, 0, envelope)
         self.assertEqual(tree_snapshot(self.project), before)
 
