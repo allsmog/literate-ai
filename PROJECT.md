@@ -318,7 +318,11 @@ command profile and exact transitive forward skills from the integration project
 or a separately named qualification catalog. Catalog defaults remain local to
 their owning project. Source snapshot and membership checks run again before
 atomic publication. Thirteen focused checks and 39 affected regressions pass
-without skips; isolated installed-wheel proof remains open.
+without skips. The exact private offline wheel passes31 installed fixtures;
+a separate versioned client metadata handoff preserves the selected shared profile
+and pinned assets. The original aggregate refusal remains failed and preserved.
+See [the development observations](docs/evidence/promoted-flavors-r1.json).
+Full native,broader catalog and release qualification remain open.
 
 RETAINED-FS-001 extends Goals 1 and 4 with independent observation of retained
 products' filesystem effects. Development cases bind private fixtures, exact

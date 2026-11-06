@@ -1,0 +1,117 @@
+{
+  "evidence_kind": "sanitized-local-development-observations",
+  "source_candidate": "2a84d63bfa8bdb33165da8003241479080b50a65",
+  "source_reports": [
+    {
+      "raw_report_sha256": "81af6e0a35c7867638aceda715b0acc26adf281f010781b1fb55d14dd18cf538",
+      "summary": {
+        "executed": 13,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 13,
+        "selected": 13,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "6a9ff5b7e093a3e38d3a8f9a22f4a5a76fcf0c0487e6f6b690934f439ed81689",
+      "summary": {
+        "executed": 10,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 10,
+        "selected": 10,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "8c82988f52ce9a7070ae7ac00551309667902ab39ff31a2cac52748092ea160f",
+      "summary": {
+        "executed": 9,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 9,
+        "selected": 9,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "c50ba096a15b70798413b22660ef7afaec107fba2b501b66fbb68e9534b2ab0a",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "a55da995ca2d115c618564208a455d1cf608f718f5feab3d5d3f434058f8fbf3",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "f6edf5b9852da5d7082c5602991667bdfdfacec164eb08297b5690eccaf4c6a5",
+      "summary": {
+        "executed": 8,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 8,
+        "selected": 8,
+        "skipped": 0
+      },
+      "release_evidence": false
+    },
+    {
+      "raw_report_sha256": "a4a37a8ed49b220efa24290190caa8cf35000a8dab526ecdd73622c4003d3a70",
+      "summary": {
+        "executed": 4,
+        "failed": 0,
+        "known_failed": 0,
+        "passed": 4,
+        "selected": 4,
+        "skipped": 0
+      },
+      "release_evidence": false
+    }
+  ],
+  "wheel_sha256": "d63f1341aba4652b330e78311da11f1af7b14c1bccdf7f40be60d7f61726ffc1",
+  "source_archive_sha256": "6e0f59620b21b6166c9d1a2e95893acd1fc16327f35b3b7d562478e7fd54bdd9",
+  "installed_distribution_identity": "sha256:51378a0d7ffda7aed8fc225b95a41b97c6ee024fb8f5af225ae1cc3d362b0a98",
+  "installed_tests": 31,
+  "installed_failures": 0,
+  "installed_errors": 0,
+  "installed_skips": 0,
+  "framework_module_origin_count": 546,
+  "all_framework_modules_inside_installed_package": true,
+  "installed_raw_report_sha256": "207b1d14de1fdd6145b48f26a81bf01e86c468e35bb59e0380f9fd7c35fded76",
+  "fixture_scope": "Fixtures explicitly select root project authority and declare a retained metadata stage for the integration case. Signatures, promotion, locks, exclusion and assembly use real installed code. No retained or native lifecycle qualification is claimed.",
+  "original_aggregate_workflow": "Failed and preserved after all31 installed fixtures passed. Exact initialized skill disagreement refused the first real metadata handoff. This record does not relabel that workflow.",
+  "separate_versioned_client_metadata_observation": {
+    "declared_inputs": 6,
+    "pinned_assets": 2,
+    "native_imports": 1,
+    "custom_shared_profile_exact": true,
+    "private_source_contract_exact": true,
+    "catalog_source_unchanged": true,
+    "owned_retained_source_copied": false,
+    "final_qualification_profile_bound": false,
+    "native_candidate_generated": false
+  },
+  "network_package_access": false,
+  "old_SDK_modified": false,
+  "whole_parent_public_export_gate_passed": false,
+  "full_parent_release_or_native_or_scientific_authority_claimed": false
+}

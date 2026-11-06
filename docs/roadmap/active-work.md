@@ -34379,7 +34379,7 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Focused regressions and isolated offline wheel/native six-file graph checks pass before downstream use; all failures remain preserved.
   - Eight new checks and 27 affected regressions pass. The exact offline wheel passes 18 installed tests with zero skips and accepts all six declared input paths. See [the development evidence](promoted-scope-development.md). This closes only the narrow scope correction; issue 74 and full framework/native qualification remain open.
 
-### [ ] PROMOTE-FLAVORS-001 - Preserve canonical aliases and selected parent Flavor inputs
+### [x] PROMOTE-FLAVORS-001 - Preserve canonical aliases and selected parent Flavor inputs
 
 - **GitHub issue:** [#74](https://github.com/jordanhubbard/literate-ai/issues/74)
 
@@ -34395,4 +34395,5 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [x] Permit an explicit canonical qualification catalog for standalone promotion without registering an unqualified child or importing that catalog's defaults.
 - **Evidence:**
   - [x] Portable signed CLI fixtures prove canonical accelerator alias handling and an exact custom shared-language command profile without compiling or generating host code.
-  - [ ] Focused refusal controls, affected regressions, private offline wheel and installed fixture checks pass. Preserve the original refusal and all failures; native and full release qualification remain separate.
+  - [x] Focused refusal controls, affected regressions, private offline wheel and installed fixture checks pass. Preserve the original refusal and all failures; native and full release qualification remain separate.
+  - Thirteen focused controls and39 affected regressions pass without skips. The exact offline wheel passes31 installed fixtures with546 imported package origins. A separate versioned client metadata handoff preserves all six declared inputs,two pinned assets and the exact custom shared profile. The earlier aggregate refusal remains failed and preserved. See [the development observations](../evidence/promoted-flavors-r1.json). Issue74 and full native/release qualification remain open.
