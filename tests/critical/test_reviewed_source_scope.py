@@ -194,7 +194,9 @@ class ReviewedSourceScopeCliTests(unittest.TestCase):
             source.mkdir()
             (source / "main.py").write_text("def value():\n    return 7\n")
             script = b"#!/bin/sh\nprintf '%s\\n' reviewed-build-behavior\n"
-            (source / "build.sh").write_bytes(script)
+            # Shell is behavioral source; a build file type the deriver does not
+            # observe keeps this test on the declared-but-unobserved path.
+            (source / "build.cmd").write_bytes(script)
             key = root / "fixture.key"
             key.write_bytes(KEY)
             attestation = self.success(
@@ -218,9 +220,9 @@ class ReviewedSourceScopeCliTests(unittest.TestCase):
                 "--trust-key",
                 str(key),
             )
-            self.assertIn("build.sh", bundle["result"]["request"]["included_paths"])
+            self.assertIn("build.cmd", bundle["result"]["request"]["included_paths"])
             self.assertNotIn(
-                "build.sh",
+                "build.cmd",
                 {
                     item["path"]
                     for observation in bundle["result"]["observations"]
@@ -265,7 +267,7 @@ class ReviewedSourceScopeCliTests(unittest.TestCase):
             self.assertTrue(
                 (root / "promoted" / result["promoted_project"]["component"]).is_file()
             )
-            self.assertEqual((source / "build.sh").read_bytes(), script)
-            self.assertFalse(list((root / "promoted").rglob("build.sh")))
+            self.assertEqual((source / "build.cmd").read_bytes(), script)
+            self.assertFalse(list((root / "promoted").rglob("build.cmd")))
             retained_review = json.dumps(review)
-            self.assertIn("build.sh", retained_review)
+            self.assertIn("build.cmd", retained_review)
