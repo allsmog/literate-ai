@@ -31,6 +31,7 @@ _IGNORED_DIRECTORIES = frozenset(
     }
 )
 _SOURCE_LANGUAGES = {
+    ".bash": "shell",
     ".c": "c",
     ".cjs": "javascript",
     ".cc": "cpp",
@@ -53,6 +54,7 @@ _SOURCE_LANGUAGES = {
     ".py": "python",
     ".rb": "ruby",
     ".rs": "rust",
+    ".sh": "shell",
     ".swift": "swift",
     ".ts": "typescript",
     ".tsx": "typescript",
