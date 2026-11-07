@@ -135,6 +135,21 @@ LEGACY_BUNDLE_SCHEMA = "literate-ai/source-to-specification-result-bundle@1"
 CONFORMANCE_SCHEMA = "literate-ai/source-to-specification-conformance@1"
 
 
+def native_integration_stage_allowed(stage: object) -> bool:
+    """New and replacement native children integrate before the qualified stage.
+
+    A newly admitted child starts derived-source-retained, which already meets the
+    drafted stage's rule, so drafted projects may still gain native children.  A
+    qualified project stays closed: every Component there is already qualified.
+    """
+    from literate_ai.contracts.operator_adoption import ConversionAuthorityStage
+
+    return isinstance(stage, ConversionAuthorityStage) and stage in (
+        ConversionAuthorityStage.RETAINED,
+        ConversionAuthorityStage.DRAFTED,
+    )
+
+
 def _object(value: Any, name: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise CliFailure("cli.invalid_input", f"{name} must be a JSON object")
@@ -3259,7 +3274,6 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 FilesystemConversionAuthorityStore,
                 require_native_project_path,
             )
-            from literate_ai.contracts.operator_adoption import ConversionAuthorityStage
 
             integration_path = Path(args.integrate_project).resolve(strict=True)
             integration_project = discover_project(integration_path)
@@ -3277,15 +3291,13 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 ).load_optional()
             except ConversionAuthorityError as exc:
                 raise CliFailure(exc.code, exc.message) from exc
-            if integration_state is None or integration_state.stage not in (
-                {ConversionAuthorityStage.RETAINED, ConversionAuthorityStage.DRAFTED}
-                if replacement_requested
-                else {ConversionAuthorityStage.RETAINED}
+            if integration_state is None or not native_integration_stage_allowed(
+                integration_state.stage
             ):
                 raise CliFailure(
                     "promotion.integration_stage_invalid",
-                    "native promotion integration requires retained conversion "
-                    "authority",
+                    "native promotion integration requires retained or drafted "
+                    "conversion authority",
                 )
             graph = result.component_graph_draft
             draft = result.component_definition_draft
