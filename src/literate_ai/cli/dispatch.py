@@ -417,6 +417,14 @@ def _handle(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
 
             return conversion_authority_from_args(args), 0
         if args.project_command == "native-child":
+            if args.native_child_command in {
+                "plan-revise",
+                "apply-revise",
+                "recover-revise",
+            }:
+                from .native_child_revision import native_child_revision_from_args
+
+                return native_child_revision_from_args(args), 0
             from .native_child_addition import native_child_addition_from_args
 
             return native_child_addition_from_args(args), 0
@@ -2249,6 +2257,17 @@ def _parser() -> JsonArgumentParser:
     native_child_recover = native_child_commands.add_parser("recover-add")
     native_child_recover.add_argument("journal")
     native_child_recover.add_argument("--project", default=".")
+    native_child_revise_plan = native_child_commands.add_parser("plan-revise")
+    native_child_revise_plan.add_argument("child")
+    native_child_revise_plan.add_argument("--replacement", required=True)
+    native_child_revise_plan.add_argument("--project", default=".")
+    native_child_revise_apply = native_child_commands.add_parser("apply-revise")
+    native_child_revise_apply.add_argument("plan")
+    native_child_revise_apply.add_argument("--project", default=".")
+    native_child_revise_apply.add_argument("--acknowledge", action="store_true")
+    native_child_revise_recover = native_child_commands.add_parser("recover-revise")
+    native_child_revise_recover.add_argument("journal")
+    native_child_revise_recover.add_argument("--project", default=".")
     project_retained_scope = project_commands.add_parser(
         "retained-scope", help="review and refresh retained source membership"
     )

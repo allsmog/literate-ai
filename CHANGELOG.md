@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Qualified native child revisions have a reviewed plan, acknowledged apply and
+  guarded recovery path. The transaction preserves both child trees, switches
+  one registration and updates its exact qualification evidence while retaining
+  unrelated children. Stale inputs and concurrent publication refuse.
+
 - Qualified retained parents can review, apply and recover addition of an already
   qualified native child through public commands. Plans bind exact current inputs;
   locked metadata updates preserve prior registrations and guarded recovery.

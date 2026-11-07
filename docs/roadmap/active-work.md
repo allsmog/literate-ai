@@ -34127,3 +34127,37 @@ reconciliation and exact-head CI remain open.
   - [ ] Mapped operation and gap behavior, code/test/environment/timeout/nondeterminism counterexamples and incomplete-green refusals pass.
   - [ ] Actual upstream-layout repair export/rebase and accepted merge-back plus rejected proposal retention pass without unearned admission.
   - [ ] Independent source review, full source and platform gates, and noneditable installed/native qualification pass at the exact head.
+
+<a id="native-qualified-revision-001"></a>
+### [ ] NATIVE-QUALIFIED-REVISION-001 - Revise a qualified native child through a reviewed registration transaction
+
+- **GitHub issue:** [#350](https://github.com/jordanhubbard/literate-ai/issues/350)
+- **ADR:** [0065](../decisions/0065-qualified-native-child-revisions.md), explicitly accepted before implementation.
+- **Release target:** 1.4.0
+- **Next action:** Finish quality checks, obtain the separate local-commit approval, and qualify the public operation from a clean non-editable wheel before consumer transfer.
+
+- **Priority:** P1
+- **Owner:** framework core public project application and conversion-authority adapters
+- **Direction:** Follow accepted ADR 0065 to revise an already-qualified logical child without private registry or projection edits.
+- **Conclusion:** Issue #350 records the measured public-command gap. Switch one registration to a separately qualified physical child with the same logical identity, preserve both trees and all unrelated evidence, and retain guarded rollback and recovery. Consumer transfer and full application acceptance remain separate.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Implement canonical typed revision plans and public plan/apply/recover services.
+  - [x] Expose read-only planning, acknowledged application and guarded recovery through CLI commands.
+  - [x] Bind both qualified child trees, admitted receipts, exact definitions, coordinates, registry and parent evidence; preserve both trees and other children.
+  - [x] Document the accepted revision boundary and supported operator flow.
+- **Evidence:**
+  - [x] Pass public API and CLI controls for identities, drift, collisions, unqualified candidates, concurrency, rollback and interrupted recovery.
+  - [x] Pass existing addition, replacement, rebind and conversion-authority regressions through managed checks.
+  - [ ] Prove the real v1-to-v2 operation and actual consumer behavior from a clean non-editable wheel, without manual generated or qualification edits.
+
+The managed Make checks pass all 118 selected tests with zero failures or skips: 60
+addition and revision transaction controls, 11 existing unqualified-replacement
+controls, 18 registered-update controls, 18 Standard rebind controls, seven project
+verification controls and four operator-adoption controls. The transaction tests
+use explicit qualification-reader fixtures and actual filesystem mutations; they
+do not establish clean installed qualification. Both old and replacement child
+trees remain untouched in success, rollback and guarded recovery. Independent
+source qualification and an actual installed v1-to-v2 consumer run remain separate
+acceptance, with the latter still open.

@@ -97,6 +97,11 @@ development (2026-09-10):
 
 ## Current work
 
+NATIVE-QUALIFIED-REVISION-001 extends Goals 1, 4 and 6 with reviewed revisions
+of an existing qualified native child. The operator accepted ADR 0065 for issue
+#350 before implementation. Both qualified trees and unrelated child evidence
+must remain intact; implementation and installed qualification are open.
+
 RELEASE-INTEGRATION-005 executes the user-requested complete outstanding PR/issue
 resolution and 1.4.0 release. The [integration plan](docs/roadmap/1.4-integration.md)
 tracks every initial item, the existing release goals, native qualification and

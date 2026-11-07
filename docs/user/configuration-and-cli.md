@@ -1707,6 +1707,43 @@ Registration grants no source retirement, consumer wiring, package publication
 or generated-code execution. The typed application entry point is
 `NativeChildAdditionService` in `literate_ai.application.native_child_addition`.
 
+To revise an existing qualified child, first accept and independently qualify the
+replacement as the same logical project, then obtain its separate admitted build
+receipt. Retain it in a different direct directory beneath
+`.literate/native-projects`; keep the original child intact. Review the revision
+plan before applying it:
+
+```console
+litai project native-child plan-revise .literate/native-projects/library-v1 --replacement .literate/native-projects/library-v2 --project . > /tmp/native-revision.json
+litai project native-child apply-revise /tmp/native-revision.json --project . --acknowledge
+```
+
+The `literate-ai/qualified-native-child-revision-plan@1` document binds both
+complete child trees, definitions, current qualified projections and receipts,
+the same project identifier and component coordinates, and the current parent
+definition, retained receipt, registry and authority. The replacement must be
+unregistered, qualified and current. Other children and their evidence remain
+unchanged. Changed plans, paths, receipts, definitions or qualification refuse.
+
+Apply holds the parent lifecycle lock, then registry and conversion-authority
+locks. It retains a private journal beneath `.literate/native-child-revisions/`,
+switches the one registration and renews its exact evidence union. Neither child
+tree is changed or removed. Ordinary failures restore prior metadata; ordinary
+verification rejects an interrupted inconsistent state. Use the reported journal
+for guarded recovery:
+
+```console
+litai project native-child recover-revise .literate/native-child-revisions/TRANSACTION/journal.json --project .
+```
+
+Recovery checks both retained trees and the live metadata before any restoration,
+refuses unrelated changes and leaves completed matching transactions untouched.
+The public application entry point is `NativeChildRevisionService` in
+`literate_ai.application.native_child_revision`. Revision does not grant execution,
+source retirement, consumer parity, a new parent receipt or publication. Update
+actual consumers and package bindings separately and rerun complete application
+acceptance. See [ADR 0065](../decisions/0065-qualified-native-child-revisions.md).
+
 For a custom (non-Standard) receipt suite, rebind preserves its suite ID/version,
 required evidence kinds, and minimum test count. An independent harness runner stays
 unchanged; a runner exactly bound to the old Standard driver advances to the new
