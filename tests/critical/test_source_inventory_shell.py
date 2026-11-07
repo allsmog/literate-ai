@@ -35,7 +35,8 @@ class ShellSourceInventoryTests(unittest.TestCase):
     def test_credential_shaped_shell_stays_sensitive(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "deploy.sh"
-            path.write_text(SCRIPT + "API_KEY=credential_literal_12345\n", encoding="utf-8")
+            credential = "API_KEY=credential_literal_12345\n"
+            path.write_text(SCRIPT + credential, encoding="utf-8")
             self.assertEqual(
                 inventory_source(path).entries[0].classification,
                 SourceFileClassification.SENSITIVE,
