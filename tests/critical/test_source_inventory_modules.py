@@ -91,3 +91,17 @@ class SourceInventoryModuleTests(unittest.TestCase):
                         self.assertEqual(
                             inventory_source(source).entries[0].classification, expected
                         )
+
+    def test_large_module_source_remains_large(self):
+        content = b"export const value = 7;\n" * 100000
+        self.assertGreater(len(content), 2 * 1024 * 1024)
+        for extension in (".mjs", ".tsx"):
+            with (
+                self.subTest(extension=extension),
+                tempfile.TemporaryDirectory() as tmp,
+            ):
+                source = Path(tmp) / ("example" + extension)
+                source.write_bytes(content)
+                entry = inventory_source(source).entries[0]
+                self.assertEqual(entry.classification, SourceFileClassification.LARGE)
+                self.assertIn(entry.language, {"javascript", "typescript"})

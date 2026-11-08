@@ -6,9 +6,9 @@ linked roadmap documents. Follow
 direction. Check an item only when its evidence is
 recorded; Git preserves prior states.
 
-**Current development release: 1.4.0.** The latest published release is 1.3.0;
-1.3.1 is a separately governed patch program with explicit goals in
-[`release-goals.json`](release-goals.json). [RELEASE-INTEGRATION-004](#release-integration-004-reconcile-and-execute-the-13-release-backlog)
+**Current development release: 1.4.0.** The latest published release is 1.3.1.
+[`release-goals.json`](release-goals.json) retains the 1.3.1 patch program and
+its explicitly carried-forward 1.4 obligations. [RELEASE-INTEGRATION-004](#release-integration-004-reconcile-and-execute-the-13-release-backlog)
 and the [1.3 integration plan](1.3-integration.md) are retained as 1.3.0 history.
 Existing unchecked acceptance remains open; evidence from an older release does not
 establish readiness for either the patch line or 1.4.0.
@@ -19143,6 +19143,10 @@ slice here before implementation so this file always names the resumable frontie
 
 ### [ ] SEC-360 — Establish production containment
 
+- **Independent native OCI controls passed:** [Sanitized native record](../../verification/native-linux-oci-control-probes.json) retains five actual Linux x86_64 / kernel `5.15.0-1117-azure` probes using pinned runc `1.5.2`, Docker `29.9.3`'s maintained seccomp profile and a digest-pinned Python rootfs. Every fresh operator-owned cgroup passes the actual installed framework's canonical preflight, with its distribution identity checked before and after inspection. Non-root execution, zero effective capabilities, no-new-privileges and seccomp remain enforced. Legitimate input/output succeeds; root/input/cgroup writes and escaping-link writes refuse with read-only-filesystem errors, undeclared egress is unreachable and output fills its 1 MiB tmpfs safely. The process probe stops at 15 children with a kernel limit event; CPU throttling is observed. Whole-group OOM kills both the initializer and its child, and explicit kernel tree-kill terminates the timeout tree with both original host process identities absent. Original kernel objects are revalidated and empty afterward. The failed Docker flag, directory permissions and denied scheduler-query attempts remain retained; the maintained seccomp policy is not relaxed. This verifies these independent runtime controls, not an authenticated framework phase launcher: profile validation, grant consumption, every phase/provider binding, deadline expiry and output-stream budgets, runtime binary admission, connection-loss quarantine, authenticated observations, native VMs and enterprise review remain open.
+
+- **Native installed-framework preflight verified:** The [sanitized native bootstrap record](../../verification/worker-wheelhouse-glibc-native-qualification.json) binds the qualified `97e71a233` framework artifact to the repaired `35948118b` exporter and its actual 38-wheel offline Linux x86_64 closure. Canonical installed-RECORD identities and all four native extension imports pass on CPython 3.12.3 / glibc 2.39. The installed framework inspects the original operator-provisioned kernel cgroup object with finite CPU, memory, swap and process limits, whole-group OOM, empty/unfrozen domain state and placement/tree-kill descriptor access. No process is placed or launched. This establishes native bootstrap and read-only preflight; runtime enforcement, authenticated phase execution, native VM qualification and enterprise security acceptance remain unchecked.
+
 - **Local batch qualification completed:** At clean source
       `54142493b6df0898e6047c99c97b6aad3ae5bcd9`, the complete Python suite
       passed 4,700 tests in 5,350.196 seconds with 30 skips and no failures.
@@ -32188,6 +32192,8 @@ feedback. Canonical curriculum and generated lifecycle admission remain open.
 
 ### [ ] RELEASE-INTEGRATION-005 — Resolve the outstanding tracker backlog and publish 1.4.0
 
+- **2026-11-07 reviewed fix integration:** The combined Go runtime-test, bounded library-import, module-source inventory and Git 2.43 staging repairs are retained at runtime source `308f98efd7ec9a04075f0907415ab49ce0055725`. A fresh managed full run independently accounts for all 2,739 selected cases: 2,621 passed, 118 explicit skips and zero missing outcomes. The canonical noneditable wheel journey passes, and all 15 focused controls pass against the exact installed wheel outside the checkout with no skips. The accepted ADR 0062/0066 main integration changes only documentation and roadmap authority; runtime, tests, Flavors, skills and template bytes remain identical. See [the bounded source/artifact review](../../verification/1.4-fix-integration-review.json). Exact combined-head platform CI, main verification, remaining milestone features/native gates and publication remain open.
+
 - **2026-11-04 current-source forward integration (in progress):** Preserve the exact `731c755` Linux validation, installed-wheel and public-export pass (2,581 passed, 100 declared skips, all 5,235 authored inputs unchanged) separately from its full platform CI result: 26 successful jobs and one failing Windows shard, where five model-probe subtests reject a native Windows path as their declared remote SSH workspace. The compiler fixture now builds; do not relabel that source as fully qualified. Collect the independently reviewed receiver-planning and SDK-metadata batches, nine real-CAS contract controls, source-equivalent current MSVC history, the accepted initial retained-tree HTML slice with six POSIX custody controls, and the reviewed setup-uv action pin. Preserve published v1 schemas and both installed catalog/host and tree journeys. Correct only the two test fixtures' declared remote workspace values to explicit home-relative coordinates; preserve native local paths, the strict worker contract, all cases and all guards. A separate native fixture proof stopped before class setup because its isolated existing-Python environment lacked framework dependencies; retain its setup failure and claim no original/corrected native result. Require final source composition review, supported authority records, fresh whole-source qualification and exact required CI before landing. Original native scale/PACKAGE/VERIFY obligations, worktree completeness/retirement and unaccepted ADR decisions remain open; no release publication is claimed.
 
 - **2026-11-04 Windows fixture correction (in progress):** Retain failed full-source Windows job `126518187197` at `bd535fd` (819 passes, 164 skips, one setup error). The native coding-agent fixture replaces the complete process environment with nonempty MSVC compiler overrides, dropping temporary/system variables; actual `cl` reports D8037. Reuse the production compiler-environment merger, preserve configured temporary/system variables and vendor override precedence, and qualify deterministic nonempty-override controls plus actual Windows compilation before a new full source/matrix run. This is a fixture repair; production compiler policy and genuine missing-tool skips remain unchanged.
@@ -32212,6 +32218,7 @@ feedback. Canonical curriculum and generated lifecycle admission remain open.
   - [x] Review and consolidate PRs 198, 228, 232 and 233; preserve all source, authority and roadmap changes and pass exact integration CI. All four reviews are merged; exact head 228c121c passes CI 41282538479 and lands through PR 237 at 48b1e312. Later adoption fixes land through PR 238 at ad979c6e after exact-head CI 41288058754. These are integration results, not release qualification.
   - [ ] Reproduce or audit each issue, implement its owning fix or reviewed resolution, record decisive evidence, and comment and close only after the resolution lands.
   - [ ] Complete all declared 1.4.0 roadmap goals and native platform qualification using aligned workers; retain prior failed evidence.
+  - [ ] Complete [RELEASE-COLLATERAL-001](#release-collateral-001-refresh-all-user-facing-documentation-and-collateral-for-each-release): refresh every current user-facing document, video, slide and linked asset against the final 1.4 candidate before preparation.
   - [ ] Regenerate, inspect and publish the declared terminal document pair, then plan, prepare, check, publish and verify 1.4.0 through repository commands.
 - **Evidence:**
   - [ ] Require an empty unresolved tracker/review set, current contribution dispositions, complete release goals and reviewed branch/worktree provenance.
@@ -32412,22 +32419,10 @@ PR #228 conflict-resolution evidence: merged main `9550a17743cf983a790dd22de471f
 - **Implementation:**
   - [x] Establish authoritative complete zero-argument public signatures and project a versioned mode through recipe, generated manifest validation, cache and lifecycle identities.
   - [x] Reconcile pinned generation guidance with independently selected overlapping inputs while keeping verifier-owned expected answers private.
-  - [x] Preserve the reviewed `interfaces/callable.json` supporting artifact during ordinary single-Component OpenSpec promotion; refuse ambiguous ownership and unsupported nested Markdown projection.
-  - [ ] Prove fresh installed promotion binds that exact declaration and establishes singleton coverage before generation, retaining the unchanged independent oracle and ordinary coverage refusals.
   - [ ] Complete the fresh installed registered-child journey and original refusal/recovery controls with its unchanged independent oracle.
 - **Evidence:**
   - [ ] Pass singleton positive, invented/duplicate/missing input, false exemption, stale authority and private-oracle controls plus unchanged v1/default-domain coverage.
   - [ ] Pass full regression, installed-wheel qualification and exact review/main CI before claiming issue 132 or dependent issue 48 complete.
-
-- **Promotion development evidence:** The ordinary signed acceptance control retains
-  a reviewed zero-argument declaration in its accepted set but drops it from the
-  child and leaves its lock unchanged before this correction. The corrected public
-  CLI fixture materializes the exact declaration, binds its digest in the child
-  lock and keeps retained implementation files outside the child. Five projection
-  controls, 16 singleton/default-coverage controls, 13 surrounding promotion tests,
-  that CLI fixture and seven project-verification controls pass, with no failures
-  or skips. The clean committed wheel, actual two-clean-run qualification and
-  upstream review/CI remain open. No generated schema or release receipt is claimed.
 
 ### [x] RUST-ADOPTION-DETECT-001 — Detect Cargo workspaces ahead of incidental helper languages
 
@@ -33625,6 +33620,9 @@ independent review and the complete combined gate from test one.
 
 ### [ ] RETAINED-TREE-EXPLORER-001 — Publish hierarchical retained-tree HTML information cards
 
+- **Publication journal work (in progress):** Before initial output mutation, retain a private, bounded, fsynced transaction intent outside source/output. Append exclusive hash-linked records for the actual live output reservation, staged generation and verified index commit; charge fixed journal memory/storage reservations through the existing output budget owner. Preserve partial records, interrupted attempts and foreign changes. Journal contents remain descriptive and cannot reopen an output writer, admit source, authorize cleanup or substitute for the separately reviewed recovery plan. Complete interruption recovery, rerender, per-unit joins and installed/native/browser scale acceptance remain required and open.
+- **Journal development verification:** Fourteen real POSIX controls pass, covering abrupt child-process exit, a partial record write, equal-byte foreign inode substitution, foreign membership, expired writer context, intent before first output mutation, the complete phase chain and pre-mutation storage-budget refusal, alongside the six existing publication race controls. The fresh complete Linux development run selects 2,747 cases: 2,629 pass, 118 declared skips and zero failures. Independent event counts show 595 completed groups, 2,718 case starts, 2,629 successes, 89 case skips and eight fixture-skip events accounting for 29 selected cases. Lint, formatting, 181 rendered documentation diagrams and driver checks pass. This working-tree development evidence is not exact-commit/native/installed release qualification or approval of recovery behavior.
+
 - **Initial publication race-control intent:** Add maintained real POSIX source/CAS/output fault controls for actual recapture edits, equal-byte foreign index substitution before and after commit, generation and excluded-namespace tampering, and a partial-CAS output-budget refusal. Use only explicit framework-measurement stand-ins and narrow ordering hooks; never manufacture installed or native SDK admission. Production code remains unchanged unless a concrete defect is established. Preserve failed provisional evidence and foreign bytes, and keep freshness/rerender/recovery/unit/browser/native-scale/full-ADR qualification open.
 - **Initial publication race-control outcome:** Six maintained controls pass with zero skips through the managed Python gate on real POSIX source, CAS and output files. An actual source recapture edit refuses without an index; equal-byte foreign index substitution before commit preserves the foreign inode/bytes, while substitution after commit refuses a valid-success result. Generation mutation after the owned move and a foreign member in the excluded namespace refuse without an index or namespace adoption. A tight output budget derived from a successful owned baseline leaves verifiable partial CAS evidence and the original owner marker without publishing an index. Only framework measurement and narrow fault-ordering boundaries are stand-ins; no installed-distribution, native SDK, browser, scale or complete-ADR admission is manufactured. Production files remain unchanged; combined-source and remaining goal qualifications stay open.
 
@@ -33687,135 +33685,6 @@ independent review and the complete combined gate from test one.
   - [ ] Real live-worker action/stage/state and network/disk/cpu/memory observations with declared unsupported values, not invented measurements.
   - [ ] Authentication, secret/command/environment/path redaction, no-listener/no-job-mutation, volume/coalescing/cancellation controls, independent review and integrated native qualification.
 
-### [x] CODEX-READ-001: Permit bounded reading of the generation request
-
-- **Priority:** P1
-- **Owner:** coding CLI generation transport
-- **Direction:** Repair the observed Codex empty-generation failure caused by contradictory shell guidance.
-- **Conclusion:** Allow read-only shell access only to the framework request file; retain source-only writes and all lifecycle checks. Upstream issue filing awaits explicit outbound approval.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Clarify request bootstrap access without authorizing general shell execution.
-- **Evidence:**
-  - [x] 23 focused coding CLI tests pass; source generation and verifier-owned admission pass from the exact approved local wheel. Publication remains unauthorized.
-
-### [x] RETAINED-SCOPE-CHILDREN-001 - Refresh retained wrapper scope beside qualified native children
-
-- **Priority:** P0
-- **Owner:** retained scope refresh and conversion authority adapters, Goals 1 and 4
-- **Direction:** Allow reviewed retained wrapper membership updates while independently registered native children remain qualified.
-- **Conclusion:** Qualification of separate native children must not imply authority transfer for an unpromoted retained wrapper. Permit only a disjoint retained wrapper with exact current child evidence; preserve all native authority and require a new complete retained receipt.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Bind current registry and verified child projections into the refresh plan; reject root promotions, overlap and stale or unqualified child authority; revalidate under the existing transaction and preserve history.
-- **Evidence:**
-  - [x] Existing scope refresh tests plus qualified-child controls, rollback and drift refusal; isolated installed-wheel planning against a real adopted project; complete new retained consumer receipt.
-- **Evidence:** The focused scope suite passes 11 tests, and retained receipt, readmission and remote-harness regression passes 21 tests. A guarded plan and apply preserve four qualified child projections while refreshing 11 added and four removed paths. A clean-checkout wheel from commit `4548261e3c2293c75b22dcfafd831821c80179a6` has SHA-256 `6bc6c124985ca80e85ee375142266579f8d08cff6ec409eeae6f554a560b1d12`; its separate non-editable installation reports that origin and plans no further scope changes against the real hybrid project. The complete sealed build, test and package workflow passes, with retained receipt `sha256:2b883528374f56bef8faf25ed5f629fb2f6ba641754c8cc17ef5fb6b4547a9ba`. Its compact application-suite count is 937 passed and zero failed; the same complete command also passes 23 shell checks, 183 OAuth checks, 62 live agent checks and 600 agent tests. Publication remains subject to operator authorization.
-
-### [x] SOURCE-MODULE-EXTENSIONS-001 - Recognize JavaScript and TypeScript module source extensions
-
-- **Priority:** P1
-- **Owner:** source inventory and static derivation, Goals 1 and 4
-- **Direction:** Continue source conversion on supported JavaScript and TypeScript projects containing explicit module and JSX files.
-- **Conclusion:** The source inventory classifies .mts as other because its language suffix map omits standard JavaScript and TypeScript module and JSX extensions. Recognize the complete extension family while preserving secret, binary, generated and test classifications. Keep source names and bytes unchanged; prove actual static derivation without executing source.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Add module and JSX source-language aliases and matching test/minified classification; retain all existing exclusion precedence.
-  - [x] Document the supported source extensions and keep a portable downstream issue draft pending explicit filing authorization.
-- **Evidence:**
-  - [x] Regression tests prove inert static derivation for each added extension, test classification, and unchanged sensitive/binary/generated exclusions.
-  - [x] An isolated non-editable wheel performs public static derivation on an unchanged module-extension fixture.
-- **Evidence:** Three focused tests cover all eight JavaScript/TypeScript extensions, 24 test/minified filename controls and 24 sensitive/binary/generated exclusion controls. The focused module tests plus existing credential, conversion and public CLI regression suites pass 14 tests. The clean wheel from commit `05d07fe60b2d4acbb740b059fc131c7bc160375d` has SHA-256 `24389b995bea8fcfaaa73d7d3db567f06eb02b86a03d7a6cb41b953b475eeafb`. Its independent non-editable installation classifies an unchanged `.mts` fixture as TypeScript and performs public static derivation without source execution. No origin pin is overridden.
-
-### [x] LIBRARY-IMPORT-COMMAND-001 - Keep large library import checks within the command bound
-
-- **Priority:** P1
-- **Owner:** Standard command projection for library import verification
-- **Direction:** Qualifying a valid library with 51 capabilities fails before generation because repeated interface identities inflate the compressed verifier command beyond 4096 characters.
-- **Conclusion:** Keep the complete typed import surface in locked authority. Project every capability, module and symbol plus the full surface identity into the verifier command. Preserve the existing command bound and all import checks. Tracker search found no matching issue; the sanitized issue draft stays downstream until external filing is authorized.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Project the complete verifier inputs without repeated per-capability authority metadata.
-  - [x] Keep the original full surface identity in the command so interface-only changes invalidate execution.
-- **Evidence:**
-  - [x] A 51-capability fixture exceeds the old bound and fits the projected command with every import preserved.
-  - [x] Successful imports, missing exports, undeclared exports, dependency declarations and namespace escapes retain their checks.
-  - [x] Interface-only changes alter command identity; genuinely oversized import mappings still fail closed.
-  - [x] Focused projection and library lifecycle tests plus lint and formatting pass.
-  - [x] An isolated non-editable wheel proves projection of the unchanged 51-capability fixture.
-- **Evidence:** Four new regression tests and four existing Standard command projection tests pass, including real Python, JavaScript and Rust import verification. Local command and build-authority regression passes seven tests with one existing macOS persistent-service skip. Lint and formatting pass. The clean wheel from commit `05d07fe60b2d4acbb740b059fc131c7bc160375d`, SHA-256 `24389b995bea8fcfaaa73d7d3db567f06eb02b86a03d7a6cb41b953b475eeafb`, is installed independently and non-editably. It projects the unchanged 51-capability surface from 4,440 to 1,396 characters without changing its identity or any import mapping. Existing consumer pins remain unchanged.
-
-<a id="native-qualified-addition-001"></a>
-### [ ] NATIVE-QUALIFIED-ADDITION-001 - Add qualified native children through reviewed public transactions
-
-- **GitHub issue:** [#315](https://github.com/jordanhubbard/literate-ai/issues/315)
-- **ADR:** [0064](../decisions/0064-qualified-native-child-addition.md), explicitly accepted before implementation.
-
-- **Priority:** P1
-- **Owner:** public project application and conversion-authority adapters
-- **Direction:** Replace consumer private registry writes with the accepted ADR 0064 plan, apply and recovery path.
-- **Conclusion:** The operator accepted this decision as ADR 0060 after issue #315 was filed. Bind exact current receipt, authority, registry and child qualification in a read-only plan; apply under metadata locks and preserve guarded recovery. Keep source retirement and execution separately owned.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Implement canonical reviewed addition plans and public typed application operations.
-  - [x] Expose read-only planning, acknowledged application and guarded interrupted-transaction recovery through the CLI.
-  - [x] Require ordinary verification to recheck qualified conversion evidence and reject malformed or foreign-project conversion records.
-  - [x] Replace the downstream private helper only after the clean installed public path is verified.
-- **Evidence:**
-  - [ ] Portable two-library fixtures and refusal, concurrency, rollback and recovery controls pass through public APIs and CLI.
-  - [ ] Managed regressions, lint and formatting pass; a clean non-editable wheel proves unchanged existing behavior and the new supported registration path.
-
-The managed transaction suite passes 25 controls with explicit qualification-reader
-fixtures. All 25 also pass through the managed Make runner using the installed
-non-editable package from approved commit `46c325cf`. The real public CLI registers
-a fifteenth qualified child, retains all 14 prior registrations and 421 protected
-files, preserves bytes/modes/mtimes during planning and completed recovery, and
-passes ordinary parent verification. The downstream private transaction is
-retired. The controls cover exact evidence unions, concurrent plans, changed receipt and
-child authority, failure after either metadata write, journal completion failure,
-and recovery refusal before writes when live qualification changes. Rehashed
-recovery plans cannot replace the required prior-plus-child evidence union. A clean
-wheel of the current-main reconciliation and installed interruption/recovery
-acceptance remain pending. The reconciled source passes 86 focused managed regressions,
-including all 25 transaction controls, three isolation controls, two verified-wheel
-tests, and existing registry, replacement, rebind and retained harness coverage.
-Both fresh tiny libraries now pass normal signed qualification and admitted
-builds in the required parent stage order. The actual process interruption after
-registry publication exposed an unchecked conversion claim in ordinary verify.
-Its new authority check rejects that exact interrupted fixture while the real
-fifteen-child consumer stays green. All seven managed verify controls pass,
-including canonical but unearned qualification, foreign or malformed records,
-valid earlier-stage records, and no-write assertions. Clean installed-wheel
-interruption/recovery acceptance remains pending.
-
-<a id="native-cache-transport-scope-001"></a>
-### [ ] NATIVE-CACHE-TRANSPORT-SCOPE-001 - State and verify the local retained cache boundary
-
-- **GitHub issue:** [#307](https://github.com/jordanhubbard/literate-ai/issues/307)
-- **Priority:** P1
-- **Owner:** retained harness adapter and public execution documentation
-- **Direction:** Document and test the existing local cache transport patch without claiming a portable package delivery protocol.
-- **Conclusion:** Registered children's committed cache bytes are bound to the local lifecycle request and copied into its disposable workspace. Remote execution explicitly refuses these inputs before dispatch. Preserve that boundary while upstream package delivery remains open.
-- **Depends on:** none
-- **Completion prerequisites:** none
-- **Implementation:**
-  - [x] Explain local cache copying and remote refusal in the CLI guide, cache guide, changelog and design traceability.
-- **Evidence:**
-  - [x] Local execution observes the exact captured bytes and a changed cache changes its lifecycle request identity.
-  - [x] Remote selection with native cache inputs refuses before dispatch or candidate publication.
-  - [x] Focused retained harness regressions, lint and formatting pass.
-
-The retained receipt suite passes nine tests, including both new public CLI
-controls with an actual registered cache tree. Related registry, replacement,
-rebind, generic projection and remote harness regressions pass 44 managed tests.
-The project authority gate passes after the documentation review. Its broad
-framework test receipt is stale; these focused regressions do not replace it.
-
 ### [x] WORKER-GPU-MEMORY-002 — Qualify permission-text NVIDIA memory observations after command-worker integration
 
 - **Release target:** 1.4.0
@@ -33836,16 +33705,16 @@ framework test receipt is stale; these focused regressions do not replace it.
 
 - **2026-11-04 combined current-main/guard integration preparation (pending review):** Preserve the separately qualified HCI `f146a2d69da2cc3d6e96194ee8a98c6b7f905f69` and GPI `d597f77ad0bba0ab5aa2e18680da1c726bdd0bf0` commits and evidence while composing current main `70cf6b20a152953fa01764086ef90b12e3147d94` through normal history. Keep the complete GPI production guard source, HCI installed freshness journey, upstream real-CAS SDK batch and owned HTML publication-race controls, workflow pin renewal and blocker-composition verification record. The new test/document/workflow union still requires independent review, canonical authority checks, one fresh required full gate and exact-head platform checks. The running root Python/Git-readiness branch and its 45-goal union will be added only after its own gate and commit; neither its source nor the immutable P0 GPI artifact is changed here. Prior qualification does not qualify this combined union, native PACKAGE, browser behavior or complete issue scope.
 
-### [ ] PYTHON-LIBRARY-IMPORT-001 — Preserve isolated standard-library imports in Python library qualification
+### [x] PYTHON-LIBRARY-IMPORT-001 — Preserve isolated standard-library imports in Python library qualification
 
 - **Release target:** 1.4.0
 - **GitHub issue:** [#306](https://github.com/jordanhubbard/literate-ai/issues/306)
-- **Next action:** Run full source and fresh installed/public qualification for the independently reviewed import-path repair; the four focused import/refusal controls pass.
+- **Next action:** Close issue #306 after this roadmap change merges. Keep broader draft PR #313 separate.
 
 - **Priority:** high
 - **Owner:** framework core / Python library import driver
 - **Direction:** Include newly filed GitHub issue #306 in 1.4 and make ordinary Python standard-library imports work during exact-artifact execution qualification.
-- **Conclusion:** The isolated import driver replaces its entire search path, hiding the standard library. Prepend the sealed export source while retaining Python isolation and the exact artifact module-origin check. This is an ordinary correctness repair, with no receipt-policy or import-origin exemption.
+- **Conclusion:** Main commit `328261aac` retains the isolated `-I -S -B` launch and prepends the sealed export source, preserving standard-library imports and the exact artifact module-origin check. The exact source tree in PR #318 equals post-merge main `be1bf57b8`; its noneditable installed wheel passed the real Python library command journey. Post-merge main CI run `42124478195` passed at `be1bf57b8`.
 - **Depends on:** none
 - **Completion prerequisites:** none
 - **Implementation:**
@@ -33853,11 +33722,12 @@ framework test receipt is stale; these focused regressions do not replace it.
   - [x] Retain interpreter standard-library paths when importing the exact sealed Python library.
   - [x] Exercise a real Python library importing dataclasses, typing and __future__, and retain ambient-package and module-origin refusal coverage.
 - **Evidence:**
-  - [ ] Real isolated native Python build/test/import journey passes with standard-library dependencies.
-  - [ ] Foreign capability origins and ambient third-party-only imports remain refused.
-  - [ ] Independent source review, canonical pins, full python-check and exact installed qualification pass before completion.
+  - [x] Real isolated native Python build/test/import journey passes with standard-library dependencies.
+  - [x] Foreign capability origins and ambient third-party-only imports remain refused.
+  - [x] Independent source review, canonical pins, full python-check and exact installed qualification passed through PRs #308 and #318.
+  - [x] Verify post-merge main CI at `be1bf57b8` (run `42124478195`) before closing issue #306.
 
-- **Source development evidence:** The real generated Python library first reproduced the `dataclasses` import failure. Prepending source alone then exposed an ambient-dependency admission regression in the legacy command path. The corrected legacy EXECUTE projection uses isolated, no-site, no-bytecode startup and retains the interpreter standard-library paths; managed Python profiles keep their existing launcher. All four Standard command-projection cases pass, including real build/test/import, ambient-only dependency refusal, foreign module-origin refusal and missing-symbol refusal (report SHA-256 `a4d0fed1032fcd11c811c4d30813a3a2c957a41579ed0e8a16afe07e099aea4d`). Independent source review passed. Full source and installed/public qualification remain open; this focused result does not close #306.
+- **Source development evidence:** The real generated Python library first reproduced the `dataclasses` import failure. Prepending source alone then exposed an ambient-dependency admission regression in the legacy command path. The corrected legacy EXECUTE projection uses isolated, no-site, no-bytecode startup and retains the interpreter standard-library paths; managed Python profiles keep their existing launcher. All four Standard command-projection cases pass, including real build/test/import, ambient-only dependency refusal, foreign module-origin refusal and missing-symbol refusal (report SHA-256 `a4d0fed1032fcd11c811c4d30813a3a2c957a41579ed0e8a16afe07e099aea4d`). Independent source review passed. The subsequent noneditable PR #318 wheel from the same source tree as current main passed this journey outside the checkout; PR #318's exact-head full CI passed at `9a73a680`. Post-merge main CI run `42124478195` passed at `be1bf57b8`.
 
 ### [ ] GIT-TOOL-CAPABILITY-001 — Align Git tool readiness with required checkout capabilities
 
@@ -33880,7 +33750,8 @@ framework test receipt is stale; these focused regressions do not replace it.
   - [ ] Supported tools pass genuine checkout/LFS JSON and foreign-ownership controls.
   - [ ] Independent source review, full python-check and installed worker readiness pass.
 
-- **Baseline source progress:** Both canonical and packaged-template SBOMs now require Git >=2.47,<3 and Git LFS >=3.2,<4; independent source review passed. Existing host-install controls pass all nine cases, and the unchanged native scoped-ownership module passes all twelve cases with Git 2.54. The exact minimum Git version is supported by upstream source inspection, not native qualification of 2.47. Canonical bootstrap composes and enforces these version constraints. The authored worker repair reads the same packaged baseline, checks the exact selected Git/LFS executables when repository tools are declared, and reports incompatible versions with a declared-install remedy. Public CLI controls pass all six tests, including real version-probe processes and a declared repair followed by fresh inspection. The version responders prove the probe protocol, not native qualification of the displayed tool versions. Independent review of this new alignment integration, complete source and installed-worker proof remain open; previous installed versions still perform only presence checks.
+- **Baseline source progress:** Both canonical and packaged-template SBOMs now require Git >=2.43,<3 and Git LFS >=3.2,<4. Native Git 2.43 passes the foreign-owned framework staging control with a disposable config carrying exact source and `.git` trust into the child Git process. An unrelated source remains refused and operator config remains unchanged. Aligned FreeBSD Git 2.56 and Git LFS 3.8.1 pass genuine checkout and LFS JSON controls. Canonical bootstrap enforces these constraints; the authored worker repair checks the selected executables and reports incompatible versions with a declared-install remedy. Host-install and public CLI controls pass. Independent review, full python-check, and installed-worker readiness proof remain open; previous installed versions still perform only presence checks.
+- **Direct-checkout progress:** The checkout skill now probes `git lfs ls-files --json` in an empty local repository before adding a remote or fetching. A real subprocess wrapper that returns the unsupported-flag error is refused with an alignment instruction before source acquisition; the existing exact object/size and unresolved-pointer checks remain in place. Four local Git/LFS controls pass. After `litai worker align --all`, the aligned `mudflap-freebsd` worker reported Git 2.56.0 and Git LFS 3.8.1 and passed the same four native checkout controls plus the exact command-scoped foreign-ownership case. Local Git 2.43.0 fails that foreign-ownership case, confirming the selected tool matters. Changed-skill admission, documentation and lint checks pass. Independent review, complete source gates and installed-wheel worker proof remain open.
 
 ### [ ] RETAINED-PYTHON-BRIDGE-001 — Consume qualified native library children from retained Python projects
 
@@ -34015,95 +33886,79 @@ implementation, policy weakening, qualification or issue closure is recorded her
   - [ ] Preserve exact 426 CI failure, raw logs, artifact hashes and all remaining original matrix outcomes.
   - [ ] Independent source review, meaningful actual install/reopen regression and fresh exact-head full qualification must pass before completion.
 
-### [ ] LIBRARY-EXPORT-ORDER-001 — Verify JavaScript export maps without JSON key-order dependence
+### [x] LIBRARY-EXPORT-ORDER-001 — Verify JavaScript export maps without JSON key-order dependence
 
 - **Priority:** P1
 - **Release target:** 1.4.0
 - **GitHub issue:** [#314](https://github.com/jordanhubbard/literate-ai/issues/314)
 - **Owner:** Standard JavaScript library import verifier; PROJECT Goals 1 and 4
 - **Direction:** Accept an exact declared export map regardless of JSON insertion order while rejecting every missing, additional or incorrect mapping.
-- **Conclusion:** Required target and symbol checks already exist; compare exact own-key membership after them, independent of key order. Issue #314 and draft PR #313 contain a candidate, but full integration evidence remains open.
+- **Conclusion:** PR #318 merged the exact own-key comparison at main commit `be1bf57b8`. Required target, symbol, import, dependency and path-custody checks remain in place. Exact-head review CI, installed-wheel controls and post-merge main CI run `42124478195` passed.
 - **Depends on:** none
 - **Completion prerequisites:** none
-- **Next action:** Reconcile the candidate in draft PR #313 with current main, complete independent review and the installed/full evidence, then close the bounded issue only with the required authority.
+- **Next action:** Close issue #314 after this roadmap change merges. Keep draft PR #313 separate from this bounded fix.
 - **Implementation:**
-  - [ ] Integrate and independently review the exact own-key comparison and retain all import, dependency and path-custody refusals.
+  - [x] Integrate and independently review the exact own-key comparison and retain all import, dependency and path-custody refusals in PR #318.
 - **Evidence:**
-  - [ ] Run managed real-import controls, installed non-editable wheel qualification, full required regression and exact-head review/main CI before closing issue #314.
+  - [x] Run managed real-import controls, installed non-editable wheel qualification, full required regression and exact-head PR CI at `9a73a680` (run `42115849519`).
+  - [x] Verify post-merge main CI at `be1bf57b8` (run `42124478195`) before closing issue #314.
 
-**Contribution checkpoint:** Approved commit `d4bd72bf` passes four managed
-real-import controls and the existing projection regressions. The non-editable
-wheel SHA-256 is `0a803747dd0cd81d00a413d3df9a57a44aa42e3192c8a94300736790c03845de`.
-The unchanged wording profile passes both clean builds and all 4,598,945
-observations, reaching projection
-`sha256:ab1d16b729691c61c2ecbd803aff8636be0801be6747c07275a7de3d75232560`.
-Required targets and symbols remain exact, including refusal of an inherited
-missing key replaced by an undeclared key. Current-main integration and the
-remaining review/CI requirements above stay open.
-
-### [ ] LIBRARY-IMPORT-ISOLATION-001 — Isolate generic Python library imports from ambient dependencies
+### [x] LIBRARY-IMPORT-ISOLATION-001 — Isolate generic Python library imports from ambient dependencies
 
 - **Priority:** P1
 - **Release target:** 1.4.0
 - **GitHub issue:** [#316](https://github.com/jordanhubbard/literate-ai/issues/316)
 - **Owner:** Standard generic Python library verifier; PROJECT Goals 1 and 4
 - **Direction:** Reject undeclared Python modules supplied only by ambient PYTHONPATH while preserving standard-library and declared artifact imports.
-- **Conclusion:** Main commit 328261aac already launches the generic Python library verifier with `-I -S -B`; its public command-projection regression rejects an ambient-only dependency while retaining standard-library imports and artifact-origin checks. Reconcile older draft PR #313 without regressing this boundary; keep installed-wheel runtime qualification separate.
+- **Conclusion:** PR #308 merged the generic Python library verifier's `-I -S -B` launch at main commit `328261aac`, with a public command-projection regression for an ambient-only dependency, standard-library import and artifact-origin check. The noneditable wheel installed from PR #318's exact source tree passed the same real command journey; PR #318's tree equals post-merge main `be1bf57b8`. Post-merge main CI run `42124478195` passed at `be1bf57b8`.
 - **Depends on:** none
 - **Completion prerequisites:** none
-- **Next action:** Preserve main's isolated generic verifier and ambient-module regression while reconciling draft PR #313, then qualify the integrated result.
+- **Next action:** Close issue #316 after this roadmap change merges. Reconcile broader draft PR #313 separately without regressing this boundary.
 - **Implementation:**
   - [x] Isolate generic Python verifier startup and add ambient-dependency refusal in main at 328261aac.
-  - [x] Preserve the isolated launch, standard-library positive, artifact-origin check and ambient-dependency refusal in the integrated candidate.
+  - [x] Preserve the isolated launch, standard-library positive, artifact-origin check and ambient-dependency refusal through PR #318's merge at `be1bf57b8`.
 - **Evidence:**
-  - [ ] Run managed positive and negative controls, installed wheel and supported-platform qualification, independent review, full required regression and exact-head CI.
+  - [x] Run managed positive and negative controls, independent integration review, noneditable installed-wheel journey and exact-tree PR CI through PRs #308 and #318.
+  - [x] Verify post-merge main CI at `be1bf57b8` (run `42124478195`) before closing issue #316.
 
-**Contribution checkpoint:** The older contribution branch's controlled import
-accepted ambient PYTHONPATH before isolated startup. Approved local commit
-`46c325cf` passes three added controls for ambient imports, standard-library
-availability and startup shadowing, plus two actual verified-wheel runtime tests.
-Those five tests pass again from its non-editable wheel, SHA-256
-`b1da4eeb267a9d67d917dd1db3a24d2ae57ea7d384cb872d779c7eee5d47f340`.
-Current-main reconciliation retains the existing `python_profile is None` guard
-and `-I -S -B` launch. The separate verified-wheel dependency closure remains
-owned by its existing driver. All three added isolation controls, four standard
-command-projection controls and two actual verified-wheel runtime tests pass
-again against the reconciled source. Approved merge commit `4d672137` now passes
-all nine of these controls through its clean non-editable wheel, SHA-256
-`c275286c5e35093dcefe9a207ef49f69413d1bb3ca880338acd622ff9d2cd15d`.
-All 93 focused installed regressions pass. Supported-platform qualification,
-independent review, full required regression and exact-head CI remain pending.
+### [ ] LIBRARY-IMPORT-COMMAND-001 — Fit complete library import authority in bounded verifier commands
 
-### [ ] QUALIFIED-CHILD-ADD-001 — Add a qualified native child to a qualified retained parent atomically
+- **Priority:** P1
+- **Release target:** 1.4.0
+- **GitHub issue:** [#330](https://github.com/jordanhubbard/literate-ai/issues/330)
+- **Owner:** Standard library command projection; PROJECT Goals 1 and 4
+- **Direction:** Project every declared library import mapping and the complete typed surface identity within the finite verifier command, without dropping a capability or weakening import, export, dependency, path or artifact custody checks.
+- **Conclusion:** Current main refuses a valid 51-capability library before checking its package because the repeated typed authority records exceed the 4,096-character command limit. Draft PR #313 has a candidate but conflicts with newer main code; extract only this bounded repair.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Next action:** Qualify the focused projection through a noneditable installed wheel, then obtain independent review and exact-head platform CI before merging and closing #330.
+- **Implementation:**
+  - [x] Retain every capability, module and symbol mapping and bind the complete surface identity; preserve the finite oversized refusal.
+  - [x] Preserve newer main's Python import isolation, Rust harness compiler authority and other lifecycle guards while extracting only the projection from PR #313.
+- **Evidence:**
+  - [x] Reproduce current-main failure and pass complete 51-capability, interface-change and oversized controls.
+  - [ ] Run real import positive and negative checks, managed regressions and a noneditable installed-wheel journey.
+  - [ ] Obtain independent source review, canonical pins and full exact-head supported-platform CI.
+
+- **Source development evidence:** The 51-capability fixture on main `dbe7eeb4b` raises `standard_command.library_import_surface_oversized` before package verification. The focused projection passes four managed import-command controls, including a real 51-module JavaScript package with missing, wrong, extra, dependency and escaped-target refusals; five existing Standard command-projection smoke controls pass across Python, JavaScript and Rust. Ruff lint and format checks pass. The reviewed lifecycle-driver pin is `sha256:2e4a0c67e49629db37789e746f96d8443c062d0450fa6a502df2ad74a3e01e1c`. This is an import-command projection failure, not evidence that the library's own tests fail.
+
+<a id="native-qualified-addition-001"></a>
+<a id="qualified-child-add-001-add-a-qualified-native-child-to-a-qualified-retained-parent-atomically"></a>
+### [ ] QUALIFIED-CHILD-ADD-001 - Add a qualified native child to a qualified retained parent atomically
 
 - **Priority:** P1
 - **Release target:** 1.4.0
 - **GitHub issue:** [#315](https://github.com/jordanhubbard/literate-ai/issues/315)
 - **Owner:** Native child registration and conversion authority; PROJECT Goals 1, 4 and 6
 - **Direction:** Provide a public reviewed plan/apply transaction that adds an independently qualified child while retaining the parent receipt and existing children.
-- **Conclusion:** Issue #315 is distinct from updates to a registered child and Python library delivery. The operator accepted the exact plan/apply/recovery design before implementation. [ADR 0064](../decisions/0064-qualified-native-child-addition.md) preserves that decision, originally accepted locally as ADR 0060, and the contribution implements the public transaction.
-- **Depends on:** ADR 0064 accepted design under ADR 0006
+- **Conclusion:** Issue #315 is distinct from updates to a registered child and from Python library delivery. Accepted ADR 0062 defines a public recoverable registry and qualification-evidence transaction. The directing user explicitly accepted the design on 2026-11-07; implementation and qualification remain open.
+- **Depends on:** Accepted [ADR 0062](../decisions/0062-qualified-native-child-addition.md); reuse current qualification and transaction authority
 - **Completion prerequisites:** none
-- **Next action:** Coordinate accepted ADR 0064 with the separately proposed ADR 0062 in PR #319, then obtain independent review and remaining integrated-head qualification. Installed two-library interruption/recovery acceptance passes at approved merge commit 4d672137; full required regression and exact-head CI remain release requirements.
+- **Next action:** Implement the accepted public addition transaction with current qualification readers, exact stale-plan refusal and recoverable registry/evidence publication.
 - **Implementation:**
-  - [x] Obtain operator design acceptance and implement the public typed plan/apply/recovery transaction.
-  - [ ] Complete integrated-head qualification and independent review.
+  - [ ] Propose and obtain design acceptance, then implement a public plan/apply transaction with current authority, registry, child and receipt binding plus recovery.
 - **Evidence:**
   - [ ] Qualify two dependency-free children through public APIs; reject unqualified, stale, changed, unsafe and duplicate inputs; verify rollback, installed/native behavior, independent review and exact-head CI.
-
-**Installed integration checkpoint:** The clean non-editable wheel of approved
-merge commit `4d672137` passes all 93 focused managed regressions. A real public-CLI
-fixture qualifies and separately admits two fresh libraries, plans without changing
-file bytes, modes or times, rejects stale receipts and missing acknowledgement,
-then exits the process after registry publication. Ordinary verification rejects
-the exact stale qualification. Public recovery restores prior metadata; reapply
-preserves the first library and exact two-child evidence union. All 525 protected
-child files remain unchanged. Duplicate addition refuses and completed recovery
-changes no metadata. A prior wheel's prepared journal also recovers compatibly.
-The wheel SHA-256 is
-`c275286c5e35093dcefe9a207ef49f69413d1bb3ca880338acd622ff9d2cd15d`.
-Independent review, broader platform and full required regression, proposed ADR
-reconciliation and exact-head CI remain open.
 
 ### [ ] SHADOW-001 — Continuously qualify upstream branches through a separate shadow repository
 
@@ -34127,6 +33982,173 @@ reconciliation and exact-head CI remain open.
   - [ ] Mapped operation and gap behavior, code/test/environment/timeout/nondeterminism counterexamples and incomplete-green refusals pass.
   - [ ] Actual upstream-layout repair export/rebase and accepted merge-back plus rejected proposal retention pass without unearned admission.
   - [ ] Independent source review, full source and platform gates, and noneditable installed/native qualification pass at the exact head.
+
+### [ ] GO-001 — Restore buildable Go runtime tests and source custody
+
+- **Native macOS fixture correction (2026-11-07):** The exact `c072d74a3` full source run on macOS ARM64/Python 3.14.7 stopped after 744 started cases (35 reported skips) at the direct Go graph control. Its fixture supplied a raw temporary path while Go reported the canonical `/private/var` path, so the unchanged source-boundary guard correctly refused. Canonicalize the fixture root before creating its source and caches. Preserve the failed native run and exact unchanged 5,286-input source snapshot; the corrected seven-case native replay passed against the frozen production source with the original snapshot unchanged. Renewed full current-head qualification remains required before closure.
+
+- **Priority:** P1
+- **Release target:** 1.4.0
+- **GitHub issue:** [#324](https://github.com/jordanhubbard/literate-ai/issues/324)
+- **Review:** [#325](https://github.com/jordanhubbard/literate-ai/pull/325)
+- **Owner:** Go Flavor, generation prompt, Standard commands, and guarded Go builder
+- **Direction:** Generate a normal compiled Go runtime-test source file and keep its real assertions in the native artifact.
+- **Conclusion:** The required _test.go file cannot be imported by go build; make the local test package buildable and verify its actual compiler consumption without external packages or dependency downloads.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Align the Go specification, skill, command profile, generation prompt, template, and copied lab projects on one buildable runtime-test file.
+  - [x] Verify the guarded builder compiles and records the declared local test package under offline Go toolchain settings, refusing hidden or unsafe source.
+  - [x] Exercise the locked Standard command path and the ordinary Make build-system path.
+- **Evidence:**
+  - [x] Retain the real _test.go compiler failure, positive native build, mutation failures, missing or hidden source refusal, and external-package refusal.
+  - [x] Validate source indexing, compiler-consumed files, artifact provenance, project/template authority, and noneditable installed-wheel execution after source removal.
+  - [ ] Pass exact-head platform CI and independent source review before merging and closing issue #324.
+
+  PR #325 at `aed471d4` carries the implementation. Seven repository-managed
+  compiler controls and the locked Standard command journey pass; eight Go
+  controls pass against a noneditable installed wheel outside the checkout.
+  Root and six copied lab projects validate, and `make wheel-check` passed from
+  clean `aed471d4` with Python 3.12 selected consistently. The exact-head
+  hosted matrix and independent review remain open. A real Standard Go+Make
+  command journey compiles and runs the artifact with the native assertions.
+  Full-platform run `42245813631` at `86a8caf4` exposed two Windows conformance
+  harness failures in tests shard 2/3: the isolated cold Go build exceeded the
+  test's 60-second process deadline and left its temporary artifact locked during
+  cleanup, and the Make fixture passed an unquoted Windows Go path through Bash.
+  The focused repair bounds Go conformance builds at five minutes and quotes the
+  fixture's language tool path; both affected real Go journeys pass locally on
+  Linux ARM64. The Windows rerun and independent review remain required.
+
+### [ ] RELEASE-COLLATERAL-001 — Refresh all user-facing documentation and collateral for each release
+
+- **Priority:** P0
+- **Owner:** release-project skill, 1.4 release collateral and user documentation
+- **Direction:** Make a complete release-specific refresh of README, release notes, introductions, instructional video, slides and other user-facing collateral a standard release checklist obligation; replace 1.3.1 and AI Unprompted framing in current 1.4 surfaces.
+- **Conclusion:** Require a source-revision-bound inventory and editorial review of every current user-facing surface before release preparation, with regenerated media and presentation artifacts, checked links and claims, and explicit archival treatment for historical 1.3.1 or conference material. Preserve truthful published 1.3.1 history until 1.4 is published; do not relabel old artifacts as new.
+- **Depends on:** final 1.4 feature and release scope
+- **Completion prerequisites:** none
+- **Release target:** 1.4.0
+- **Plan:** [1.4 release documentation and collateral refresh](1.4-release-collateral.md)
+- **Next action:** On the final 1.4 candidate, finish the per-surface inventory and replace current 1.3.1 or AI Unprompted introductions, media and slides with reviewed 1.4 material before release preparation.
+- **Implementation:**
+  - [x] Add the reusable release-project checklist gate and the 1.4 inventory covering release notes, root and user READMEs, getting-started and introduction pages, tutorials, video scripts and rendered media, captions, slides, speaker notes, download pages and linked collateral. Keep the generated-project release skill byte-identical to the framework catalog copy (#340).
+  - [ ] Refresh all current material from the final 1.4 candidate source and preserve prior release or event material only as labeled history.
+- **Evidence:**
+  - [ ] Review inventory and changes against final 1.4 source; verify rendered docs, media, slides, captions, links, installation commands and published assets on the exact release candidate; reject stale current-release or AI Unprompted claims; retain only clearly labeled historical 1.3.1 artifacts and complete the post-publication README/provider readback.
+### [ ] SOURCE-MODULE-VARIANTS-001 — Preserve JavaScript and TypeScript module source in inert conversion
+
+- **Priority:** P1
+- **Release target:** 1.4.0
+- **GitHub issue:** [#328](https://github.com/jordanhubbard/literate-ai/issues/328)
+- **Owner:** source-to-specification inventory and static derivation; PROJECT Goals 1 and 4
+- **Direction:** Recognize `.mjs`, `.cjs`, `.jsx`, `.mts`, `.cts` and `.tsx` as language source without executing or rewriting input; preserve safety and test classifications.
+- **Conclusion:** Current main `be1bf57b8` inventories a real `.mjs` source as `other` with no language. Mixed draft PR #313 contains a candidate correction, but its unrelated changes require separate review.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Next action:** Qualify the current-main integration at its exact head, complete independent source review, then land and verify main before closing #328.
+- **Implementation:**
+  - [x] Admit the six module and JSX suffixes under their JavaScript or TypeScript language while preserving input paths and bytes. PR #329 at `b49c8652` exercises all six through an installed noneditable wheel outside this checkout.
+  - [x] Preserve sensitive, binary, generated, large, minified and test precedence. Repository-managed conversion custody and negative inventory controls pass at `b49c8652`.
+- **Evidence:**
+  - [x] Run managed source inventory and real inert derivation controls, including refusal to execute source. The exact wheel from `b49c8652` classified and derived all six variants with original bytes unchanged; local Linux ARM64 wheel check and full-platform run 42245817943 passed.
+  - [ ] Verify independent source review, noneditable installed qualification, exact-head CI and post-merge main CI.
+
+
+### [ ] QUALIFIED-CHILD-REVISION-001 — Revise a qualified native child through a recoverable public transaction
+
+- **Release target:** 1.4.0
+- **GitHub issue:** [#350](https://github.com/jordanhubbard/literate-ai/issues/350)
+- **Accepted design:** [ADR 0066](../decisions/0066-qualified-native-child-revision.md), explicitly accepted by the directing user on 2026-11-07 ("Accept both designs").
+
+- **Priority:** P1
+- **Owner:** Native child registry, qualification and retained parent lifecycle; PROJECT Goals 1, 4 and 6
+- **Direction:** Complete included issue #350 in 1.4.0. The directing user explicitly accepted ADRs 0062 and 0066 on 2026-11-07.
+- **Conclusion:** Implement accepted ADR 0066: independently qualify a distinct physical v2 with the same logical identity, bind both children and the complete parent, publish registry and renewed policy-supported evidence recoverably, and retain separate consumer acceptance.
+- **Depends on:** Accepted ADR 0066 and shared qualification/transaction authority from ADR 0062
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [ ] Expose read-only revision planning, acknowledged apply, status and recovery using current canonical evidence readers and exact drift refusal.
+  - [ ] Preserve both child trees and unaffected children; reserve publication inputs and refuse incomplete or foreign recovery state.
+- **Evidence:**
+  - [ ] Use installed public CLI for a real v1/v2 plus unchanged sibling journey, prove actual consumer v2 behavior and fresh application acceptance.
+  - [ ] Qualify stale inputs, unsigned/unqualified/wrong-target/unsafe/duplicate candidates, exact rollback, interruption and foreign-file preservation; require independent review and full exact-head native/platform gates.
+
+
+### [ ] WORKER-CPU-001 — Measure bounded native Windows CPU pressure
+
+- **Release target:** 1.4.0
+
+- **Current 1.4 consolidation:** Preserve PR #351's reviewed implementation and original native evidence through normal merge with PR #353's qualified fix batch. Add the included CPU goal to the 1.4 manifest, which previously omitted it. A new Windows-only acceptance control uses both the actual local collector and the actual standalone receiver, checks measured samples and required-CPU policy on a single processor-group host, and discloses that the receiver uses a local child in place of SSH transport. Its actual native Windows result is recorded below; Linux/macOS skips do not supply that evidence. Existing thresholds and the explicit multi-group limitation remain unchanged.
+- **Native Windows consolidation evidence:** Exact `f159e2d41f7130612bdbb90d58731fa4eb000940`, CI run `42408103227`, completed Windows shard 3, artifact `13588893820`: the JUnit record names the actual native local/standalone-receiver required-CPU case, which passes in 0.503 seconds with no skip. All seven deterministic CPU controls also pass. The artifact's provider metadata independently binds the run and head; aggregate job success alone is not used as per-case evidence. The receiver's SSH transport is replaced by a real local Windows child. Remaining shard/full-platform, installed-wheel and integrated-main gates remain open.
+- **Native installed Windows acceptance passed:** Exact `97e71a233`, CI run `42411067487`, completed Windows wheel job `128519427209`, artifact `13590603036`: the canonical noneditable wheel smoke passes, including the actual native local-collector/standalone-receiver case with no skip and both module origins verified inside the installed environment. The receiver uses a real local child in place of SSH transport. [Sanitized provider/artifact record](../../verification/worker-cpu-windows-installed-native.json) binds the independently rehashed 4,246,420-byte wheel (`sha256:08a147ff9b1b966c00052fabc21a2bc087b5a53b02e911122d4e2e3288341e03`) and installed framework identity. This closes the native installed-CPU acceptance blocker; separate-host SSH transport, independent review, consolidated exact-head qualification and post-merge gates remain open.
+
+<a id="worker-cpu-001"></a>
+
+**GitHub issue:** [#348](https://github.com/jordanhubbard/literate-ai/issues/348)
+
+- **Completion prerequisites:** none
+- **Claim:** NVShawn is implementing this item; upstream assignee permissions are unavailable, so the issue records an explicit active claim. No upstream main merge or release is authorized by this contribution.
+- **Historical current-main reconciliation intent:** Merge upstream `32411a81` through ordinary history, preserving its documentation-only changes and the exact `0cf600f7` source qualification. Resolve the documentation-marker conflict through the supported review recorder, then run current authority, roadmap and relevant documentation checks. No runtime/test behavior changed on upstream main since the qualified base, so do not repeat the passing full Python suite solely for this documentation successor. Keep the contribution draft and preserve the original failures, installed/native lifecycle limits and unchanged downstream package pin.
+
+- **Current-parent reconciliation intent:** Normally merge actual parent main `576296d4` before further contribution review. It adds accepted child designs and unrelated Git/LFS checkout and installed-status controls, preserving the CPU production source and all frozen `0cf600f7` results. Recompute composed authority through supported recorders; do not relabel the old full suite as current whole-parent qualification or repeat it solely to qualify unchanged CPU code. Maintainer integration PR #354 separately owns its expanded current/native acceptance. Keep this contribution draft and the downstream framework pin unchanged.
+- **Current-parent reconciliation result:** Normal merge `efb0f968` preserves all accepted parent obligations and both histories. Both CPU runtime modules remain byte-identical to qualified `0cf600f7`; supported driver and documentation review are current. The parent main's unrelated checkout/status source changes do not acquire this contribution's old full-suite receipt. Maintainer PR #354 owns its own expanded native/current-source integration gates; no duplicate full run or default-branch/pin change is claimed.
+
+- **Priority:** P1
+- **Owner:** Framework worker-health native CPU provider
+- **Direction:** Use native Windows CPU observations when required pressure evidence would otherwise be unsupported.
+- **Conclusion:** Windows GetSystemTimes supplies bounded content-free utilization; retain configured admission thresholds and fail closed on API/counter/processor-group uncertainty. Keep local and standalone SSH receiver behavior consistent, without host-policy mutation or new dependencies.
+- **Depends on:** none
+- **Implementation:**
+  - [x] Add a bounded System32-only native Windows counter adapter and share equivalent local/remote sampling semantics; preserve unsupported multi-group and unavailable-counter states.
+- **Evidence:**
+  - [x] Deterministic adapter/error/counter/group controls, native read-only Windows smoke and the declared Python check gate; preserve existing pressure-policy refusal semantics. The exact-source full macOS gate below passes; this is not a full Windows-suite claim.
+
+- **Bounded qualification:** Source `3448c061` passes all seven deterministic controls, strict whole-tree lint and formatting. The exact standalone module SHA-256 `fef1cb6b1f690dfa71dc93f004d7289066c390215d1ea25311361fd5113cdcd8` also executes three read-only native windows on Windows/Python 3.12.10: measured 795, 614 and 976 basis points, with process retirement independently checked. The initial command-line transport refused before Python because it exceeded the Windows command budget; unchanged source passed through fixed executable stdin transport. This is counter-provider qualification, not a benchmark or whole-resource admission result. The original controller Python suite stops on the existing foreign-owned Git staging fixture: host Git 2.43.0 refuses the source `.git` path as dubious ownership. The identical failure reproduces through the declared Make target in an isolated unchanged `64415762` baseline; no global trust exception or test suppression is applied. This original failure remains historical, independently of the completed source gate below. Source authority is recorded through the supported documentation/driver review commands, with the test-runner pin unchanged. Documentation dependency/audit and all 22 tooling controls pass; rendering refuses the controller's unavailable browser sandbox, without weakening sandbox policy.
+- **Full source qualification:** Frozen `0cf600f70fa4767ca80dd8ec8b5bf9b424f40695` completes canonical `make python-check` on native macOS with two workers, Python 3.14.10, Git 2.56.0, Rust 1.97.1 and sccache 0.19.0. The structured report selects 2,728 cases: 2,599 execute and pass, 129 are explicitly skipped, with zero failures or known failures and no unexecuted selected cases. Its SHA-256 is `57f727a4f2f0c520003a19220cd3c059f233bd7aec942e58367e47a9f1fe478d`; independently collected source/report/log archive SHA-256 is `b2bb2a6f4ed1def8c7581c5b78880e92e2d92a8735fb780db9167c9191b8b11a`. All 5,281 authored inputs match frozen Git bytes, including two declared command-file CRLF representations; source remains unchanged and Git-clean. Native tool hashes and the operator's Cargo configuration remain unchanged. All five bounded phases exit zero with owned groups absent; the controller and private temporary root are independently absent afterward. The first Mac run's SGID assertion failure is preserved: a new temporary root inherited an unrelated group, so the requested SGID mode never existed before invocation. Giving a separate new job root the actual worker UID/primary GID makes the unchanged exact receipt test and then the full gate pass; no product/test assertion, operator directory, deadline or skip policy changes. This qualifies the source gate, not installed-wheel, full Windows, generation/import, native project lifecycle or release acceptance. Draft [PR #351](https://github.com/jordanhubbard/literate-ai/pull/351) remains unmerged pending its separate review and remaining project gates.
+
+### [ ] WORKER-WHEELHOUSE-GLIBC-001 — Resolve compatible glibc floors in cross-platform worker wheelhouse export
+
+- **Release target:** 1.4.0
+- **GitHub issue:** [#356](https://github.com/jordanhubbard/literate-ai/issues/356)
+- **Reproduction:** The canonical coordinator export for Python 3.12 / `manylinux_2_39_x86_64` refuses its binary download. Against public PyPI, the exact pinned Cryptography 50.0.1 download fails with the 2.39 tag and succeeds with the compatible `cp311-abi3-manylinux_2_34_x86_64` wheel. The newer explicit target is passed literally to pip, excluding lower floors. [PEP 600](https://peps.python.org/pep-0600/) defines compatibility with matching architecture and an equal or newer glibc. Preserve the failed export and both downloader observations; they do not establish installed native acceptance.
+- **Development verification:** Fourteen canonical bootstrap controls pass, including actual offline pip selection among synthetic wheel metadata for older/newer libc floors, legacy aliases and a foreign architecture; those fixtures do not claim native ABI execution. The repaired public CLI exports the real pinned framework/dependency closure for CPython 3.12 / `manylinux_2_39_x86_64`: 38 wheels, 12,708,667 bytes, closure identity `sha256:814fd764dc6971b84f4953518cc715e4b6d145abfd3cd0395af6809773a0701e`, with the exact requested target retained. The fresh Linux development suite passes 2,742 selected cases: 2,624 passed, 118 skipped, zero failures. Independent counts cover all 594 completed worker groups, 2,713 case starts and eight fixture-skip events accounting for 29 selected cases. Lint, formatting, documentation rendering and driver checks pass. Initial native installation was interrupted by a provider transfer conflict and HTTP 503; original partial staging and request records are retained. The subsequent verified completion is recorded below. Current-head CI, integration and release evidence remain open.
+- **Native closed-bootstrap verification:** [Sanitized native record](../../verification/worker-wheelhouse-glibc-native-qualification.json) retains the actual Linux x86_64 / CPython 3.12.3 / glibc 2.39 installation of that 38-wheel closure, with every installed distribution checked through canonical offline bootstrap and installed-RECORD identities. All four native extension modules import from the verified environment. The input transfer's conflicts/HTTP 503 remain recorded; explicit append-only recovery verifies the original inode and complete existing byte prefix before finishing the original hash-bound archive. The installed framework then passes its real cgroup-v2 preflight on the original operator-provisioned empty/unfrozen domain leaf, including whole-group OOM, finite CPU/memory/swap/process limits and actual placement/tree-kill descriptor access without writes. The framework artifact remains exact `97e71a233` (wheel SHA-256 `3aa12bb2cecca99b4eac65de84ec39b2c15ca7599c030f7ce101056602f5d479`); the repaired exporter source is `35948118b`. No mount identity is mocked, generated application launched, signed enforcement assertion produced or production grant consumed. This closes the native installation blocker; runtime enforcement, authenticated phase execution, VM/enterprise acceptance and full integration/release gates remain open.
+
+- **Priority:** P1
+- **Owner:** Framework worker bootstrap and dependency closure
+- **Direction:** Unblock the existing 1.4 native runner qualification without worker-side indexes or weaker installed-wheel verification; GitHub issue #356.
+- **Conclusion:** Expand explicit PEP 600 targets into a bounded ordered list of compatible same-architecture glibc platform tags while preserving the declared target and all closure checks.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Repair coordinator resolver arguments and preserve non-PEP-600 target behavior, target marker evaluation, canonical identities and fail-closed bounds.
+- **Evidence:**
+  - [ ] Reproduce public PyPI failure and compatible older-floor download, then qualify complete native-target closure, rejection of newer floors/foreign architectures, focused regression and required integration gates.
+
+- **Shared 1.4 staging qualification (in progress):** Normal history combines PR #353's Go/import/inventory/Git fixes, PR #354's CPU source and installed acceptance hook, current contributor PR #351 history, PR #355's initial publication journal and PR #357's compatible-floor bootstrap fix. Exact software source `c5dc8f25a` passes the complete Linux gate (2,758 selected; 2,639 passed; 119 skipped; zero failed) with all 596 groups independently reconciled, and its canonical installed-wheel checks pass. All 60 original goals remain retained. The scope audit then identifies the CPU item's missing exact release target; restore `1.4.0` and include newly reported #358 under its active contribution claim, bringing the current manifest to 61 goals. These metadata-only changes do not relabel the earlier source-bound software results. Require current scope/documentation validation and the full remote matrix at the corrected candidate before landing; independent review, post-merge main, full HTML recovery/rerender and all other unchecked goals remain open.
+
+### [ ] REVIEW-AUTHORITY-CLI-001 — Expose truthful policy review authority with explicit acceptance opt-in
+
+- **Release target:** 1.4.0
+- **GitHub issue:** [#358](https://github.com/jordanhubbard/literate-ai/issues/358)
+- **Active contribution claim:** [NVShawn's explicit implementation claim](https://github.com/jordanhubbard/literate-ai/issues/358#issuecomment-6713835521). No human-labeled review has been signed or accepted for the automated fixture. Preserve this work separately from native-Cargo provider qualification and the qualified-child publication mechanism.
+
+- **Priority:** P1
+- **Owner:** Specification review and source-acceptance CLI; existing review authority and promotion policy contracts
+- **Direction:** Include issue #358 in 1.4 qualification: preserve the human-only default while allowing an explicitly selected authorized-policy reviewer and a separate operator acceptance opt-in.
+- **Conclusion:** The core contracts already distinguish human and authorized-policy review, but the public CLI hardcodes human authority. Correct the existing CLI boundary without inventing human review or allowing a review to authorize its own acceptance. NVShawn has an explicit active implementation claim; coordinate the isolated contribution rather than duplicate it.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [ ] Expose the existing review authority choice with an explicit actor and independently acknowledged policy acceptance; preserve all signed intent, graph, uncertainty, source and lifecycle bindings.
+- **Evidence:**
+  - [ ] Qualify public CLI serialization and signing, unchanged human defaults, refusal without operator opt-in, explicit opt-in success and tampered-authority refusal; require independent review, installed/native and exact integration gates.
+
+The local contribution records below preserve the operator-directed work from
+commit `6f3c2237391bf3c3e8f5778ff85b1e2ec3655ef2`. Current upstream dispositions
+above remain authoritative for previously shared issue records. Prior local
+source and installed verification details remain in that commit history.
 
 <a id="native-qualified-revision-001"></a>
 ### [ ] NATIVE-QUALIFIED-REVISION-001 - Revise a qualified native child through a reviewed registration transaction

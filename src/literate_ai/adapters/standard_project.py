@@ -545,6 +545,13 @@ _STANDARD_BUILD_DRIVER = compiler_driver_source(
     "environment=dict((name,value) for name,value in environment.items() "
     "if os.name!='nt' or name.casefold() not in overridden);"
     "environment.update(compiler_environment);"
+    "environment.pop('GOROOT',None) if strategy=='go-executable' else None;"
+    "environment.update({'GO111MODULE':'off','GOTOOLCHAIN':'local',"
+    "'GOPROXY':'off','GOSUMDB':'off','GOWORK':'off','GOENV':'off',"
+    "'CGO_ENABLED':'0','GOPATH':str(pathlib.Path(obj)/'go-path'),"
+    "'GOMODCACHE':str(pathlib.Path(obj)/'module-cache'),"
+    "'GOCACHE':str(pathlib.Path(obj)/'go-cache')}) "
+    "if strategy=='go-executable' else None;"
     "assert source.is_file() or strategy in "
     "('python-tree','javascript-tree','typescript-tree') or "
     "(strategy=='elixir-tree' and relative=='.' and source.is_dir());"
@@ -985,9 +992,9 @@ def _encoded_multi_entrypoint_outputs(outputs: object) -> str:
 
 
 def _encoded_library_import_surface(surface: LibraryImportSurface) -> str:
-    # The verifier consumes import mappings, not the repeated typed authority
-    # records. Bind those records through the complete surface identity so an
-    # interface-only change still changes the immutable execute command.
+    # The verifier consumes import mappings, not repeated typed authority records.
+    # Bind those records through the complete surface identity so an interface-only
+    # change still changes the immutable execute command.
     verifier_surface = {
         "identity": surface.identity.to_dict(),
         "language": surface.language,

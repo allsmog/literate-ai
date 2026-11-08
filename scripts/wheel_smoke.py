@@ -80,6 +80,35 @@ if missing or not guard.is_file():
 print(json.dumps({"guard": True, "project_template": list(required)}, sort_keys=True))
 """
 
+INSTALLED_WORKER_CPU_PROBE = """
+import json
+import runpy
+import sys
+import unittest
+from pathlib import Path
+from literate_ai import worker_pressure_probe
+from literate_ai.adapters import worker_pressure
+
+prefix = Path(sys.prefix).resolve(strict=True)
+for module in (worker_pressure_probe, worker_pressure):
+    if not Path(module.__file__).resolve(strict=True).is_relative_to(prefix):
+        raise RuntimeError("worker pressure probe did not load the installed wheel")
+case = "test_native_windows_local_and_receiver_cpu_satisfy_required_policy"
+loaded = runpy.run_path(sys.argv[1])
+suite = unittest.TestSuite([loaded["WindowsCpuTests"](case)])
+result = unittest.TextTestRunner(verbosity=2).run(suite)
+if result.testsRun != 1 or not result.wasSuccessful():
+    raise RuntimeError("installed native worker CPU acceptance failed")
+print(json.dumps({
+    "case": case,
+    "platform": sys.platform,
+    "status": "skipped" if result.skipped else "passed",
+    "skip_reasons": [reason for _test, reason in result.skipped],
+    "installed_module_origins_verified": True,
+    "receiver_transport": "local-child",
+}))
+"""
+
 INSTALLED_EVIDENCE_SIGNATURE_PROBE = """
 import json
 import tempfile
@@ -1263,6 +1292,67 @@ def assert_installed_operator_golden_paths(
         raise RuntimeError(
             "installed onboard adopt did not reach an explicit retained receipt"
         )
+    # Exercise an older adopted project's default shim selection through the
+    # installed status CLI without changing the qualified golden-path receipt.
+    manifest_path = adopted_project / "literate.project.json"
+    original_manifest = manifest_path.read_bytes()
+    adopted_definition = json.loads(original_manifest)
+    selectors = adopted_definition.get("default_flavor_selectors")
+    shim = "+flavor://legacy-adoption/build-legacy-shim"
+    if (
+        not isinstance(selectors, list)
+        or "+flavor://literate-ai/build-make" not in selectors
+        or "flavors" not in adopted_definition.get("flavor_roots", [])
+        or not (adopted_project / "flavors/legacy-project-shim/flavor.md").is_file()
+    ):
+        raise RuntimeError("installed adoption omitted the project-local shim fixture")
+    adopted_definition["default_flavor_selectors"] = [
+        selector
+        for selector in selectors
+        if selector != "+flavor://literate-ai/build-make"
+    ] + [shim]
+    try:
+        manifest_path.write_text(
+            json.dumps(adopted_definition, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        selected_manifest = manifest_path.read_bytes()
+        shim_status = json.loads(
+            run(
+                str(litai),
+                "--json",
+                "status",
+                "--project",
+                str(adopted_project),
+                cwd=root,
+            ).stdout
+        )["result"]
+        if manifest_path.read_bytes() != selected_manifest:
+            raise RuntimeError("installed status changed the selected project manifest")
+    finally:
+        manifest_path.write_bytes(original_manifest)
+    host_tools = shim_status.get("host", {}).get("host_tools", {})
+    capabilities = host_tools.get("capabilities")
+    toolchain_sources = host_tools.get("toolchain_sources", [])
+    if (
+        "error" in host_tools
+        or not isinstance(capabilities, list)
+        or not capabilities
+        or any(not isinstance(item, dict) for item in capabilities)
+        or not isinstance(toolchain_sources, list)
+        or not {"literate-ai-os-base-toolchain", "lang-python"}.issubset(
+            toolchain_sources
+        )
+        or "legacy-project-shim" in toolchain_sources
+        or (
+            all(item.get("probe_satisfied") is True for item in capabilities)
+            and host_tools.get("ready") is not True
+        )
+    ):
+        raise RuntimeError(
+            "installed adopted-project status did not resolve its selected shim "
+            f"against the project Flavor catalog: {host_tools!r}"
+        )
     return {
         "create": {
             "kind": create_status["project"]["kind"],
@@ -1273,6 +1363,8 @@ def assert_installed_operator_golden_paths(
             "stage": retained["stage"],
             "release_authority": retained["release_authority"],
             "receipt": "current",
+            "host_toolchain_resolved": True,
+            "host_tools_ready": host_tools["ready"],
         },
         "source": "release-candidate-wheel",
     }
@@ -1905,6 +1997,16 @@ def _main() -> int:
         )
         installed_evidence_signatures = json.loads(
             run(str(python), "-c", INSTALLED_EVIDENCE_SIGNATURE_PROBE, cwd=root).stdout
+        )
+        installed_worker_cpu = json.loads(
+            run(
+                str(python),
+                "-I",
+                "-c",
+                INSTALLED_WORKER_CPU_PROBE,
+                str(repository / "tests/e2e/test_worker_pressure_windows_cpu.py"),
+                cwd=root,
+            ).stdout
         )
         checkpoint_help = run(
             str(python),
@@ -2753,6 +2855,7 @@ def _main() -> int:
                     "runtime_resources": installed_runtime_resources,
                     "runtime_environment": runtime_environment,
                     "evidence_signature_primitives": installed_evidence_signatures,
+                    "worker_cpu": installed_worker_cpu,
                     "schema_catalog_versions": sorted(
                         key for key in schema_versions if key.startswith("v")
                     ),

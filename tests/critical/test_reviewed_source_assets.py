@@ -32,6 +32,7 @@ from literate_ai.source_to_specification.promotion_materialization import (
 from literate_ai.source_to_specification.reviewed_assets import (
     validate_reviewed_asset_inventory,
 )
+from tests.support.fixtures_test_schema_catalog import SchemaCatalog
 
 DATA = b'["alpha","beta"]\n'
 CODE = (
@@ -379,6 +380,17 @@ class ReviewedSourceAssetTests(unittest.TestCase):
             )
             verified = verify_source_promotion_evidence(project, projection)
             self.assertEqual(len(verified.authored_asset_bindings), 1)
+            records = [
+                value
+                for path in (project / "provenance/source-promotion").rglob("*.json")
+                for value in (json.loads(path.read_text()),)
+                if value.get("schema")
+                == "urn:literate-ai:schema:v4:source-promotion-provenance"
+            ]
+            self.assertEqual(len(records), 1)
+            SchemaCatalog(Path(__file__).resolve().parents[2] / "schemas/v2").validate(
+                records[0]["schema"], records[0]
+            )
             audit = next(
                 item
                 for item in verified.promotion_input_audits

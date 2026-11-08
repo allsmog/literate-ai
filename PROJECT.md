@@ -9,6 +9,14 @@ paths during source capture; saved output assertions grant no write, recovery,
 collection or later source-exclusion authority. Existing single-file views and
 ordinary payload-retaining SDK capture retain their contracts and defaults.
 
+Initial tree publication retains a bounded private transaction journal outside
+source and output, with intent durable before the first output mutation and
+exclusive hash-linked phase records. Journal memory and storage consume the
+declared budgets. Interrupted attempts and foreign changes remain intact. These
+records describe one attempt; they do not restore output ownership or authorize
+recovery, cleanup, source exclusion or consumer acceptance. Complete recovery and
+rerender remain unfinished under RETAINED-TREE-EXPLORER-001.
+
 Projects may opt into complete tree freshness through a closed, versioned
 `literate.tree-html.json` registry of bounded project-relative declaration paths.
 Verification holds the actual registry and declaration inputs current, then runs
@@ -45,6 +53,8 @@ disposable output. The framework's own goals are:
    Semantic Versioning: each published release has an immutable version tag on
    its `release/<major>.<minor>.x` branch, selecting the exact qualified commit.
    A package version or copied source snapshot alone is not a published release.
+   Current user documentation, introductions and release collateral are reviewed
+   and qualified with that same source revision, including video and slides.
 2. Let a human-readable Component/Flavor/skill/workflow/routing specification fully
    determine generated application behavior, independent of which coding CLI or model
    performs the generation. This arrives in waves as models improve; it is not the
@@ -106,20 +116,35 @@ NATIVE-QUALIFIED-REVISION-001 extends Goals 1, 4 and 6 with reviewed revisions
 of an existing qualified native child. The operator accepted ADR 0065 for issue
 #350 before implementation. Both qualified trees and unrelated child evidence
 must remain intact; implementation and installed qualification are open.
+[WORKER-CPU-001](docs/roadmap/active-work.md#worker-cpu-001) qualifies bounded native Windows CPU observations for the existing worker-health goal; unavailable or incomplete processor-group evidence remains a hold under required-metric policy.
 
 RELEASE-INTEGRATION-005 executes the user-requested complete outstanding PR/issue
 resolution and 1.4.0 release. The [integration plan](docs/roadmap/1.4-integration.md)
 tracks every initial item, the existing release goals, native qualification and
 publication evidence. All required acceptance remains open until proven.
+RELEASE-COLLATERAL-001 makes the complete 1.4 documentation and media refresh a
+blocking release goal and adds the same review to the standard release workflow.
 
-LIBRARY-EXPORT-ORDER-001 and LIBRARY-IMPORT-ISOLATION-001 cover newly reported
-JavaScript export-map ordering and ambient Python import defects under Goals 1
-and 4. Draft PR #313 contains a candidate for the former. Main already isolates
-the generic Python verifier; preserving that protection through integration,
-independent review and installed qualification remain open. QUALIFIED-CHILD-ADD-001
-extends Goals 1, 4 and 6 with a public atomic transaction for adding an
-independently qualified native child to a qualified retained parent. Issue #315
-requires accepted design, implementation and native evidence before completion.
+LIBRARY-EXPORT-ORDER-001, LIBRARY-IMPORT-ISOLATION-001 and
+PYTHON-LIBRARY-IMPORT-001 cover JavaScript export-map ordering, ambient Python
+imports and standard-library imports under Goals 1 and 4. PR #318 merged the
+export-order fix; PR #308 merged both Python verifier repairs. Installed-wheel
+controls pass for all three; post-merge main CI run `42124478195` passed at
+`be1bf57b8`. Roadmap closure landed through PR #327.
+The broader draft PR #313 needs separate reconciliation without regressions.
+LIBRARY-IMPORT-COMMAND-001 covers issue #330 under Goals 1 and 4: project every
+declared library import within a bounded verifier command while binding the full
+typed surface identity. The focused repair and qualification remain open.
+QUALIFIED-CHILD-ADD-001 extends Goals 1, 4 and 6 with a public atomic
+transaction for adding an independently qualified native child to a qualified
+retained parent. The directing user accepted
+[ADR 0062](docs/decisions/0062-qualified-native-child-addition.md) on 2026-11-07.
+Issue #315 still requires implementation and native evidence before completion.
+
+QUALIFIED-CHILD-REVISION-001 extends Goals 1, 4 and 6 under issue #350.
+The directing user accepted [ADR 0066](docs/decisions/0066-qualified-native-child-revision.md)
+on 2026-11-07 for 1.4.0. Public revision planning, acknowledged apply,
+recoverable evidence publication and installed consumer qualification remain open.
 
 SHADOW-001 extends Goals 1 and 4 with a separate repository that continually
 qualifies selected upstream branches and PRs, tests repairs and validates their
