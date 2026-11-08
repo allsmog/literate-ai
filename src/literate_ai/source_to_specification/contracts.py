@@ -711,6 +711,11 @@ class ComponentEntrypointDraft:
             )
 
 
+# A distribution Component can pin every file of a packaged tree (for example a few hundred committed child cache
+# files); 1024 keeps the bound explicit while allowing that.
+MAXIMUM_COMPONENT_ASSETS = 1024
+
+
 @dataclass(frozen=True, slots=True)
 class ComponentGraphNodeDraft:
     """One evidence-backed logical Component recovered from a source tree."""
@@ -784,7 +789,7 @@ class ComponentGraphNodeDraft:
             ) from exc
         if (
             not isinstance(self.assets, tuple)
-            or len(self.assets) > 256
+            or len(self.assets) > MAXIMUM_COMPONENT_ASSETS
             or any(not isinstance(item, ComponentAssetSelector) for item in self.assets)
         ):
             raise SourceToSpecificationError(
