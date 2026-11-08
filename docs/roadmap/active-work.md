@@ -34240,7 +34240,7 @@ qualification, admission and cache reuse remain open.
 - **GitHub issue:** [#368](https://github.com/jordanhubbard/literate-ai/issues/368)
 - **ADR:** [0068](../decisions/0068-reviewed-static-source-intake.md), accepted under directing-operator delegation before implementation.
 - **Release target:** 1.4.0
-- **Next action:** Build the clean non-editable wheel and complete installed qualification, then exercise the actual dependent authentication source.
+- **Next action:** Build the clean successor wheel and complete installed qualification and admitted consumption after the tested retained-record ordering correction.
 
 
 - **Priority:** P1
@@ -34253,11 +34253,13 @@ qualification, admission and cache reuse remain open.
   - [x] Add typed signed review, read-only planning and fresh approval with bounded direct-file reads and independent hard exclusions.
   - [x] Integrate reviewed static analysis, signed acceptance, versioned private provenance and measured qualification validation without changing original source identities.
   - [x] Preserve ordinary bundle5/provenance3 and asset provenance4 writers and all existing qualified-provider identities.
+  - [x] Order the deduplicated retained-record union before archive encoding; retain strict reader and identity-conflict refusal.
 - **Evidence:**
   - [x] Managed positive and adversarial source, signature, scope, custody, policy-opt-in, no-egress and compatibility tests pass.
   - [ ] A clean non-editable wheel proves public planning, approval, derive, accept, qualification and key-free admitted consumption with swapped-record refusal.
-  - Sixty-nine distinct affected tests pass in the canonical Make-managed session
-    environment, including all 21 focused intake tests and ordinary source/asset,
+  - [x] Real filesystem publication/reopening accepts reverse-ordered intake additions and identical duplicates, preserves ordinary archive bytes and refuses conflicting identities before store creation.
+  - Seventy-one distinct affected tests pass in the canonical Make-managed session
+    environment, including all 23 focused intake tests and ordinary source/asset,
     qualification archive, schema and wire-version regressions. Lint, formatting,
     layout and public-export checks pass. Clean installed and actual application
     qualification remain open.

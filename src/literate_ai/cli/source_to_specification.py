@@ -2687,6 +2687,7 @@ def _publish_retained_qualification(
         else:
             known[identity] = content
             records.append((identity, content))
+    records.sort(key=lambda entry: entry[0].uri)
     archive = encode_qualification_archive(
         tuple(records), max_bytes=limit, max_records=100_000
     )

@@ -111,10 +111,15 @@ SOURCE-STATIC-INTAKE-001 extends Goals 1, 2, 4 and 6 with exact signed local
 static-intake review while preserving conservative inventory, source identities,
 no-egress defaults and ordinary qualified-library compatibility.
 [ADR 0068](docs/decisions/0068-reviewed-static-source-intake.md) records the
-accepted bounded design. The implementation passes 69 affected managed tests,
+accepted bounded design. The d19b8fdb checkpoint passes 69 affected managed tests,
 including all 21 focused tests, ordinary source and asset promotion, trust refusal,
 retained qualification validation, schemas and wire compatibility. Clean installed
-qualification remains open.
+qualification remains open. Its actual installed path exposed noncanonical
+retained-record ordering when the signed intake records are appended. The writer
+now orders the deduplicated union while retaining all reader and conflict checks.
+The correction passes 71 affected managed tests, including exact
+filesystem archive reopening, unchanged ordinary bytes and conflict refusal.
+A clean successor wheel and installed qualification remain required.
 
 SOURCE-ASSET-PROMOTION-001 extends Goals 1, 2, 4 and 6 with reviewed source-backed
 immutable assets through graph review, normal promotion and the existing asset

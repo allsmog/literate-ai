@@ -5,9 +5,22 @@ import json
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
+from literate_ai.adapters.evidence_storage import FileSystemEvidenceStore
+from literate_ai.adapters.qualification_archive import (
+    encode_qualification_archive,
+    reopen_qualification_archive,
+)
+from literate_ai.adapters.qualification_capture import QualificationEvidenceRecorder
 from literate_ai.application.source_promotion import qualify_locked_source_promotion
-from literate_ai.contracts import canonical_identity
+from literate_ai.cli.source_to_specification import (
+    CliFailure,
+    _publish_retained_qualification,
+)
+from literate_ai.contracts import canonical_identity, canonical_json_bytes
+from literate_ai.contracts.blobs import BlobRef
 from literate_ai.source_to_specification.model_workflow import (
     SOURCE_TRANSLATION_RUN_SCHEMA,
 )
@@ -61,6 +74,83 @@ class StaticIntakeQualificationTests(unittest.TestCase):
             self.fixture.qualification.identity.uri,
             self.review.key_id,
         )
+
+    def test_retained_intake_publication_reopens_canonical_union_and_keeps_baseline(
+        self,
+    ):
+        qualification = self.fixture.qualification
+        recorder = QualificationEvidenceRecorder(max_bytes=1_000_000, max_records=100)
+        recorder.remember_json(qualification.to_dict())
+        lifecycle = Mock()
+        adapter = SimpleNamespace(
+            max_capture_bytes=1_000_000,
+            evidence_blobs=recorder.entries,
+            library_captures=(),
+            lifecycle=lifecycle,
+        )
+        root = Path(self.fixture.temporary.name).resolve()
+        baseline = _publish_retained_qualification(
+            adapter, qualification, root / "baseline"
+        )
+        expected = encode_qualification_archive(
+            recorder.entries, max_bytes=1_000_000, max_records=100_000
+        )
+        self.assertEqual(
+            baseline["archive"]["digest"], hashlib.sha256(expected).hexdigest()
+        )
+        validation = self.validation()
+        values = [self.review.to_dict(), validation.to_dict()]
+        additions = sorted(
+            (
+                (canonical_identity(value), canonical_json_bytes(value))
+                for value in values
+            ),
+            key=lambda entry: entry[0].uri,
+            reverse=True,
+        )
+        self.assertGreater(additions[0][0].uri, additions[1][0].uri)
+        additions.append(additions[0])
+        location = root / "with-intake"
+        published = _publish_retained_qualification(
+            adapter, qualification, location, tuple(additions)
+        )
+        reference = BlobRef.from_dict(published["archive"])
+        retained = reopen_qualification_archive(
+            FileSystemEvidenceStore(location).get_bytes(reference),
+            reference,
+            max_bytes=1_000_000,
+            max_records=100_000,
+        )
+        self.assertEqual(
+            retained.read_json(qualification.identity), qualification.to_dict()
+        )
+        for value in values:
+            self.assertEqual(retained.read_json(canonical_identity(value)), value)
+        self.assertEqual(len(retained._records), 3)
+        self.assertEqual(lifecycle.require_current_authority.call_count, 2)
+
+    def test_retained_intake_conflict_refused_before_store_creation(self):
+        qualification = self.fixture.qualification
+        recorder = QualificationEvidenceRecorder(max_bytes=1_000_000, max_records=100)
+        recorder.remember_json(qualification.to_dict())
+        adapter = SimpleNamespace(
+            max_capture_bytes=1_000_000,
+            evidence_blobs=recorder.entries,
+            library_captures=(),
+            lifecycle=Mock(),
+        )
+        location = Path(self.fixture.temporary.name).resolve() / "conflict"
+        with self.assertRaises(CliFailure) as raised:
+            _publish_retained_qualification(
+                adapter,
+                qualification,
+                location,
+                ((qualification.identity, b"foreign bytes"),),
+            )
+        self.assertEqual(
+            raised.exception.code, "qualification.retained_intake_conflict"
+        )
+        self.assertFalse(location.exists())
 
     def test_measured_qualification_requires_every_exact_review_binding(self):
         fixture = self.fixture
