@@ -41,6 +41,7 @@ from ..provider_resolution import ProviderResolution
 from ..repositories import RepositorySourceLock
 from ..versioning import SemanticVersion, semantic_version
 from .authoring import (
+    MAXIMUM_COMPONENT_ASSETS,
     AuthoredProvidedCapability,
     ComponentAssetSelector,
     ComponentAuthoring,
@@ -357,6 +358,7 @@ class LockedComponentRevision:
             expected_type=ResolvedComponentAsset,
             key=lambda item: item.selector.asset_id,
             label="asset IDs",
+            maximum=MAXIMUM_COMPONENT_ASSETS,
         )
         flavor_requirements = _canonical_values(
             self.flavor_requirements,

@@ -12,7 +12,7 @@ from literate_ai.source_to_specification import (
     ComponentGraphNodeDraft,
     SourceToSpecificationError,
 )
-from literate_ai.source_to_specification.contracts import MAXIMUM_COMPONENT_ASSETS
+from literate_ai.contracts.component_locking.authoring import MAXIMUM_COMPONENT_ASSETS
 
 
 def selectors(count):
@@ -70,3 +70,46 @@ class ComponentAssetBoundTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AuthoringAndMarkdownAssetBoundTests(unittest.TestCase):
+    def test_authoring_assets_use_the_shared_bound(self):
+        from literate_ai.contracts.component_locking import authoring
+
+        many = selectors(590)
+        self.assertEqual(
+            authoring._canonical(
+                many,
+                path="ComponentAuthoring.assets",
+                expected_type=ComponentAssetSelector,
+                key=lambda item: item.asset_id,
+                label="asset IDs",
+                maximum=MAXIMUM_COMPONENT_ASSETS,
+            ),
+            many,
+        )
+        with self.assertRaises(ValueError):
+            authoring._canonical(
+                many,
+                path="ComponentAuthoring.provider_resolutions",
+                expected_type=ComponentAssetSelector,
+                key=lambda item: item.asset_id,
+                label="asset IDs",
+            )
+
+    def test_markdown_assets_list_is_the_only_list_above_256(self):
+        from literate_ai.adapters import component_markdown
+
+        items = list(range(590))
+        self.assertEqual(
+            component_markdown._list(items, "assets", maximum=MAXIMUM_COMPONENT_ASSETS),
+            items,
+        )
+        with self.assertRaises(component_markdown.ComponentMarkdownError):
+            component_markdown._list(items, "provides")
+        with self.assertRaises(component_markdown.ComponentMarkdownError):
+            component_markdown._list(
+                list(range(MAXIMUM_COMPONENT_ASSETS + 1)),
+                "assets",
+                maximum=MAXIMUM_COMPONENT_ASSETS,
+            )

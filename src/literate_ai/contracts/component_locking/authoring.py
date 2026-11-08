@@ -130,6 +130,11 @@ class ComponentAssetSelector:
         )
 
 
+# A distribution Component can pin every file of a packaged tree (for example a few hundred committed child cache
+# files); 1024 keeps the bound explicit while allowing that.
+MAXIMUM_COMPONENT_ASSETS = 1024
+
+
 def _canonical(
     values: object,
     *,
@@ -137,10 +142,13 @@ def _canonical(
     expected_type: type[Any],
     key: Any,
     label: str,
+    maximum: int = 256,
 ) -> tuple[Any, ...]:
     items = tuple_value(values, path)
-    if len(items) > 256 or any(not isinstance(item, expected_type) for item in items):
-        fail(path, f"must contain at most 256 {label} values")
+    if len(items) > maximum or any(
+        not isinstance(item, expected_type) for item in items
+    ):
+        fail(path, f"must contain at most {maximum} {label} values")
     keys = tuple(key(item) for item in items)
     unique(keys, path, label)
     if keys != tuple(sorted(keys)):
@@ -511,6 +519,7 @@ class ComponentAuthoring:
             expected_type=ComponentAssetSelector,
             key=lambda item: item.asset_id,
             label="asset IDs",
+            maximum=MAXIMUM_COMPONENT_ASSETS,
         )
         _canonical(
             self.provider_resolutions,

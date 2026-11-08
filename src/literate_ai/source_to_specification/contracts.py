@@ -15,7 +15,10 @@ from types import MappingProxyType
 from typing import Any, ClassVar
 
 from literate_ai.contracts import canonical_relative_posix_paths, semantic_version
-from literate_ai.contracts.component_locking.authoring import ComponentAssetSelector
+from literate_ai.contracts.component_locking.authoring import (
+    MAXIMUM_COMPONENT_ASSETS,
+    ComponentAssetSelector,
+)
 from literate_ai.contracts.library_imports import (
     AuthoredLibraryImport,
     validate_library_imports,
@@ -709,11 +712,6 @@ class ComponentEntrypointDraft:
                 "component_graph.entrypoint_evidence_required",
                 "each entrypoint requires exact source evidence",
             )
-
-
-# A distribution Component can pin every file of a packaged tree (for example a few hundred committed child cache
-# files); 1024 keeps the bound explicit while allowing that.
-MAXIMUM_COMPONENT_ASSETS = 1024
 
 
 @dataclass(frozen=True, slots=True)

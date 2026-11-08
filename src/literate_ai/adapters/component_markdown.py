@@ -21,6 +21,7 @@ from literate_ai.contracts.component_locking import (
     ComponentAuthoring,
     ComponentContentSelector,
 )
+from literate_ai.contracts.component_locking.authoring import MAXIMUM_COMPONENT_ASSETS
 from literate_ai.contracts.components import Entrypoint
 from literate_ai.contracts.flavors import FlavorAxis, FlavorCardinality, FlavorSlot
 from literate_ai.contracts.identity import ComponentCoordinate, ContentIdentity
@@ -34,7 +35,8 @@ from literate_ai.contracts.repositories import (
     RepositoryRevisionSelector,
 )
 
-_MAXIMUM_DOCUMENT_BYTES = 256 * 1024
+# Room for MAXIMUM_COMPONENT_ASSETS asset entries of a few hundred bytes each.
+_MAXIMUM_DOCUMENT_BYTES = 1024 * 1024
 _MAXIMUM_DESCRIPTION_CHARACTERS = 16_384
 _MAXIMUM_FRONTMATTER_LINES = 4096
 _MAXIMUM_NESTING = 8
@@ -205,7 +207,13 @@ def parse_component_markdown(
         sorted(
             (
                 _asset(item, index)
-                for index, item in enumerate(_list(raw.get("assets", []), "assets"))
+                for index, item in enumerate(
+                    _list(
+                        raw.get("assets", []),
+                        "assets",
+                        maximum=MAXIMUM_COMPONENT_ASSETS,
+                    )
+                )
             ),
             key=lambda item: item.asset_id,
         )
@@ -684,8 +692,12 @@ def _parse_sequence(
                     f"{tokens[index].number}",
                 )
         result.append(item)
-        if len(result) > 256:
-            _error("yaml_collection_limit", "frontmatter list exceeds 256 items")
+        # The parser does not know the key yet; per-key limits are applied by _list.
+        if len(result) > MAXIMUM_COMPONENT_ASSETS:
+            _error(
+                "yaml_collection_limit",
+                f"frontmatter list exceeds {MAXIMUM_COMPONENT_ASSETS} items",
+            )
     return result, index
 
 
@@ -1073,11 +1085,11 @@ def _record(
     return value
 
 
-def _list(value: Any, path: str) -> list[Any]:
+def _list(value: Any, path: str, maximum: int = 256) -> list[Any]:
     if not isinstance(value, list):
         _error("value_invalid", f"{path} must be a list")
-    if len(value) > 256:
-        _error("yaml_collection_limit", f"{path} exceeds 256 items")
+    if len(value) > maximum:
+        _error("yaml_collection_limit", f"{path} exceeds {maximum} items")
     return value
 
 
