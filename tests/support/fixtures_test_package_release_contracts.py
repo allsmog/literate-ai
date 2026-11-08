@@ -271,6 +271,42 @@ class PackageReleaseContractTests(unittest.TestCase):
         ):
             PackagePlan.from_dict(wire)
 
+    def test_library_archive_has_no_entrypoint_unless_it_requires_a_runtime(
+        self,
+    ) -> None:
+        directory = create_package_plan(
+            self.graph,
+            root_component_revision=self.root_export.component_revision,
+            component_lock_identity=_identity("component-lock"),
+            target_identity=self.root_export.target_identity,
+            root_artifact_identity=self.root_export.identity,
+            package_kind=PackageKind.DIRECTORY,
+            packager_identity=_identity("packager"),
+            destinations=self.destinations,
+            entrypoints=(),
+            runtime_requirements=(),
+        )
+        plan = replace(directory, package_kind=PackageKind.ARCHIVE)
+        result = self.result(plan)
+
+        self.assertEqual(plan.entrypoints, ())
+        self.assertEqual(result.entrypoints, ())
+        self.assertEqual(PackagePlan.from_dict(plan.to_dict()), plan)
+        self.assertEqual(PackageResult.from_dict(result.to_dict()), result)
+        with self.assertRaisesRegex(
+            ContractValidationError, "PackagePlan.entrypoints.*must not be empty"
+        ):
+            replace(plan, runtime_requirements=(self.interpreter,))
+        with self.assertRaisesRegex(
+            ContractValidationError, "PackageResult.entrypoints.*must not be empty"
+        ):
+            replace(result, runtime_requirements=(self.interpreter,))
+        for kind in (PackageKind.RUNTIME_BUNDLE, PackageKind.STANDALONE_EXECUTABLE):
+            with self.assertRaisesRegex(
+                ContractValidationError, "PackagePlan.entrypoints.*must not be empty"
+            ):
+                replace(directory, package_kind=kind)
+
     def test_native_library_archive_retains_exact_layout_without_entrypoint(
         self,
     ) -> None:

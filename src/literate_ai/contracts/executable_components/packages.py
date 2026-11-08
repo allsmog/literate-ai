@@ -447,6 +447,13 @@ class PackagePlan:
         )
         if any(not isinstance(item, PackageInput) for item in inputs):
             fail("PackagePlan.inputs", "must contain PackageInput values")
+        # An importable library has nothing to run. Its directory package, and
+        # the archive a native provider (for example a wheel) builds from it,
+        # carry no entrypoint. An archive that declares a runtime requirement
+        # still has to say what that runtime executes.
+        library_archive = (
+            self.package_kind is PackageKind.ARCHIVE and not self.runtime_requirements
+        )
         entrypoints = _canonical(
             self.entrypoints,
             "PackagePlan.entrypoints",
@@ -454,6 +461,7 @@ class PackagePlan:
             required=(
                 self.package_kind is not PackageKind.DIRECTORY
                 and self.native_library_layout is None
+                and not library_archive
             ),
             maximum=256,
         )
@@ -761,6 +769,10 @@ class PackageResult:
             required=(
                 self.package_kind is not PackageKind.DIRECTORY
                 and self.native_library_layout is None
+                and not (
+                    self.package_kind is PackageKind.ARCHIVE
+                    and not self.runtime_requirements
+                )
             ),
             maximum=256,
         )
