@@ -34233,3 +34233,31 @@ qualification, admission and cache reuse remain open.
 - **Evidence:**
   - [ ] Public CLI causal old-source regression, unchanged human default, policy denial without opt-in, opted-in acceptance, authority tamper refusal, and existing inverse regression gates.
   - [ ] Independent source review and qualified successor wheel/public path; keep native Cargo and retained acceptance source-bound and unfinished until actual execution.
+
+<a id="source-static-intake-001"></a>
+### [ ] SOURCE-STATIC-INTAKE-001 - Review exact credential-free source for local static intake
+
+- **GitHub issue:** [#368](https://github.com/jordanhubbard/literate-ai/issues/368)
+- **ADR:** [0068](../decisions/0068-reviewed-static-source-intake.md), accepted under directing-operator delegation before implementation.
+- **Release target:** 1.4.0
+- **Next action:** Build the clean non-editable wheel and complete installed qualification, then exercise the actual dependent authentication source.
+
+
+- **Priority:** P1
+- **Owner:** Local source review, static translation and source promotion; PROJECT goals 1, 2, 4 and 6
+- **Direction:** Issue368 requires exact reviewed static intake while preserving the original sensitive inventory and no-egress policy.
+- **Conclusion:** Follow accepted ADR0068. Scope the permission to signed exact paths, preserve ordinary writers and asset readers, and require full regenerative qualification before authority transfer.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Add typed signed review, read-only planning and fresh approval with bounded direct-file reads and independent hard exclusions.
+  - [x] Integrate reviewed static analysis, signed acceptance, versioned private provenance and measured qualification validation without changing original source identities.
+  - [x] Preserve ordinary bundle5/provenance3 and asset provenance4 writers and all existing qualified-provider identities.
+- **Evidence:**
+  - [x] Managed positive and adversarial source, signature, scope, custody, policy-opt-in, no-egress and compatibility tests pass.
+  - [ ] A clean non-editable wheel proves public planning, approval, derive, accept, qualification and key-free admitted consumption with swapped-record refusal.
+  - Sixty-nine distinct affected tests pass in the canonical Make-managed session
+    environment, including all 21 focused intake tests and ordinary source/asset,
+    qualification archive, schema and wire-version regressions. Lint, formatting,
+    layout and public-export checks pass. Clean installed and actual application
+    qualification remain open.

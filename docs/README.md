@@ -14,6 +14,7 @@ Large retained native trees can opt into
 
 ## User documentation
 
+- [Reviewed local static source intake](user/source-to-specification.md#review-conservatively-excluded-local-source)
 - [Skill catalog: what Literate AI has skills for](user/skills.md)
 - [Current features and release posture](user/current-features.md)
 - [Progressive visual labs](https://github.com/jordanhubbard/literate-ai/blob/main/labs/README.md)

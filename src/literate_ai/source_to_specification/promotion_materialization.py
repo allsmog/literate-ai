@@ -44,6 +44,11 @@ if TYPE_CHECKING:
     from .qualification_lifecycle import QualificationLifecycleResult
 from .inventory import SourceInventory
 from .reviewed_assets import ReviewedSourceAssetBinding, validate_asset_bindings
+from .static_intake import (
+    StaticIntakeReview,
+    StaticIntakeValidation,
+    _parse_static_intake_json,
+)
 
 GENERATION_INPUT_AUDIT_ENTRY_SCHEMA = (
     "urn:literate-ai:schema:v2:generation-input-audit-entry"
@@ -60,6 +65,9 @@ SOURCE_PROMOTION_PROVENANCE_SCHEMA = (
 )
 ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA = (
     "urn:literate-ai:schema:v4:source-promotion-provenance"
+)
+REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA = (
+    "urn:literate-ai:schema:v5:source-promotion-provenance"
 )
 QUALIFICATION_REBIND_MIGRATION_SCHEMA = (
     "literate-ai/qualification-standard-rebind-migration@1"
@@ -728,9 +736,33 @@ class VerifiedSourcePromotionEvidence:
     authored_asset_bindings: tuple[ReviewedSourceAssetBinding, ...] = dataclass_field(
         default=(), metadata={"omit_empty": True}
     )
+    static_intake_review: StaticIntakeReview | None = dataclass_field(
+        default=None, metadata={"omit_empty": True}
+    )
+    static_intake_validation: StaticIntakeValidation | None = dataclass_field(
+        default=None, metadata={"omit_empty": True}
+    )
 
     def __post_init__(self) -> None:
         validate_asset_bindings(self.authored_asset_bindings)
+        review = self.static_intake_review
+        validation = self.static_intake_validation
+        if review is not None and not isinstance(review, StaticIntakeReview):
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid", "static intake review must be typed"
+            )
+        if validation is not None and not isinstance(
+            validation, StaticIntakeValidation
+        ):
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid",
+                "static intake validation must be typed",
+            )
+        if validation is not None and review is None:
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid",
+                "static intake validation requires its exact review",
+            )
         if not self.promotion_input_audits or any(
             not isinstance(item, GenerationInputAudit)
             for item in self.promotion_input_audits
@@ -776,6 +808,36 @@ class VerifiedSourcePromotionEvidence:
                 raise SourcePromotionError(
                     "promotion.lifecycle_evidence_invalid",
                     "promotion qualification evidence must be a lifecycle result",
+                )
+        if review is not None:
+            projection = self.authority_projection
+            if (
+                projection is None
+                or review.source_snapshot_id != projection.source_snapshot_identity.uri
+            ):
+                raise SourcePromotionError(
+                    "promotion.static_intake_mismatch",
+                    "static intake review names another source snapshot",
+                )
+            if self.qualification_lifecycle_result is not None:
+                if validation is None or (
+                    validation.source_snapshot_id != review.source_snapshot_id
+                    or validation.promotion_reference_id
+                    != projection.provenance_reference_identity.uri
+                    or validation.review_identity != review.identity
+                    or validation.trust_key_id != review.key_id
+                    or validation.qualification_result_id
+                    != self.qualification_lifecycle_result.identity.uri
+                ):
+                    raise SourcePromotionError(
+                        "promotion.static_intake_validation_mismatch",
+                        "measured qualification requires exact source, review, "
+                        "promotion, key and lifecycle validation",
+                    )
+            elif validation is not None:
+                raise SourcePromotionError(
+                    "promotion.static_intake_validation_mismatch",
+                    "static intake validation requires measured qualification evidence",
                 )
         for value, identity, label in (
             (self.translation, self.translation_identity, "translation"),
@@ -862,6 +924,9 @@ class VerifiedSourcePromotionEvidence:
             None
             if self.standard_rebind_migration is None
             else self.standard_rebind_migration.identity,
+            None
+            if self.static_intake_validation is None
+            else ContentIdentity.parse_uri(self.static_intake_validation.identity),
         ):
             if identity is not None:
                 identities[identity.uri] = identity
@@ -1186,7 +1251,7 @@ def _read_regular_file(root: Path, relative: PurePosixPath, *, max_bytes: int) -
             descriptors.append(os.open(part, directory_flags, dir_fd=descriptors[-1]))
         descriptor = os.open(
             relative.parts[-1],
-            os.O_RDONLY | os.O_NOFOLLOW,
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
             dir_fd=descriptors[-1],
         )
         descriptors.append(descriptor)
@@ -1566,8 +1631,23 @@ def verify_source_promotion_evidence(
         "generation_input_audit_references",
     }
     schema = record.get("schema") if isinstance(record, dict) else None
+    if schema == REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA:
+        try:
+            record = _parse_static_intake_json(content, unwrap_cli=False)
+        except SourceToSpecificationError as error:
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid",
+                "reviewed promotion metadata must have exact unique JSON fields",
+            ) from error
     expected_fields = (
-        common_fields | {"inverse_evidence_reference"}
+        common_fields
+        | {
+            "inverse_evidence_reference",
+            "authored_asset_bindings",
+            "static_intake_review_reference",
+        }
+        if schema == REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA
+        else common_fields | {"inverse_evidence_reference"}
         if schema == SOURCE_PROMOTION_PROVENANCE_SCHEMA
         else common_fields | {"inverse_evidence_reference", "authored_asset_bindings"}
         if schema == ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA
@@ -1580,6 +1660,7 @@ def verify_source_promotion_evidence(
         not in {
             SOURCE_PROMOTION_PROVENANCE_SCHEMA,
             ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
+            REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
             PREVIOUS_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
         }
         or canonical_identity(record) != promotion_identity
@@ -1605,6 +1686,81 @@ def verify_source_promotion_evidence(
             "promotion.asset_binding_invalid",
             "asset promotion requires nonempty bindings",
         )
+    intake_review = None
+    intake_validation = None
+    if schema == REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA:
+        reference = record["static_intake_review_reference"]
+        if (
+            not isinstance(reference, dict)
+            or set(reference) != {"kind", "identity", "path"}
+            or reference["kind"] != "static-intake-review"
+            or reference["path"] != "static-intake-review.json"
+        ):
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid",
+                "static intake reference must be exact and typed",
+            )
+        try:
+            review_content = _read_regular_file(
+                Path(project_root),
+                record_path.parent / "static-intake-review.json",
+                max_bytes=64 * 1024,
+            )
+            intake_review = StaticIntakeReview.from_dict(
+                _parse_static_intake_json(review_content, unwrap_cli=False)
+            )
+        except SourceToSpecificationError as error:
+            raise SourcePromotionError(
+                "promotion.static_intake_invalid",
+                "static intake review is unavailable or invalid",
+            ) from error
+        if (
+            reference["identity"] != intake_review.identity
+            or intake_review.source_snapshot_id != record["source_snapshot_identity"]
+        ):
+            raise SourcePromotionError(
+                "promotion.static_intake_mismatch",
+                "static intake review does not bind this exact promotion source",
+            )
+        candidates = []
+        for evidence_identity in projection.evidence_identities:
+            location = (
+                record_path.parent
+                / "static-intake-validations"
+                / f"{evidence_identity.digest}.json"
+            )
+            try:
+                content = _read_regular_file(
+                    Path(project_root), location, max_bytes=64 * 1024
+                )
+            except SourcePromotionError as error:
+                if error.code == "promotion.input_unavailable":
+                    continue
+                raise
+            try:
+                value = StaticIntakeValidation.from_dict(
+                    _parse_static_intake_json(content, unwrap_cli=False)
+                )
+            except SourceToSpecificationError as error:
+                raise SourcePromotionError(
+                    "promotion.static_intake_validation_invalid",
+                    "static intake validation is invalid",
+                ) from error
+            if value.identity != evidence_identity.uri:
+                raise SourcePromotionError(
+                    "promotion.static_intake_validation_mismatch",
+                    "static intake validation does not match its content identity",
+                )
+            candidates.append(value)
+        if len(candidates) > 1 or (
+            projection.generation_closure is not None and len(candidates) != 1
+        ):
+            raise SourcePromotionError(
+                "promotion.static_intake_validation_required",
+                "qualified reviewed intake requires one exact "
+                "projection-bound validation",
+            )
+        intake_validation = candidates[0] if candidates else None
     translation: Mapping[str, Any] | None = None
     translation_identity: ContentIdentity | None = None
     if record["translation_identity"] is not None:
@@ -1638,6 +1794,7 @@ def verify_source_promotion_evidence(
     if schema in {
         SOURCE_PROMOTION_PROVENANCE_SCHEMA,
         ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
+        REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
     }:
         reference = record["inverse_evidence_reference"]
         if reference is not None:
@@ -1680,6 +1837,22 @@ def verify_source_promotion_evidence(
         raise SourcePromotionError(
             "promotion.evidence_mismatch", "promotion source snapshot does not match"
         )
+    if intake_review is not None:
+        from .model_workflow import SOURCE_TRANSLATION_RUN_SCHEMA
+
+        if (
+            translation is None
+            or set(translation) != {"schema", "mode", "intelligence", "journals"}
+            or translation.get("schema") != SOURCE_TRANSLATION_RUN_SCHEMA
+            or translation.get("mode") != "deterministic-static"
+            or translation.get("intelligence") is not None
+            or translation.get("journals") != []
+        ):
+            raise SourcePromotionError(
+                "promotion.static_intake_static_only",
+                "reviewed intake requires exact local static translation "
+                "with no model provenance",
+            )
     # The promotion record binds the reviewed graph-wide inverse SpecificationSet.
     # A v2 Component authority projection binds its node-local exact specification
     # set from the Component lock. Nested Components therefore must not be flattened
@@ -1818,6 +1991,8 @@ def verify_source_promotion_evidence(
             inverse_evidence_custody_identity=inverse_evidence_custody_identity,
             standard_rebind_migration=standard_rebind_migration,
             authored_asset_bindings=asset_bindings,
+            static_intake_review=intake_review,
+            static_intake_validation=intake_validation,
         )
     from .qualification_lifecycle import QualificationLifecycleResult
 
@@ -1923,6 +2098,8 @@ def verify_source_promotion_evidence(
         inverse_evidence_custody_identity=inverse_evidence_custody_identity,
         standard_rebind_migration=standard_rebind_migration,
         authored_asset_bindings=asset_bindings,
+        static_intake_review=intake_review,
+        static_intake_validation=intake_validation,
     )
 
 
@@ -1932,6 +2109,7 @@ __all__ = [
     "MATERIALIZED_PROMOTION_TREE_SCHEMA",
     "SOURCE_PROMOTION_PROVENANCE_SCHEMA",
     "ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA",
+    "REVIEWED_SOURCE_PROMOTION_PROVENANCE_SCHEMA",
     "GenerationInputAudit",
     "GenerationInputAuditEntry",
     "generation_input_subset_identity",

@@ -1,9 +1,15 @@
 # Design traceability
 
-<!-- literate-ai:authority-reviewed sha256:96e7b5b0c523116fd5ad84fe818a2e5fe1fb0c5b203905487f17d5ee4bf2e921 -->
+<!-- literate-ai:authority-reviewed sha256:7848c130da9f200dfe3528845f3e410d2bccfc76102fbc802663aeafcc9962f7 -->
 
 This matrix is the short map from product concepts to code and proof. Start here; read a
 deeper document only for the row being changed.
+
+[ADR 0068](../decisions/0068-reviewed-static-source-intake.md) scopes signed local
+static intake to exact reviewed files while preserving original inventory and
+no-egress policy. Promotion keeps the review private. Measured qualification
+rechecks trust and binds an exact retained validation. Focused managed tests cover
+these controls; clean installed qualification remains required before closure.
 
 The newest explicit boundaries are the
 [Component authority ladder](component-authority.md), the

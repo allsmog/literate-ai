@@ -691,7 +691,8 @@
         "urn:literate-ai:schema:v2:source-promotion-provenance",
         "urn:literate-ai:schema:v3:source-promotion-provenance",
         "urn:literate-ai:schema:v4:source-promotion-provenance",
-        "urn:literate-ai:schema:v2:legacy-source-promotion-journal-migration"
+        "urn:literate-ai:schema:v2:legacy-source-promotion-journal-migration",
+        "urn:literate-ai:schema:v5:source-promotion-provenance"
       ]
     },
     {
@@ -1147,6 +1148,15 @@
         "literate-ai/retained-tree-html-freshness@1",
         "literate-ai/retained-tree-html-check-result@1",
         "literate-ai/project-tree-html@1"
+      ]
+    },
+    {
+      "file": "source-static-intake.schema.json",
+      "root_id": "urn:literate-ai:schema:v1:source-static-intake-contracts",
+      "public_ids": [
+        "urn:literate-ai:schema:v1:source-static-intake-plan",
+        "urn:literate-ai:schema:v1:source-static-intake-review",
+        "urn:literate-ai:schema:v1:source-static-intake-validation"
       ]
     }
   ]

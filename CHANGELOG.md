@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Exact signed intake reviews permit local static analysis of credential-free
+  JavaScript and TypeScript excluded by the conservative content heuristic.
+  Original source and inventory identities remain unchanged. Separate policy
+  opt-ins, hard exclusions, no model egress and measured qualification still apply;
+  private review records stay outside forward generation inputs.
+
 - Reviewed source-backed assets retain their declarations and exact pins through
   source promotion into Component assets and normal locks. Immutable JSON and
   binary data stay separate from generated text. Missing or changed inputs,
