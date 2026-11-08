@@ -28,6 +28,7 @@ from .context import (
     ContextVisibility,
     GenerationComplexityBudget,
     GenerationComplexityDecision,
+    context_document_count,
     deterministic_token_estimate,
 )
 from .source_generation import (
@@ -436,7 +437,8 @@ class ForwardGenerationPromptJournal:
                 sum(item.byte_count for item in self.segment_bindings)
             )
             != self.complexity_decision.estimated_tokens
-            or len(self.segment_bindings) != self.complexity_decision.document_count
+            or context_document_count(self.segment_bindings)
+            != self.complexity_decision.document_count
             or sum(item.byte_count for item in self.direct_interface_bindings)
             != self.complexity_decision.direct_interface_bytes
             or len(

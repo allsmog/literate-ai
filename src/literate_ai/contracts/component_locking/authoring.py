@@ -130,8 +130,8 @@ class ComponentAssetSelector:
         )
 
 
-# A distribution Component can pin every file of a packaged tree (for example a few hundred committed child cache
-# files); 1024 keeps the bound explicit while allowing that.
+# A distribution Component can pin every file of a packaged tree, for example a
+# few hundred committed child cache files; 1024 keeps the bound explicit.
 MAXIMUM_COMPONENT_ASSETS = 1024
 
 

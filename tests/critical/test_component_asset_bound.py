@@ -1,4 +1,4 @@
-"""A reviewed Component graph node accepts up to MAXIMUM_COMPONENT_ASSETS pinned asset selectors and no more."""
+"""Component asset bounds: graph, authoring, locks, component.md and context."""
 
 from __future__ import annotations
 
@@ -6,13 +6,13 @@ import hashlib
 import unittest
 
 from literate_ai.contracts.component_locking import ComponentAssetSelector
+from literate_ai.contracts.component_locking.authoring import MAXIMUM_COMPONENT_ASSETS
 from literate_ai.contracts.identity import ContentIdentity
 from literate_ai.source_to_specification import (
     ComponentCapabilityContractDraft,
     ComponentGraphNodeDraft,
     SourceToSpecificationError,
 )
-from literate_ai.contracts.component_locking.authoring import MAXIMUM_COMPONENT_ASSETS
 
 
 def selectors(count):
@@ -119,9 +119,11 @@ class GenerationDocumentCountTests(unittest.TestCase):
     def test_asset_metadata_does_not_consume_the_document_budget(self):
         from types import SimpleNamespace
 
-        from literate_ai.application.component_generation_context import _document_count
         from literate_ai.contracts.executable_components.context import (
             ContextAuthorityKind,
+        )
+        from literate_ai.contracts.executable_components.context import (
+            context_document_count as _document_count,
         )
 
         segments = (

@@ -57,6 +57,21 @@ class ContextAuthorityKind(StrEnum):
     TRANSITIVE_PUBLIC_INTERFACE = "transitive-public-interface"
 
 
+def context_document_count(segments) -> int:
+    """Count generation-context documents, leaving out asset pin descriptors.
+
+    Each pinned asset adds one fixed-size metadata segment. Their number is bounded by
+    MAXIMUM_COMPONENT_ASSETS and their bytes still count toward the prompt and token
+    budgets, so they do not also consume the document budget.
+    """
+
+    return sum(
+        1
+        for item in segments
+        if item.authority_kind is not ContextAuthorityKind.LOCAL_ASSET_METADATA
+    )
+
+
 class ContextVisibility(StrEnum):
     FRAMEWORK = "framework"
     LOCAL_AUTHORITY = "local-authority"
