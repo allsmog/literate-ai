@@ -34161,3 +34161,34 @@ do not establish clean installed qualification. Both old and replacement child
 trees remain untouched in success, rollback and guarded recovery. Independent
 source qualification and an actual installed v1-to-v2 consumer run remain separate
 acceptance, with the latter still open.
+
+<a id="source-asset-promotion-001"></a>
+### [ ] SOURCE-ASSET-PROMOTION-001 - Preserve reviewed immutable assets through source promotion
+
+- **GitHub issue:** [#363](https://github.com/jordanhubbard/literate-ai/issues/363)
+- **ADR:** [0067](../decisions/0067-reviewed-source-assets.md), accepted before implementation.
+- **Release target:** 1.4.0
+- **Next action:** Verify a clean non-editable wheel, then prove the normal data-backed library generation, overlay and qualification route.
+
+- **Priority:** P1
+- **Owner:** source review, promotion materialization and existing immutable asset lifecycle
+- **Direction:** Carry explicitly reviewed source-backed assets through signed graph identity, normal promotion and the existing immutable overlay.
+- **Conclusion:** Issue #363 reproduces normal review and promotion losing an asset declaration and its changed pin. Follow accepted ADR 0067 without broadening source admission or release authority.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [x] Add canonical optional reviewed asset selectors and strict compatible graph wire handling.
+  - [x] Validate exact admitted source membership, pin, size and safe collision-free paths before promotion.
+  - [x] Promote immutable bytes through typed provenance into authored Component assets and normal locks.
+  - [ ] Preserve metadata-only generation and existing overlay, qualification, admission and cache ownership.
+- **Evidence:**
+  - [x] Normal CLI reviews bind asset changes and preserve asset-free identities; malformed declarations and unknown fields fail closed.
+  - [x] Missing, changed, symbolic, unsafe or colliding assets fail before project writes; normal promotion retains exact data and lock metadata.
+  - [ ] Actual generation-request metadata excludes asset payload; ordinary overlay, independent acceptance and cache reuse preserve exact bytes.
+  - [ ] Managed source, promotion and existing compatibility checks pass; a clean non-editable wheel proves the public data-backed library route.
+
+Managed source checks pass seven new asset tests, eight source-translation tests,
+13 existing promotion controls and three existing public CLI journeys. Large JSON
+and binary assets retain exact bytes and lock metadata. The four-language graph
+merge preserves the reviewed selector. Normal installed generation, independent
+qualification, admission and cache reuse remain open.

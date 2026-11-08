@@ -146,6 +146,19 @@ generation, the selected language Flavor projects its public capabilities into a
 package/module/symbol import surface; generated source must implement that surface and a
 framework-only generated-test adapter, not invent a CLI application.
 
+A graph node may declare immutable data in its optional `assets` array using the
+normal Component asset selector: `asset_id`, baseline-relative `source`, assembled
+runtime `path`, `role`, `media_type`, and exact `pin`. Review binds every selector
+to the full source inventory. Binary and large data files need not appear in the
+node's behavioral `source_paths`; their bytes remain outside model text inputs.
+Sensitive inputs, missing files, changed pins, unsafe paths and output collisions
+are refused. Acceptance freezes the reviewed bytes, copies them to the owning
+Component's `assets/<asset_id>` file, authors its selector, and locks the exact
+digest, size and media type through the normal asset resolver. Promotion records
+bind that copy to the original inventory entry. Qualification still requires the
+ordinary immutable overlay and independent acceptance; declaring data does not
+transfer implementation authority. Graphs without assets keep their identities.
+
 ## 3. Review uncertainty
 
 Blocking uncertainty IDs are listed in `bundle.json`. Resolve each one explicitly:

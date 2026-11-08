@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Reviewed source-backed assets retain their declarations and exact pins through
+  source promotion into Component assets and normal locks. Immutable JSON and
+  binary data stay separate from generated text. Missing or changed inputs,
+  unsafe paths and unbound asset provenance refuse promotion or qualification.
+
 - Qualified native child revisions have a reviewed plan, acknowledged apply and
   guarded recovery path. The transaction preserves both child trees, switches
   one registration and updates its exact qualification evidence while retaining

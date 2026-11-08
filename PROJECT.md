@@ -97,6 +97,11 @@ development (2026-09-10):
 
 ## Current work
 
+SOURCE-ASSET-PROMOTION-001 extends Goals 1, 2, 4 and 6 with reviewed source-backed
+immutable assets through graph review, normal promotion and the existing asset
+lifecycle. [ADR 0067](docs/decisions/0067-reviewed-source-assets.md) records the
+accepted design; implementation and clean installed acceptance remain open.
+
 NATIVE-QUALIFIED-REVISION-001 extends Goals 1, 4 and 6 with reviewed revisions
 of an existing qualified native child. The operator accepted ADR 0065 for issue
 #350 before implementation. Both qualified trees and unrelated child evidence

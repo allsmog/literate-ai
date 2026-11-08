@@ -109,6 +109,12 @@ from literate_ai.source_to_specification import (
 )
 from literate_ai.source_to_specification.inventory import (
     inventory_matches_accepted_snapshot,
+    source_inventory_from_dict,
+)
+from literate_ai.source_to_specification.reviewed_assets import (
+    ReviewedSourceAssetBinding,
+    validate_bound_component_assets,
+    validate_reviewed_asset_inventory,
 )
 from literate_ai.source_to_specification.synthesis import (
     capability_contract_path,
@@ -119,6 +125,7 @@ from literate_ai.source_to_specification.synthesis import (
 
 from ._wire import (
     component_graph_from_wire,
+    component_graph_to_wire,
     result_from_wire,
     result_to_wire,
     review_from_wire,
@@ -901,6 +908,51 @@ def _read_reviewed_component_graph(path: str | Path) -> ComponentGraphDraft:
     return graph
 
 
+def _validate_reviewed_graph_assets(graph, inventory_value) -> None:
+    if not any(node.assets for node in graph.nodes):
+        return
+    try:
+        inventory = source_inventory_from_dict(inventory_value)
+        validate_reviewed_asset_inventory(graph, inventory)
+    except SourceToSpecificationError as exc:
+        raise CliFailure(exc.code, exc.message) from exc
+
+
+def _capture_reviewed_assets(accepted_root, graph, source_root) -> None:
+    """Freeze declared bytes before publishing an accepted specification set."""
+
+    if not any(node.assets for node in graph.nodes):
+        return
+    from literate_ai.source_to_specification.promotion_materialization import (
+        PromotionInputKind,
+        SourcePromotionInput,
+        SourcePromotionMaterializer,
+    )
+
+    try:
+        validate_reviewed_asset_inventory(graph, inventory_source(source_root))
+        inputs = tuple(
+            SourcePromotionInput(
+                kind=PromotionInputKind.AUTHORED_ASSET,
+                source_root=source_root,
+                source_root_label="reviewed-source-assets",
+                source_path=asset.source,
+                target_path=(
+                    f"{_coordinate_parts(node.coordinate, accepted_root.name)[1]}/"
+                    f"{asset.asset_id}"
+                ),
+                expected_content_identity=asset.pin.uri,
+            )
+            for node in graph.nodes
+            for asset in node.assets
+        )
+        SourcePromotionMaterializer().materialize(
+            inputs, accepted_root / "authored-assets"
+        )
+    except SourceToSpecificationError as exc:
+        raise CliFailure(exc.code, exc.message) from exc
+
+
 def _static_review_artifacts(
     result: SourceToSpecificationResult,
     graph: ComponentGraphDraft,
@@ -1452,6 +1504,16 @@ def _create_promoted_project(
                     ),
                 )
                 for source_path, promoted_artifact in specification_projection
+            ) + tuple(
+                SourcePromotionInput(
+                    kind=PromotionInputKind.AUTHORED_ASSET,
+                    source_root=accepted_root,
+                    source_root_label="accepted-specifications",
+                    source_path=f"authored-assets/{node_name}/{asset.asset_id}",
+                    target_path=f"assets/{asset.asset_id}",
+                    expected_content_identity=asset.pin.uri,
+                )
+                for asset in node.assets
             )
             materializer.materialize(
                 promotion_inputs,
@@ -1600,6 +1662,10 @@ def _create_promoted_project(
                     else ()
                 ),
                 source_dependencies=(),
+                assets=tuple(
+                    replace(asset, source=f"assets/{asset.asset_id}")
+                    for asset in node.assets
+                ),
             )
             authoring_path = component_root / "component.md"
             authoring_path.write_text(
@@ -1953,6 +2019,7 @@ def _create_promoted_project(
         from literate_ai.adapters.authority import FileAuthorityProjectionStore
         from literate_ai.authority import ComponentAuthorityLifecycle
         from literate_ai.source_to_specification.promotion_materialization import (
+            ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA,
             SOURCE_PROMOTION_PROVENANCE_SCHEMA,
             PromotionInputKind,
         )
@@ -1979,6 +2046,13 @@ def _create_promoted_project(
             for artifact in component_specifications[coordinate]:
                 forward_paths[f"components/{node_name}/{artifact.path}"] = (
                     PromotionInputKind.SPECIFICATION
+                )
+            graph_node = next(
+                node for node in graph.nodes if node.coordinate == coordinate
+            )
+            for asset in graph_node.assets:
+                forward_paths[f"components/{node_name}/assets/{asset.asset_id}"] = (
+                    PromotionInputKind.AUTHORED_ASSET
                 )
         if profile_content is not None:
             forward_paths[f"components/{name}/qualification/profile.json"] = (
@@ -2016,8 +2090,38 @@ def _create_promoted_project(
         complete_audit = materializer.audit(forward_inputs)
         promotion_audits.append((complete_audit.identity, complete_audit))
 
+        asset_bindings = tuple(
+            sorted(
+                (
+                    ReviewedSourceAssetBinding(
+                        component_coordinate=f"component://{node_coordinates[node.coordinate][0]}/{node_coordinates[node.coordinate][1]}",
+                        asset_id=asset.asset_id,
+                        source_path=asset.source,
+                        project_path=f"components/{node_coordinates[node.coordinate][1]}/assets/{asset.asset_id}",
+                        runtime_path=asset.path,
+                        role=asset.role,
+                        media_type=asset.media_type,
+                        content_identity=asset.pin.uri,
+                        byte_count=(
+                            staging
+                            / "components"
+                            / node_coordinates[node.coordinate][1]
+                            / "assets"
+                            / asset.asset_id
+                        )
+                        .stat()
+                        .st_size,
+                    )
+                    for node in graph.nodes
+                    for asset in node.assets
+                ),
+                key=lambda item: item.project_path,
+            )
+        )
         promotion_record = {
-            "schema": SOURCE_PROMOTION_PROVENANCE_SCHEMA,
+            "schema": ASSET_SOURCE_PROMOTION_PROVENANCE_SCHEMA
+            if asset_bindings
+            else SOURCE_PROMOTION_PROVENANCE_SCHEMA,
             "source_snapshot_identity": result.request.source_snapshot_id,
             "specification_set_identity": specification_set_id,
             "review_identity": review_id,
@@ -2046,6 +2150,10 @@ def _create_promoted_project(
                 for _name, audit in promotion_audits
             ],
         }
+        if asset_bindings:
+            promotion_record["authored_asset_bindings"] = [
+                item.to_dict() for item in asset_bindings
+            ]
         promotion_identity = canonical_identity(promotion_record)
         promotion_root = (
             staging / "provenance" / "source-promotion" / promotion_identity.digest
@@ -2987,6 +3095,9 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             else _read_reviewed_component_graph(args.component_graph)
         )
         if reviewed_graph is not None:
+            _validate_reviewed_graph_assets(
+                reviewed_graph, bundle.get("source_inventory")
+            )
             try:
                 validate_component_graph_projection(result, reviewed_graph)
             except SourceToSpecificationError as exc:
@@ -3337,6 +3448,10 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 validation=review.validation,
             ),
         )
+        if effective_graph is not None:
+            _validate_reviewed_graph_assets(
+                effective_graph, bundle.get("source_inventory")
+            )
         specification = promote(
             result,
             review,
@@ -3481,8 +3596,11 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 )
             if result.component_graph_draft is not None:
                 (staging / "component-graph-draft.json").write_text(
-                    _json_text(canonical_value(result.component_graph_draft)),
+                    _json_text(component_graph_to_wire(result.component_graph_draft)),
                     encoding="utf-8",
+                )
+                _capture_reviewed_assets(
+                    staging, result.component_graph_draft, source_root
                 )
             guard.require_unchanged()
             os.replace(staging, target)
@@ -3800,9 +3918,19 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 "qualification.source_mismatch",
                 "source baseline does not match the accepted source snapshot",
             )
-        source_exclusion = promotion_service.assess_source_exclusion(
-            component_audit, inventory
-        )
+        try:
+            validate_bound_component_assets(
+                verified_promotion.authored_asset_bindings,
+                component_coordinate,
+                locked_authority.root_authoring.assets,
+            )
+            source_exclusion = promotion_service.assess_source_exclusion(
+                component_audit,
+                inventory,
+                authored_asset_bindings=verified_promotion.authored_asset_bindings,
+            )
+        except SourceToSpecificationError as exc:
+            raise CliFailure(exc.code, exc.message) from exc
         if not source_exclusion.source_excluded:
             raise CliFailure(
                 "qualification.source_in_generation_inputs",
