@@ -230,6 +230,21 @@ def _canonical_inputs(
     )
 
 
+def _document_count(segments: tuple[ComponentGenerationContextSegment, ...]) -> int:
+    """Count context documents, leaving out asset pin descriptors.
+
+    Each pinned asset adds one fixed-size metadata segment. Their number is bounded by
+    MAXIMUM_COMPONENT_ASSETS and their bytes still count toward the prompt and token
+    budgets, so they do not also consume the document budget.
+    """
+
+    return sum(
+        1
+        for item in segments
+        if item.authority_kind is not ContextAuthorityKind.LOCAL_ASSET_METADATA
+    )
+
+
 def _contributors(
     segments: tuple[ComponentGenerationContextSegment, ...],
     visibility: ContextVisibility,
@@ -309,7 +324,7 @@ def prepare_component_generation_context(
     measurements = {
         "prompt_bytes": manifest.byte_count,
         "estimated_tokens": manifest.estimated_tokens,
-        "document_count": len(manifest.segments),
+        "document_count": _document_count(manifest.segments),
         "direct_interface_bytes": sum(item.byte_count for item in direct_segments),
         "dependency_fan_in": len(
             {item.source_component_revision.uri for item in direct_segments}

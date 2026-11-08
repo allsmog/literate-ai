@@ -113,3 +113,25 @@ class AuthoringAndMarkdownAssetBoundTests(unittest.TestCase):
                 "assets",
                 maximum=MAXIMUM_COMPONENT_ASSETS,
             )
+
+
+class GenerationDocumentCountTests(unittest.TestCase):
+    def test_asset_metadata_does_not_consume_the_document_budget(self):
+        from types import SimpleNamespace
+
+        from literate_ai.application.component_generation_context import _document_count
+        from literate_ai.contracts.executable_components.context import (
+            ContextAuthorityKind,
+        )
+
+        segments = (
+            SimpleNamespace(authority_kind=ContextAuthorityKind.LOCAL_SPECIFICATION),
+            SimpleNamespace(authority_kind=ContextAuthorityKind.LOCAL_FLAVOR),
+            *(
+                SimpleNamespace(
+                    authority_kind=ContextAuthorityKind.LOCAL_ASSET_METADATA
+                )
+                for _ in range(590)
+            ),
+        )
+        self.assertEqual(_document_count(segments), 2)
