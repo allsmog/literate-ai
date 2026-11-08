@@ -34214,3 +34214,22 @@ Managed source checks pass seven new asset tests, eight source-translation tests
 and binary assets retain exact bytes and lock metadata. The four-language graph
 merge preserves the reviewed selector. Normal installed generation, independent
 qualification, admission and cache reuse remain open.
+### [ ] REVIEW-AUTHORITY-001 — Expose truthful policy review with explicit acceptance opt-in
+
+- **GitHub issue:** [#358](https://github.com/jordanhubbard/literate-ai/issues/358)
+- **Next action:** Review the isolated public CLI successor, finish existing inverse regressions and current source qualification, then execute a fresh installed public policy-review/acceptance fixture. Keep native-Cargo/retained qualification and prior full-source results independently bound.
+
+- **Priority:** P1
+- **Owner:** Public inverse CLI and promotion policy; PROJECT goals 2 and 4
+- **Direction:** Issue358: an automated actor must not be labeled human; expose an honest authorized-policy review and independently explicit operator acceptance choice.
+- **Conclusion:** Keep human-only defaults and signed source/graph binding. Review artifacts cannot grant their own acceptance policy. Core already represents authorized-policy but the public review and acceptance paths hardcode human authority.
+- **Focused checkpoint:** All three new public CLI controls pass in the canonical managed Make Python gate with zero skips; the same controls fail on unchanged original CLI because the authority selector is unavailable. The tests cover default human identity/policy, explicit actor and authority binding, denial without a separate acceptance opt-in, honest signed policy acceptance, and signature refusal after authority tampering. This is disposable test-fixture intent promotion only, not actual retained-provider acceptance or full source qualification.
+- **Existing inverse regression:** The canonical Make gate passes all nine selected existing source/admission/inverse CLI tests with zero failures or skips in 49.578 seconds. An earlier run using another checkout's editable Python environment failed origin admission; the unchanged original CLI reproduces that refusal. A fresh task-owned Make environment resolves the setup mismatch without changing source or origin policy. Both failed observations remain historical.
+- **Depends on:** none
+- **Completion prerequisites:** none
+- **Implementation:**
+  - [ ] Add explicit review authority with mandatory explicit policy actor and identity binding, plus separate acceptance opt-in and truthful accepted policy identity.
+  - [ ] Document the distinction between actor identity, signed review authority, operator acceptance policy, and execution authorization.
+- **Evidence:**
+  - [ ] Public CLI causal old-source regression, unchanged human default, policy denial without opt-in, opted-in acceptance, authority tamper refusal, and existing inverse regression gates.
+  - [ ] Independent source review and qualified successor wheel/public path; keep native Cargo and retained acceptance source-bound and unfinished until actual execution.

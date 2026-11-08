@@ -191,7 +191,10 @@ class ReviewedSourceAssetTests(unittest.TestCase):
     def test_binary_asset_remains_exact(self):
         self.promote_fixture(bytes(range(256)) * 4)
 
-    def promote_fixture(self, data):
+    def test_policy_review_and_separate_opt_in_keep_exact_asset(self):
+        self.promote_fixture(DATA, policy=True)
+
+    def promote_fixture(self, data, *, policy=False):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source = root / "source"
@@ -286,6 +289,8 @@ class ReviewedSourceAssetTests(unittest.TestCase):
                 "--component-graph",
                 str(paths["graph"]),
             ]
+            if policy:
+                review_args.extend(["--authority", "authorized-policy"])
             for item in result["uncertainty"]["items"]:
                 review_args.extend(["--resolve", item["uncertainty_id"]])
             status, text, errors = invoke(*review_args)
@@ -325,6 +330,13 @@ class ReviewedSourceAssetTests(unittest.TestCase):
                 "--flavor=+flavor://literate-ai/lang-javascript",
                 "--flavor=+flavor://literate-ai/os-macos",
             ]
+            if policy:
+                status, _, errors = invoke(*accept_args)
+                self.assertNotEqual(status, 0)
+                self.assertIn("promotion.authority_denied", errors)
+                self.assertFalse(project.exists())
+                self.assertFalse(accepted.exists())
+                accept_args.append("--allow-authorized-policy-review")
             for mutation in ["changed", "missing", "symlink"]:
                 with self.subTest(mutation=mutation):
                     original = source / "words.json"
