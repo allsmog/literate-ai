@@ -106,6 +106,7 @@ litai project mac-contract
 litai project adopt-original
 litai project convert-stage show
 litai project convert-stage advance
+litai project convert-stage retire-child
 litai project source-intelligence sync
 litai project source-intelligence check
 litai project identity migrate
@@ -547,6 +548,7 @@ root-integration acceptance still remain.
 | `project adopt-original [--project PATH] [--apply --acknowledge --expected-plan-identity SHA256]` | Review a validated canonical project's clean Git commit/tree and explicitly select original source authority with metadata-only writes. Preserve source layout; refuse stale plans, dirty or unsafe roots, existing evidence/authority and legacy conversion transitions. This grants no execution or release admission. |
 | `project convert-stage show [--project PATH]` | Read the canonical evidence-bound conversion authority state for an adopted project. |
 | `project convert-stage advance --to retained\|drafted\|qualified [--project PATH]` | Advance exactly one adjacent stage after independently verifying the current receipt or Component-promotion evidence. No command silently promotes a tree. |
+| `project convert-stage retire-child --child PATH --superseded-by PATH --archive PATH [--project PATH]` | Retire one superseded native child after verifying its successor, moving the child tree into the given archive. |
 | `project retained-scope refresh [--project PATH] [--apply --acknowledge --expected-plan-identity SHA256]` | Review exact added/removed retained-source paths and input identities, then revalidate and rebind scope and receipt policy without changing source or historical conversion evidence. |
 | `project identity migrate --from-project-id OLD [--project PATH] [--apply --acknowledge --expected-plan-identity SHA256]` | Reconcile an explicitly authored new project ID with original-source conversion authority, preserving hash-linked rename history and requiring fresh qualification. |
 | `project retained-harness readmit [--project PATH] [--retain-stage STAGE_ID ...] [--apply --acknowledge --expected-plan-identity SHA256] [--worker-id ID] [--worker-config PATH] [--timeout-seconds N]` | Re-inspect a retained implementation while original source still owns release authority, including at the `retained` conversion stage. A repeated `--retain-stage` carries the exact named stage from the current admitted inventory when inspection cannot rediscover it; the stage IDs and complete records are part of the reviewed plan and must be repeated unchanged on apply. The command binds the selected worker, timeout, and supported pinned runtime-tool requirements into that plan, then qualifies the corrected direct commands and generated wrapper locally or on one exact POSIX SSH worker before atomically replacing inventory, baseline, parity, wrapper/shim authority, Component lock, and receipt policy. Prior lift-and-shift and conversion evidence and the current conversion stage remain immutable. Specification-authoritative projects fail closed. |

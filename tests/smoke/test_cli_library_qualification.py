@@ -68,6 +68,7 @@ class PublicLibraryQualificationTests(unittest.TestCase):
             identity=self.fixture.invalidation.changed_component,
             specification_set_identity=self.specification,
             definition=SimpleNamespace(coordinate=self.coordinate),
+            assets=(),
         )
         lock = self.fixture.snapshot.authority.lock
         lock.nodes = (SimpleNamespace(revision=revision),)
@@ -121,6 +122,7 @@ class PublicLibraryQualificationTests(unittest.TestCase):
         audit = SimpleNamespace(
             identity=identity("audit").uri,
             materialized_tree_identity=identity("promotion").uri,
+            entries=(),
         )
         verified = SimpleNamespace(
             audit_containing=lambda _: audit,
