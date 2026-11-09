@@ -136,17 +136,19 @@ CONFORMANCE_SCHEMA = "literate-ai/source-to-specification-conformance@1"
 
 
 def native_integration_stage_allowed(stage: object) -> bool:
-    """New and replacement native children integrate before the qualified stage.
+    """New native children integrate at the retained, drafted or qualified stage.
 
     A newly admitted child starts derived-source-retained, which already meets the
-    drafted stage's rule, so drafted projects may still gain native children.  A
-    qualified project stays closed: every Component there is already qualified.
+    drafted stage's rule.  A qualified project may gain a new child only by first
+    moving back to drafted (``reopen_for_native_child``), because it can no longer
+    claim that every Component is qualified.  Replacement keeps its own rule.
     """
     from literate_ai.contracts.operator_adoption import ConversionAuthorityStage
 
     return isinstance(stage, ConversionAuthorityStage) and stage in (
         ConversionAuthorityStage.RETAINED,
         ConversionAuthorityStage.DRAFTED,
+        ConversionAuthorityStage.QUALIFIED,
     )
 
 
@@ -3274,6 +3276,9 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                 FilesystemConversionAuthorityStore,
                 require_native_project_path,
             )
+            from literate_ai.contracts.operator_adoption import (
+                ConversionAuthorityStage,
+            )
 
             integration_path = Path(args.integrate_project).resolve(strict=True)
             integration_project = discover_project(integration_path)
@@ -3296,7 +3301,16 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             ):
                 raise CliFailure(
                     "promotion.integration_stage_invalid",
-                    "native promotion integration requires retained or drafted "
+                    "native promotion integration requires retained, drafted or "
+                    "qualified conversion authority",
+                )
+            if (
+                replacement_requested
+                and integration_state.stage is ConversionAuthorityStage.QUALIFIED
+            ):
+                raise CliFailure(
+                    "promotion.integration_stage_invalid",
+                    "native child replacement requires retained or drafted "
                     "conversion authority",
                 )
             graph = result.component_graph_draft
@@ -3647,6 +3661,7 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             raise
         guard.require_unchanged()
         promoted_project = None
+        reopened_authority = None
         if project_target is not None:
             try:
                 parent_selection = None
@@ -3701,6 +3716,22 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
                         source_guard=replacement_guard,
                     )
                 else:
+                    if (
+                        integration_project is not None
+                        and integration_state is not None
+                        and integration_state.stage
+                        is ConversionAuthorityStage.QUALIFIED
+                    ):
+                        from literate_ai.adapters.conversion_authority import (
+                            reopen_for_native_child,
+                        )
+
+                        try:
+                            reopened_authority = reopen_for_native_child(
+                                integration_project, integration_state
+                            )
+                        except ConversionAuthorityError as exc:
+                            raise CliFailure(exc.code, exc.message) from exc
                     promoted_project = create_promoted(project_target)
                 if integration_project is not None and replacement_plan is None:
                     from literate_ai.adapters.conversion_authority import (
@@ -3718,6 +3749,14 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             except BaseException:
                 if target.exists():
                     shutil.rmtree(target)
+                if reopened_authority is not None:
+                    from literate_ai.adapters.conversion_authority import (
+                        restore_after_failed_native_child,
+                    )
+
+                    restore_after_failed_native_child(
+                        integration_project, *reopened_authority
+                    )
                 # The creator cleans its own staging tree on failure. A collision
                 # must never let this caller delete someone else's installed child.
                 if (
@@ -3739,6 +3778,11 @@ def _spec_from_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         }
         if promoted_project is not None:
             response["promoted_project"] = promoted_project
+            if reopened_authority is not None:
+                response["promoted_project"]["integrated_project_stage"] = {
+                    "before": reopened_authority[0].stage.value,
+                    "after": reopened_authority[1].stage.value,
+                }
         return response, 0
     if command == "qualify":
         if not args.allow_host_execution:

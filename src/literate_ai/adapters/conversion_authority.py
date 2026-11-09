@@ -667,6 +667,54 @@ def evidence_for_conversion_stage(
     )
 
 
+def reopen_for_native_child(
+    project: LoadedProject, state: ConversionAuthorityState
+) -> tuple[ConversionAuthorityState, ConversionAuthorityState]:
+    """Move a qualified project back to drafted before it gains a new native child.
+
+    The new child starts derived-source-retained, so the project can no longer
+    claim that every Component is qualified.  The drafted state is bound to the
+    current Component projections and names the qualified state as its prior
+    identity, so the history stays visible.  Advancing to qualified again needs
+    fresh evidence that also covers the new child.
+    """
+
+    if state.stage is not ConversionAuthorityStage.QUALIFIED:
+        raise ConversionAuthorityError(
+            "conversion_authority.transition_invalid",
+            "only a qualified project reopens to drafted for a native child",
+        )
+    store = FilesystemConversionAuthorityStore(project.root)
+    current = store.load_optional()
+    if current is None or current.identity != state.identity:
+        raise ConversionAuthorityError(
+            "conversion_authority.concurrent_change",
+            "conversion authority changed before the native child reopened it",
+        )
+    evidence = evidence_for_conversion_stage(project, ConversionAuthorityStage.DRAFTED)
+    reopened = ConversionAuthorityState(
+        project_id=current.project_id,
+        stage=ConversionAuthorityStage.DRAFTED,
+        evidence_identities=tuple(sorted(evidence, key=lambda item: item.uri)),
+        prior_state_identity=current.identity,
+        identity_migration_identity=current.identity_migration_identity,
+    )
+    store._replace(reopened, expected=current.identity)
+    return current, reopened
+
+
+def restore_after_failed_native_child(
+    project: LoadedProject,
+    before: ConversionAuthorityState,
+    reopened: ConversionAuthorityState,
+) -> None:
+    """Put back the exact qualified state when the child was not integrated."""
+
+    FilesystemConversionAuthorityStore(project.root)._replace(
+        before, expected=reopened.identity
+    )
+
+
 def require_current_qualified_conversion_authority(
     project: LoadedProject, state: ConversionAuthorityState
 ) -> tuple[ContentIdentity, ...]:
@@ -699,6 +747,8 @@ __all__ = [
     "FilesystemConversionAuthorityStore",
     "evidence_for_conversion_stage",
     "register_native_project",
+    "reopen_for_native_child",
     "require_current_qualified_conversion_authority",
+    "restore_after_failed_native_child",
     "retire_native_project",
 ]
